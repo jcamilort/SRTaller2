@@ -27,7 +27,10 @@ public class User extends Model{
 	public double average_stars;
 	public int[] votes;
 	public int[] compliments;
-	public ArrayList<User> friends;
+	/**
+	 * Contenedor de ids de los amigos del usuario
+	 */
+	public String[] friends;
 	public int[] elite;
 	public String yelping_since;
 	public int fans;
@@ -71,7 +74,7 @@ public class User extends Model{
 	/**
 	 * @return the list of friends
 	 */
-	public ArrayList<User> getFriends()
+	public String[]  getFriends()
 	{
 		return friends;
 	}
@@ -162,7 +165,7 @@ public class User extends Model{
 	/**
 	 * @param friends the friends to set
 	 */
-	public void setFriends(ArrayList<User> friends) {
+	public void setFriends(String[] friends) {
 		this.friends = friends;
 	}
 	/**

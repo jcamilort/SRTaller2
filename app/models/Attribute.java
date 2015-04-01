@@ -34,7 +34,7 @@ public class Attribute extends Model{
 	
 	public Attribute()
 	{
-		encloses = new ArrayList<>();
+		encloses = new ArrayList<Attribute>();
 	}
 	
 	public boolean getEnclosure()
