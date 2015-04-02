@@ -1,7 +1,16 @@
-@(message: String)
+@()
 
-@main("Welcome to Play") {
+@main("Recommender system") {
 
-    @play20.welcome(message, style = "Java")
 
+    <h1>Tu ubicación</h1>
+    <label>Localización: </label><input type="text" id="latitude"/><span style="width:20px">-</span><input type="text" id="longitude"/>
+    <br/>
+
+    <div id="geolocation"></div>
+    <br/>
+    <label>Hora: </label><input type="text" id="hour"/>
+    <br/>
+
+    <button id="search">Buscar</button>
 }
