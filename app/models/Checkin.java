@@ -27,13 +27,20 @@ public class Checkin extends Model {
 	 * El numero de checkins en el rango de una hora por dias se encuentra en la interseccion dia-hora
 	 */
 
-    @Transient
-	public ArrayList<ArrayList<Integer>> checkin_info;
+    public ArrayList<ArrayList<Integer>> checkin_info;
 	
 	public Checkin()
 	{
-		//checkin_info = new int [24][7];
-	}
+		//checkin_info = new int [24][7];//init size:
+        checkin_info=new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < 24; i++) {
+            ArrayList<Integer> added = new ArrayList<Integer>();
+            for (int j = 0; j < 7; j++) {
+                added.add(0);
+            }
+            checkin_info.add(added);
+        }
+    }
 
 	/**
 	 * @return the business_id

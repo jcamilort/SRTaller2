@@ -26,6 +26,7 @@ public class User extends Model{
 	public String name;
 	public int review_count;
 	public double average_stars;
+    //TODO Review or refactor @transients
     @Transient
 	public int[] votes;
     @Transient
