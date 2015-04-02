@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import models.User;
 
@@ -51,12 +52,13 @@ public class DataLoader {
 				// get an array from the JSON object
 				JSONArray friends = (JSONArray) jsonObject.get("friends");
 
-				String[] amigos = new String [ friends.size()];
+				//String[] amigos = new String [ friends.size()];
+                ArrayList<String> amigos=new ArrayList<>();
 				// take the elements of the json array
 				for (int i = 0; i < friends.size(); i++) {
 					System.out.println("The " + i + " element of the array: "
 							+ friends.get(i));
-					amigos[i]= (String) friends.get(i);
+					amigos.add((String) friends.get(i));
 				}
 				
 				//TODO terminar de asignar todo

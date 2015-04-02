@@ -6,6 +6,7 @@ package models;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import play.db.ebean.Model;
 
@@ -30,6 +31,7 @@ public class Review extends Model{
 	/**
 	 * Modela los votos sobre el review de las caracteristicas en el arreglo
 	 */
+    @Transient
 	public int[] votes;
 	
 	public Review()

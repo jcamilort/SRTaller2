@@ -2,9 +2,9 @@ package models;
 
 import java.util.ArrayList;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-import play.db.ebean.Model;
+import play.db.ebean.*;
 
 @Entity
 public class Business extends Model{
@@ -14,11 +14,12 @@ public class Business extends Model{
 	 */
 	private static final long serialVersionUID = 1L;
 
+
 	public String business_id;
 	
 	public String full_address;
 	public String name;
-	public String[] neighborhoods;
+	public ArrayList<String> neighborhoods;
 	public String city;
 	public String state;
 	public double latitude;
@@ -34,12 +35,15 @@ public class Business extends Model{
 	 * La primera columna es la hora de apertura en hora militar (0-2359), -1 si no abre ese dia
 	 * La segunda columna es la hora de cierre en hora militar (0-2359), -1 si no abre ese dia
 	 */
-	public int[][] openTimes;
+
+
+	public ArrayList<ArrayList<Integer>> openTimes;
 	
 	/**
 	 * @return the openTimes
 	 */
-	public int[][] getOpenTimes() {
+
+	public ArrayList<ArrayList<Integer>> getOpenTimes() {
 		return openTimes;
 	}
 	/**
@@ -47,7 +51,8 @@ public class Business extends Model{
 	 * en la primera casilla se ubica el id del atributo
 	 * La segunda casilla el valor true (1) o false(0) del atributo
 	 */
-	public int[][] attributes;
+
+	public ArrayList<ArrayList<Integer>> attributes;
 	
 
 	public String getBusiness_id() {
@@ -74,11 +79,11 @@ public class Business extends Model{
 		this.name = name;
 	}
 
-	public String[] getNeighborhoods() {
+	public ArrayList<String> getNeighborhoods() {
 		return neighborhoods;
 	}
 
-	public void setNeighborhoods(String[] neighborhoods) {
+	public void setNeighborhoods(ArrayList<String> neighborhoods) {
 		this.neighborhoods = neighborhoods;
 	}
 
@@ -146,18 +151,18 @@ public class Business extends Model{
 		this.open = open;
 	}
 
-	public int[][] getAttributes() {
+	public ArrayList<ArrayList<Integer>> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(int[][] attributes) {
+	public void setAttributes(ArrayList<ArrayList<Integer>> attributes) {
 		this.attributes = attributes;
 	}
 
 	/**
 	 * @param openTimes the openTimes to set
 	 */
-	public void setOpenTimes(int[][] openTimes) {
+	public void setOpenTimes(ArrayList<ArrayList<Integer>> openTimes) {
 		this.openTimes = openTimes;
 	}
 

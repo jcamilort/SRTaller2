@@ -3,9 +3,11 @@
  */
 package models;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
-import play.db.ebean.Model;
+import play.db.ebean.*;
+
+import java.util.ArrayList;
 
 /**
  * @author juancamiloortiz
@@ -24,11 +26,13 @@ public class Checkin extends Model {
 	 * Las columnas contienen los dias de la semana
 	 * El numero de checkins en el rango de una hora por dias se encuentra en la interseccion dia-hora
 	 */
-	public int[][] checkin_info;
+
+    @Transient
+	public ArrayList<ArrayList<Integer>> checkin_info;
 	
 	public Checkin()
 	{
-		checkin_info = new int [24][7];
+		//checkin_info = new int [24][7];
 	}
 
 	/**
@@ -41,10 +45,9 @@ public class Checkin extends Model {
 	/**
 	 * @return the checkin_info
 	 */
-	public int[][] getCheckin_info() {
+	public ArrayList<ArrayList<Integer>> getCheckin_info() {
 		return checkin_info;
 	}
-
 	/**
 	 * @param business_id the business_id to set
 	 */
@@ -55,7 +58,7 @@ public class Checkin extends Model {
 	/**
 	 * @param checkin_info the checkin_info to set
 	 */
-	public void setCheckin_info(int[][] checkin_info) {
+	public void setCheckin_info(ArrayList<ArrayList<Integer>> checkin_info) {
 		this.checkin_info = checkin_info;
 	}
 

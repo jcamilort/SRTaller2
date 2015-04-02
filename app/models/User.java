@@ -6,6 +6,7 @@ package models;
 import java.util.ArrayList;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 import play.db.ebean.Model;
 
@@ -25,12 +26,16 @@ public class User extends Model{
 	public String name;
 	public int review_count;
 	public double average_stars;
+    @Transient
 	public int[] votes;
+    @Transient
 	public int[] compliments;
 	/**
 	 * Contenedor de ids de los amigos del usuario
 	 */
-	public String[] friends;
+
+	public ArrayList<String> friends;
+    @Transient
 	public int[] elite;
 	public String yelping_since;
 	public int fans;
@@ -74,7 +79,7 @@ public class User extends Model{
 	/**
 	 * @return the list of friends
 	 */
-	public String[]  getFriends()
+	public ArrayList<String> getFriends()
 	{
 		return friends;
 	}
@@ -165,7 +170,7 @@ public class User extends Model{
 	/**
 	 * @param friends the friends to set
 	 */
-	public void setFriends(String[] friends) {
+	public void setFriends(ArrayList<String> friends) {
 		this.friends = friends;
 	}
 	/**
