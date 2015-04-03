@@ -35,8 +35,6 @@ public class Business extends Model{
 	 * La primera columna es la hora de apertura en hora militar (0-2359), -1 si no abre ese dia
 	 * La segunda columna es la hora de cierre en hora militar (0-2359), -1 si no abre ese dia
 	 */
-
-
 	public ArrayList<ArrayList<Integer>> openTimes;
 	
 	/**
