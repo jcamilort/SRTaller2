@@ -25,34 +25,32 @@ public class DataLoader {
 	public static final String rutaUsuarios = "./data/yelp_academic_dataset_user.json";
 	public static final String rutaTips = "./data/yelp_academic_dataset_tip.json";
 	public static final String rutaNegocios = "./data/yelp_academic_dataset_business.json";
-	public static EntityCollector colector;
+	public static final String rutaCheckins = "./data/yelp_academic_dataset_checkin.json";
+	public static final String rutaReviews = "./data/yelp_academic_dataset_review.json";
+	
 	public static final String rutaNegociosTest = "./data/yelp_academic_dataset_business_test.json";
 	public static final String rutaCheckinsTest = "./data/yelp_academic_dataset_checkins_test.json";
 	public static final String rutaUsuariosTest = "./data/yelp_academic_dataset_user_test.json";
+	public static final String rutaReviewsTest = "./data/yelp_academic_dataset_reviews_test.json";
+	
 	public static final String rutaArchivoDataModel = "./data/reviews_info.txt";
+	
+	public static EntityCollector colector;
 	public static void main(String[] args0) {
 		colector = EntityCollector.getInstance();
 		cargarNegocios();
 		cargarUsuarios();
 		cargarCheckins();
 		cargarReviews();
-		cargarTips();
+		//cargarTips();
 
 		System.out.println("Carga Completa");
-	}
-
-	/**
-	 * Genera el archivo que alimenta el recomendador de la libreria
-	 */
-	private static void generarArchivoDataModel() {
-		// TODO Auto-generated method stub
-
 	}
 
 	private static void cargarReviews() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(
-					rutaUsuariosTest));
+					rutaReviews));
 			System.out.println("Lee el archivo");
 			String line = "";
 			
@@ -77,6 +75,7 @@ public class DataLoader {
 					String text = (String) jsonObject.get("text");
 					Date d = (new SimpleDateFormat("yyyy-MM-dd"))
 							.parse(jsonObject.get("date").toString());
+					
 					// TODO extraer votes
 
 					review.setBusiness_id(business_id);
@@ -84,11 +83,13 @@ public class DataLoader {
 					review.setStars(stars);
 					review.setText(text);
 					review.setUser_id(user_id);
-					review.save();
+					//review.save();
 					
 					writer.println(business_id+"	"+user_id+"		"+stars);
 
-				} catch (java.text.ParseException e) {
+				} catch (Exception e) {
+					System.out.println("EXCEPTION THROWN: "+e.getClass()+" ::: "+e.getMessage());
+					System.out.println("Ignoring Line...");
 					e.printStackTrace();
 				}
 			}
@@ -100,9 +101,6 @@ public class DataLoader {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("IO Exception: " + e.getMessage());
-			e.printStackTrace();
-		} catch (ParseException e) {
-			System.out.println("Parse Exception: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -157,7 +155,7 @@ public class DataLoader {
 	private static void cargarCheckins() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(
-					rutaCheckinsTest));
+					rutaCheckins));
 			System.out.println("Lee el archivo");
 			String line = "";
 			while ((line = br.readLine()) != null) {
@@ -183,7 +181,7 @@ public class DataLoader {
 					for (int j = 0; j < 7; j++) {
 						Long checkin_numb = (Long) structure.get(i + "-" + j);
 
-						if (checkin_numb != null) {
+						if (checkin_numb == null) {
 							checkin_numb = (long) 0;
 						}
 						int checkin_numb_int = checkin_numb.intValue();
@@ -255,7 +253,7 @@ public class DataLoader {
 				usuario.setAverage_stars(average_stars);
 				usuario.setFans(fans_int);
 				usuario.setFriends(amigos);
-				usuario.save();
+				//usuario.save();
 
 				colector.addUser(usuario);
 			}
