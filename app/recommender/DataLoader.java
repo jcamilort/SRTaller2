@@ -95,6 +95,7 @@ public class DataLoader {
 			}
 			
 			writer.close();
+            br.close();
 			
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
@@ -192,6 +193,7 @@ public class DataLoader {
 				}
 
 			}
+            br.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
 			e.printStackTrace();
@@ -257,6 +259,7 @@ public class DataLoader {
 
 				colector.addUser(usuario);
 			}
+            br.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
 			e.printStackTrace();
@@ -324,8 +327,10 @@ public class DataLoader {
 				negocio.setStars(stars);
 				negocio.setReview_count(review_count_int);
 
+                //negocio.save();
 				colector.addBusiness(negocio);
 			}
+            br.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
 			e.printStackTrace();
