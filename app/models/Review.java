@@ -3,6 +3,7 @@
  */
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -31,12 +32,23 @@ public class Review extends Model{
 	/**
 	 * Modela los votos sobre el review de las caracteristicas en el arreglo
 	 */
-    @Transient
-	public int[] votes;
+
+	public ArrayList<Integer> votes;
+
+    /**
+     * Tip sentiment
+     * -2: undefined
+     * -1 : negative
+     * 0 : neutral
+     * 1: positive
+     */
+    public int sentiment;
 	
 	public Review()
 	{
-		votes = new int[VoteTypes.VOTE_VALUES_QUANTITY];
+		//votes = new int[VoteTypes.VOTE_VALUES_QUANTITY];
+        votes = new ArrayList<Integer>();
+        sentiment=-2;
 	}
 	/**
 	 * @return the business_id
@@ -71,7 +83,7 @@ public class Review extends Model{
 	/**
 	 * @return the votes
 	 */
-	public int[] getVotes() {
+	public ArrayList<Integer> getVotes() {
 		return votes;
 	}
 	/**
@@ -107,8 +119,27 @@ public class Review extends Model{
 	/**
 	 * @param votes the votes to set
 	 */
-	public void setVotes(int[] votes) {
+	public void setVotes(ArrayList<Integer> votes) {
 		this.votes = votes;
 	}
+
+    /**
+     * @return the sentiment
+     */
+    public int getSentiment() {
+        return sentiment;
+    }
+
+    /**
+     * @param sentiment the sentiment to set
+     */
+    public void setSentiment(int sentiment) {
+        this.sentiment = sentiment;
+    }
+    @Override
+    public String toString()
+    {
+        return text;
+    }
 }
 

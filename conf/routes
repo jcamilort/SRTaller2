@@ -4,8 +4,10 @@
 
 # Home page
 GET        /                    controllers.Application.index()
+GET        /semantria           controllers.SemantriaController.index()
+GET        /sentiment           controllers.SemantriaController.sentiment()
 GET        /results             controllers.Application.results()
-GET     /evaluation                           controllers.Application.evaluation()
+GET        /evaluation          controllers.Application.evaluation()
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)

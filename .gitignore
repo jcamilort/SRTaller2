@@ -13,5 +13,7 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+bin
 *.class
 data/*.json
+db/*

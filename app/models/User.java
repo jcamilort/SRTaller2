@@ -26,23 +26,24 @@ public class User extends Model{
 	public String name;
 	public int review_count;
 	public double average_stars;
-	public int[] votes;
-	public int[] compliments;
+    public ArrayList<Integer> votes;
+    public ArrayList<Integer> compliments;
 	/**
 	 * Contenedor de ids de los amigos del usuario
 	 */
 
 	public ArrayList<String> friends;
-    @Transient
-	public int[] elite;
+    public ArrayList<Integer> elite;
 	public String yelping_since;
 	public int fans;
 	public ArrayList<Review> reviews;
 	
 	public User()
 	{
-		votes = new int[VoteTypes.VOTE_VALUES_QUANTITY];
-		compliments = new int[VoteTypes.VOTE_VALUES_QUANTITY];
+		//votes = new int[VoteTypes.VOTE_VALUES_QUANTITY];
+		//compliments = new int[VoteTypes.VOTE_VALUES_QUANTITY];
+        votes=new ArrayList<Integer>();
+        compliments=new ArrayList<Integer>();
 	}
 	/**
 	 * @return the reviews
@@ -84,19 +85,19 @@ public class User extends Model{
 	/**
 	 * @return the votes
 	 */
-	public int[] getVotes() {
+	public ArrayList<Integer> getVotes() {
 		return votes;
 	}
 	/**
 	 * @return the compliments
 	 */
-	public int[] getCompliments() {
+    public ArrayList<Integer> getCompliments() {
 		return compliments;
 	}
 	/**
 	 * @return the elite
 	 */
-	public int[] getElite() {
+    public ArrayList<Integer> getElite() {
 		return elite;
 	}
 	/**
@@ -138,19 +139,19 @@ public class User extends Model{
 	/**
 	 * @param votes the votes to set
 	 */
-	public void setVotes(int[] votes) {
+	public void setVotes(ArrayList<Integer> votes) {
 		this.votes = votes;
 	}
 	/**
 	 * @param compliments the compliments to set
 	 */
-	public void setCompliments(int[] compliments) {
+	public void setCompliments(ArrayList<Integer> compliments) {
 		this.compliments = compliments;
 	}
 	/**
 	 * @param elite the elite to set
 	 */
-	public void setElite(int[] elite) {
+	public void setElite(ArrayList<Integer> elite) {
 		this.elite = elite;
 	}
 	/**

@@ -35,7 +35,8 @@ create table review (
   user_id                   varchar(255),
   stars                     double,
   text                      varchar(255),
-  date                      timestamp)
+  date                      timestamp,
+  sentiment                 integer)
 ;
 
 create table tip (

@@ -28,11 +28,17 @@ public class Tip extends Model{
 	public int likes;
 	/**
 	 * Tip sentiment
+     * -2: undefined
 	 * -1 : negative
 	 * 0 : neutral
 	 * 1: positive
 	 */
 	public int sentiment;
+
+    public Tip()
+    {
+        sentiment=-2;
+    }
 	/**
 	 * @return the userID
 	 */
@@ -105,5 +111,10 @@ public class Tip extends Model{
 	public void setSentiment(int sentiment) {
 		this.sentiment = sentiment;
 	}
-	
+
+    @Override
+    public String toString()
+    {
+        return text;
+    }
 }
