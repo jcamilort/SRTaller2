@@ -4,15 +4,16 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import models.Business;
+import models.Checkin;
+import models.Review;
 import models.Tip;
 import models.User;
 
-import org.json.simple.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -22,63 +23,114 @@ public class DataLoader {
 	public static final String rutaUsuariosTest = "./data/yelp_academic_dataset_user_test.json";
 	public static EntityCollector colector;
 	public static final String rutaNegociosTest = "./data/yelp_academic_dataset_business_test.json";
-    public static final String rutaTips = "./data/yelp_academic_dataset_tip.json";
 
 	public static void main(String[] args0) {
 		colector = EntityCollector.getInstance();
 		cargarNegocios();
 		cargarUsuarios();
+		cargarCheckins();
+		cargarReviews();
+		cargarTips();
 		
 		System.out.println("Carga Completa");
 	}
+	
+	/**
+	 * Genera el archivo que alimenta el recomendador de la libreria
+	 */
+	private static void generarArchivoDataModel() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	private static void cargarReviews() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(rutaUsuariosTest));
+			System.out.println("Lee el archivo");
+			String line = "";
+			Review review;
+			while ((line = br.readLine()) != null) {
 
+				line = line.replace("\\", "");
+				System.out.println("Nueva linea");
+				System.out.println(line);
 
-    public static void cargarTips(){
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(rutaTips));
-            System.out.println("Lee el archivo");
-            String line = "";
-            JSONParser jsonParser = new JSONParser();
-            int badParsed=0;
-            while ((line = br.readLine()) != null) {
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
+				System.out.println(jsonObject.toJSONString());
 
-                line = line.replace("\\", "");
+			}
+			generarArchivoDataModel();
+		} catch (FileNotFoundException e) {
+			System.out.println("Error loading users: file not found.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO Exception: " + e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.out.println("Parse Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
-                System.out.println("nl_tips");
-                try{
-                    JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
-                    Tip t=new Tip();
-                    int likes=Integer.parseInt(jsonObject.get("likes").toString());
-                    Date d=(new SimpleDateFormat("yyyy-MM-dd")).parse(jsonObject.get("date").toString());
-                    String te=jsonObject.get("text").toString();
-                    String ui=jsonObject.get("user_id").toString();
-                    String bi=jsonObject.get("business_id").toString();
-                    t.setBusinees_id(bi.toString());
-                    t.setUserID(ui);
-                    t.setLikes(likes);
-                    t.setDate(d);
-                    t.setText(te);
-                    t.save();
-                }
-                catch (ParseException e) {
-                    e.printStackTrace();
-                    badParsed++;
-                } catch (java.text.ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("Bad parsed: "+badParsed);
-            br.close();
+	private static void cargarTips() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(rutaUsuariosTest));
+			System.out.println("Lee el archivo");
+			String line = "";
+			Tip tip;
+			while ((line = br.readLine()) != null) {
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+				line = line.replace("\\", "");
+				System.out.println("Nueva linea");
+				System.out.println(line);
 
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
+				System.out.println(jsonObject.toJSONString());
 
-    }
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("Error loading users: file not found.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO Exception: " + e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.out.println("Parse Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private static void cargarCheckins() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(rutaUsuariosTest));
+			System.out.println("Lee el archivo");
+			String line = "";
+			Checkin checkin;
+			while ((line = br.readLine()) != null) {
+
+				line = line.replace("\\", "");
+				System.out.println("Nueva linea");
+				System.out.println(line);
+
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
+				System.out.println(jsonObject.toJSONString());
+
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("Error loading users: file not found.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO Exception: " + e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
+			System.out.println("Parse Exception: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	private static void cargarUsuarios() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaUsuariosTest));
@@ -128,11 +180,8 @@ public class DataLoader {
 				usuario.setFans(fans_int);
 				usuario.setFriends(amigos);
 
-                usuario.save();//save to db
-
 				colector.addUser(usuario);
 			}
-            br.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
 			e.printStackTrace();
@@ -200,11 +249,8 @@ public class DataLoader {
 				negocio.setStars(stars);
 				negocio.setReview_count(review_count_int);
 
-                negocio.save();//save to db
-
 				colector.addBusiness(negocio);
 			}
-            br.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("Error loading users: file not found.");
 			e.printStackTrace();
@@ -215,6 +261,6 @@ public class DataLoader {
 			System.out.println("Parse Exception: " + e.getMessage());
 			e.printStackTrace();
 		}
-
 	}
+
 }
