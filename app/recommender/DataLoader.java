@@ -59,7 +59,7 @@ public class DataLoader {
 	private static void buildCategories() {
 		BufferedReader br;
 		try {
-			br = new BufferedReader(new FileReader(rutaCategorias ));
+			br = new BufferedReader(new FileReader(rutaCategorias));
 			System.out.println("Construccion de categorias");
 			String line = "";
 
@@ -272,10 +272,10 @@ public class DataLoader {
 
 	private static void cargarUsuarios() {
 		try {
-			/**
-			 * ArrayList<String> vote_collector = new ArrayList<String>();
-			 * ArrayList<String> compliment_collector = new ArrayList<String>();
-			 */
+
+//			ArrayList<String> vote_collector = new ArrayList<String>();
+//			ArrayList<String> compliment_collector = new ArrayList<String>();
+
 			BufferedReader br = new BufferedReader(new FileReader(
 					rutaUsuariosTest));
 			System.out.println("Lee el archivo");
@@ -294,15 +294,19 @@ public class DataLoader {
 				// Vote Extraction
 				JSONObject structure = (JSONObject) jsonObject.get("votes");
 
-				/**
-				 * //Vote Key Set Extraction Set keySet = structure.keySet();
-				 * System.out.println(keySet.toString()); Iterator<?>
-				 * keys=keySet.iterator(); int count = 0; while( keys.hasNext()
-				 * ) { String key = (String)keys.next(); //Cool funny useful
-				 * System.out.println("_____Votes tag "+count+": "+key);
-				 * if(!vote_collector.contains(key)) { vote_collector.add(key);
-				 * } count++; }
-				 */
+//				// Vote Key Set Extraction
+//				Set keySet = structure.keySet();
+//				System.out.println(keySet.toString());
+//				Iterator<?> keys = keySet.iterator();
+//				int count = 0;
+//				while (keys.hasNext()) {
+//					String key = (String) keys.next(); // Cool funny useful
+//					System.out.println("_____Votes tag " + count + ": " + key);
+//					if (!vote_collector.contains(key)) {
+//						vote_collector.add(key);
+//					}
+//					count++;
+//				}
 
 				Long cool_long = (Long) structure.get("cool");
 				if (cool_long == null) {
@@ -490,7 +494,10 @@ public class DataLoader {
 	private static void cargarNegocios() {
 		try {
 			ArrayList<String> category_collector = new ArrayList<String>();
-			BufferedReader br = new BufferedReader(new FileReader(rutaNegociosTest));
+			ArrayList<String> attribute_collector = new ArrayList<String>();
+			
+			BufferedReader br = new BufferedReader(new FileReader(
+					rutaNegocios));
 			System.out.println("Lee el archivo");
 			String line = "";
 			Business negocio;
@@ -506,6 +513,22 @@ public class DataLoader {
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
 
 					// TODO terminar de extraer horas y atributos
+					JSONObject atributos = (JSONObject) jsonObject.get("attributes");
+					
+					// Attributes Key Set Extraction
+					Set keySet = atributos.keySet();
+					System.out.println(keySet.toString());
+					Iterator<?> keys = keySet.iterator();
+					int count = 0;
+					while (keys.hasNext()) {
+						String key = (String) keys.next(); // Cool funny useful
+						System.out.println("_____Attribute tag " + count + ": " + key);
+						if (!attribute_collector.contains(key)) {
+							attribute_collector.add(key);
+						}
+						count++;
+					}
+					
 
 					JSONArray categorias = (JSONArray) jsonObject
 							.get("categories");
@@ -516,23 +539,15 @@ public class DataLoader {
 						Category actual = iter.next();
 						boolean encontro = false;
 						for (int i = 0; i < categorias.size() && !encontro; i++) {
-							if (actual.name.equals(categorias.get(i).toString())) {
+							if (actual.name
+									.equals(categorias.get(i).toString())) {
 								categorias_negocio.add(actual);
 								System.out.println(actual.name);
 								categorias.remove(i);
-								encontro=true;
+								encontro = true;
 							}
 						}
 					}
-
-					// Iterator<?> iterC = categorias.iterator();
-					// while (iter.hasNext()) {
-					// String categoria = (String) iterC.next();
-					// if (!category_collector.contains(categoria)) {
-					// category_collector.add(categoria);
-					// }
-					// }
-
 					// get a String from the JSON object
 					String business_id = (String) jsonObject.get("business_id");
 					String name = (String) jsonObject.get("name");
@@ -562,7 +577,7 @@ public class DataLoader {
 
 					// TODO terminar de asignar atributos y horas
 					negocio = new Business();
-					
+
 					negocio.setCategories(categorias_negocio);
 					negocio.setName(name);
 					negocio.setFull_address(full_address);
@@ -573,13 +588,17 @@ public class DataLoader {
 					negocio.setState(state);
 					negocio.setStars(stars);
 					negocio.setReview_count(review_count_int);
-
+					
 					// negocio.save();
 					// colector.addBusiness(negocio);
 
 				} catch (Exception e) {
 					System.out.println(e.getClass() + " :: " + e.getMessage());
 				}
+			}
+			
+			for (int i = 0; i < attribute_collector.size(); i++) {
+				System.out.println(attribute_collector.get(i));
 			}
 			for (int i = 0; i < category_collector.size(); i++) {
 				System.out.println(category_collector.get(i));
