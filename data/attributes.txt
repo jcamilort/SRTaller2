@@ -2,37 +2,93 @@ By Appointment Only
 Happy Hour
 Good For Groups
 Accepts Credit Cards
-Price Range
+Price Range_1
+Price Range_3
+Price Range_2
+Price Range_4
 Outdoor Seating
 Good for Kids
 Coat Check
-Alcohol
+Alcohol_full_bar
+Alcohol_none
+Alcohol_beer_and_wine
 Waiter Service
-Attire
+Attire_casual
+Attire_dressy
+Attire_formal
 Delivery
-Parking
+Parking_street
+Parking_garage
+Parking_lot
+Parking_valet
+Parking_validated
 Take-out
 Takes Reservations
-Smoking
+Smoking_no
+Smoking_outdoor
+Smoking_yes
 Caters
-Noise Level
-Ambience
-Good For
+Noise Level_average
+Noise Level_loud
+Noise Level_quiet
+Noise Level_very_loud
+Ambience_hipster
+Ambience_classy
+Ambience_touristy
+Ambience_divey
+Ambience_intimate
+Ambience_romantic
+Ambience_trendy
+Ambience_upscale
+Good For_dinner
+Good For_latenight
+Good For_breakfast
+Good For_brunch
+Good For_lunch
+Good For_dessert
 Has TV
-Music
-Wi-Fi
+Music_dj
+Music_karaoke
+Music_background_music
+Music_jukebox
+Music_video
+Music_live
+Music_playlist
 Good For Dancing
+Wi-Fi_free
+Wi-Fi_paid
 Drive-Thru
 Wheelchair Accessible
 Corkage
 Order at Counter
 BYOB
-BYOB/Corkage
+BYOB/Corkage_yes_free
+BYOB/Corkage_yes_corkage
 Good For Kids
 Dogs Allowed
 Open 24 Hours
-Hair Types Specialized In
+Hair Types Specialized In_curly
+Hair Types Specialized In_perms
+Hair Types Specialized In_africanamerican
+Hair Types Specialized In_straightperms
+Hair Types Specialized In_coloring
+Hair Types Specialized In_kids
+Hair Types Specialized In_extensions
+Hair Types Specialized In_asian
 Accepts Insurance
-Ages Allowed
-Payment Types
-Dietary Restrictions
+Ages Allowed_21plus
+Ages Allowed_18plus
+Ages Allowed_allages
+Ages Allowed_19plus
+Payment Types_cash_only
+Payment Types_mastercard
+Payment Types_discover
+Payment Types_amex
+Payment Types_visa
+Dietary Restrictions_soy-free
+Dietary Restrictions_vegan
+Dietary Restrictions_gluten-free
+Dietary Restrictions_kosher
+Dietary Restrictions_dairy-free
+Dietary Restrictions_vegetarian
+Dietary Restrictions_halal
