@@ -30,6 +30,22 @@ public class Attribute extends Model{
 	 */
 	public ArrayList<Attribute> encloses;
 	
+	public String name;
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public int attribute_id; 
 	
 	public Attribute()
@@ -59,5 +75,10 @@ public class Attribute extends Model{
 	public void addEnclosed(Attribute attID)
 	{
 		encloses.add(attID);
+	}
+	
+	public void addChildren(Attribute attribute)
+	{
+		encloses.add(attribute);
 	}
 }
