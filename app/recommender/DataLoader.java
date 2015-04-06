@@ -49,11 +49,11 @@ public class DataLoader {
 		//buildCategories();
 		//buildAttributes();
 
-		cargarNegocios();
-		cargarUsuarios();
-		cargarCheckins();
+		//cargarNegocios();
+		//cargarUsuarios();
+		//cargarCheckins();
 		cargarReviews();
-		cargarTips();
+		//cargarTips();
 
 		System.out.println("Carga Completa");
 	}
@@ -309,8 +309,8 @@ public class DataLoader {
 
 				try {
 					Review review = new Review();
-					line = line.replace("\\", "");
-					System.out.println("Nueva linea");
+				//	line = line.replace("\\", "");
+				//	System.out.println("Nueva linea");
 					System.out.println(line);
 
 					JSONParser jsonParser = new JSONParser();
@@ -321,45 +321,45 @@ public class DataLoader {
 					String user_id = (String) jsonObject.get("user_id");
 					long stars_long = (Long) jsonObject.get("stars");
 					double stars = (double) stars_long;
-					String text = (String) jsonObject.get("text");
-					Date d = (new SimpleDateFormat("yyyy-MM-dd"))
-							.parse(jsonObject.get("date").toString());
-
-					// Vote Extraction
-					JSONObject structure = (JSONObject) jsonObject.get("votes");
-
-					Long cool_long = (Long) structure.get("cool");
-					if (cool_long == null) {
-						cool_long = (long) 0;
-					}
-					int cool = cool_long.intValue();
-
-					Long funny_long = (Long) structure.get("funny");
-					if (funny_long == null) {
-						funny_long = (long) 0;
-					}
-					int funny = funny_long.intValue();
-
-					Long useful_long = (Long) structure.get("useful");
-					if (useful_long == null) {
-						useful_long = (long) 0;
-					}
-					int useful = useful_long.intValue();
-
-					ArrayList<Integer> votes = new ArrayList<Integer>(3);
-					for (int i = 0; i < 3; i++) {
-						votes.add(0);
-					}
-					votes.add(0, cool);
-					votes.add(1, funny);
-					votes.add(2, useful);
-
-					review.setBusiness_id(business_id);
-					review.setVotes(votes);
-					review.setDate(d);
-					review.setStars(stars);
-					review.setText(text);
-					review.setUser_id(user_id);
+//					String text = (String) jsonObject.get("text");
+//					Date d = (new SimpleDateFormat("yyyy-MM-dd"))
+//							.parse(jsonObject.get("date").toString());
+//
+//					// Vote Extraction
+//					JSONObject structure = (JSONObject) jsonObject.get("votes");
+//
+//					Long cool_long = (Long) structure.get("cool");
+//					if (cool_long == null) {
+//						cool_long = (long) 0;
+//					}
+//					int cool = cool_long.intValue();
+//
+//					Long funny_long = (Long) structure.get("funny");
+//					if (funny_long == null) {
+//						funny_long = (long) 0;
+//					}
+//					int funny = funny_long.intValue();
+//
+//					Long useful_long = (Long) structure.get("useful");
+//					if (useful_long == null) {
+//						useful_long = (long) 0;
+//					}
+//					int useful = useful_long.intValue();
+//
+//					ArrayList<Integer> votes = new ArrayList<Integer>(3);
+//					for (int i = 0; i < 3; i++) {
+//						votes.add(0);
+//					}
+//					votes.add(0, cool);
+//					votes.add(1, funny);
+//					votes.add(2, useful);
+//
+//					review.setBusiness_id(business_id);
+//					review.setVotes(votes);
+//					review.setDate(d);
+//					review.setStars(stars);
+//					review.setText(text);
+//					review.setUser_id(user_id);
 					// review.save();
 
 					writer.println(business_id + "	" + user_id + "		" + stars);
@@ -727,21 +727,123 @@ public class DataLoader {
 					// TODO terminar de extraer horas y atributos
 					JSONObject atributos = (JSONObject) jsonObject
 							.get("attributes");
-
-					// Attributes Key Set Extraction
-					Set keySet = atributos.keySet();
-					System.out.println(keySet.toString());
-					Iterator<?> keys = keySet.iterator();
-					int count = 0;
-					while (keys.hasNext()) {
-						String key = (String) keys.next(); // Cool funny useful
-						System.out.println("_____Attribute tag " + count + ": "
-								+ key);
-						if (!attribute_collector.contains(key)) {
-							attribute_collector.add(key);
-						}
-						count++;
+					// TODO terminar de extraer horas
+					JSONObject hours_structure = (JSONObject)jsonObject.get("hours");
+					
+					JSONObject monday = (JSONObject)hours_structure.get("Monday");
+					ArrayList<Integer> monday_array = new ArrayList<Integer>(2);
+					
+					JSONObject tuesday = (JSONObject)hours_structure.get("Tuesday");
+					ArrayList<Integer> tuesday_array = new ArrayList<Integer>(2);
+					
+					JSONObject wednesday = (JSONObject)hours_structure.get("Wednesday");
+					ArrayList<Integer> wednesday_array = new ArrayList<Integer>(2);
+					
+					JSONObject thursday = (JSONObject)hours_structure.get("Thursday");
+					ArrayList<Integer> thursday_array = new ArrayList<Integer>(2);
+					
+					JSONObject friday = (JSONObject)hours_structure.get("Friday");
+					ArrayList<Integer> friday_array = new ArrayList<Integer>(2);
+					
+					JSONObject saturday = (JSONObject)hours_structure.get("Saturday");
+					ArrayList<Integer> saturday_array = new ArrayList<Integer>(2);
+					
+					JSONObject sunday = (JSONObject)hours_structure.get("Sunday");
+					ArrayList<Integer> sunday_array = new ArrayList<Integer>(2);
+					
+					
+					ArrayList<ArrayList<Integer>> openTimes = new ArrayList<ArrayList<Integer>>();
+					
+					if(monday==null)
+					{
+						monday_array.add(0,0);
+						monday_array.add(1,0);
 					}
+					else{
+						
+						//TODO
+						String open  = (String) monday.get("open");
+						String close = (String) monday.get("close");
+						monday_array.add(0,0);
+						monday_array.add(1,0 );
+					}
+					if(tuesday==null)
+					{
+						tuesday_array.add(0,0);
+						tuesday_array.add(1,0);
+					}
+					else{
+						tuesday_array.add(0,(Integer) tuesday.get("open"));
+						tuesday_array.add(1,(Integer) tuesday.get("close"));
+					}
+					if(wednesday==null)
+					{
+						wednesday_array.add(0,0);
+						wednesday_array.add(1,0);
+					}
+					else{
+						wednesday_array.add(0,(Integer) wednesday.get("open"));
+						wednesday_array.add(1,(Integer) wednesday.get("close"));
+					}
+					if(thursday==null)
+					{
+						thursday_array.add(0,0);
+						thursday_array.add(1,0);
+					}
+					else{
+						thursday_array.add(0,(Integer) thursday.get("open"));
+						thursday_array.add(1,(Integer) thursday.get("close"));
+					}
+					if(friday==null)
+					{
+						friday_array.add(0,0);
+						friday_array.add(1,0);
+					}
+					else{
+						friday_array.add(0,(Integer) friday.get("open"));
+						friday_array.add(1,(Integer) friday.get("close"));
+					}
+					if(saturday==null)
+					{
+						saturday_array.add(0,0);
+						saturday_array.add(1,0);
+					}
+					else{
+						saturday_array.add(0,(Integer) saturday.get("open"));
+						saturday_array.add(1,(Integer) saturday.get("close"));
+					}
+					if(sunday==null)
+					{
+						sunday_array.add(0,0);
+						sunday_array.add(1,0);
+					}
+					else{
+						sunday_array.add(0,(Integer) sunday.get("open"));
+						sunday_array.add(1,(Integer) sunday.get("close"));
+					}
+					
+					openTimes.add(0,sunday_array);
+					openTimes.add(1,monday_array);
+					openTimes.add(2,tuesday_array);
+					openTimes.add(3,wednesday_array);
+					openTimes.add(4,thursday_array);
+					openTimes.add(5,friday_array);
+					openTimes.add(6,saturday_array);
+					
+//					// Attributes Key Set Extraction
+//					Set keySet = atributos.keySet();
+//					System.out.println(keySet.toString());
+//					Iterator<?> keys = keySet.iterator();
+//					int count = 0;
+//					while (keys.hasNext()) {
+//						String key = (String) keys.next(); // Cool funny useful
+//						System.out.println("_____Attribute tag " + count + ": "
+//								+ key);
+//						if (!attribute_collector.contains(key)) {
+//							attribute_collector.add(key);
+//						}
+//						count++;
+//					}
 
 					JSONArray categorias = (JSONArray) jsonObject
 							.get("categories");
@@ -801,6 +903,7 @@ public class DataLoader {
 					negocio.setState(state);
 					negocio.setStars(stars);
 					negocio.setReview_count(review_count_int);
+					negocio.setOpenTimes(openTimes);
 
 					// negocio.save();
 					// colector.addBusiness(negocio);
