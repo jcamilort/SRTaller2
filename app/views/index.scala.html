@@ -1,15 +1,17 @@
-@()
+@(us:User)
 
-@main("Recommender system") {
+@main("Recommender system",us) {
 
 
-    <h1>Tu ubicación</h1>
-    <label>Localización: </label><input type="text" id="latitude"/><span style="width:20px">-</span><input type="text" id="longitude"/>
+    <h1>Lugares recomendados</h1>
+    <h2>Tu ubicación</h2>
+    <label>Localización: </label><input type="text" id="latitude" name="latitude"/><span style="width:20px">-</span>
+    <input type="text" id="longitude" name="longitude"/>
     <br/>
 
     <div id="geolocation"></div>
     <br/>
-    <label>Hora: </label><input type="text" id="hour"/>
+    <label>Hora: </label><input type="text" id="hour" name="hour"/>
     <br/>
 
     <button id="search">Buscar</button>

@@ -4,9 +4,7 @@
 package models;
 
 import java.util.ArrayList;
-
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import play.db.ebean.Model;
 
@@ -21,7 +19,8 @@ public class User extends Model{
 	 * Default Serial Version ID
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+    @Id
 	public String user_id;
 	public String name;
 	public int review_count;

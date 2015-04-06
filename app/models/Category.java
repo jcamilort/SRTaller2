@@ -3,7 +3,7 @@
  */
 package models;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import play.db.ebean.Model;
 
@@ -18,7 +18,8 @@ public class Category extends Model{
 	 * Default Serial Version
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
+    @Id
 	public int category_id;
 	
 	public String name;

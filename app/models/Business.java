@@ -15,6 +15,7 @@ public class Business extends Model{
 	private static final long serialVersionUID = 1L;
 
 
+    @Id
 	public String business_id;
 	
 	public String full_address;

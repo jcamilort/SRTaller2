@@ -106,7 +106,7 @@ public class DataLoader {
 		}
 	}
 
-	private static void cargarTips() {
+	public static void cargarTips() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaTips));
 			System.out.println("Lee el archivo");

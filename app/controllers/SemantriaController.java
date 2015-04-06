@@ -25,7 +25,7 @@ public class SemantriaController extends Controller {
 
         SentimentAnalizer sa=SentimentAnalizer.getInstance();
         sa.analizeText();
-        return ok(index.render());
+        return ok(index.render(null));
     }
 
     public static Result sentiment() {
@@ -38,7 +38,7 @@ public class SemantriaController extends Controller {
 
             DataLoader.cargarTips();
 
-        return ok(index.render());
+        return ok(index.render(null));
     }
 
 }
