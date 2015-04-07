@@ -6,12 +6,15 @@ package models;
 import java.util.ArrayList;
 import javax.persistence.*;
 
+import com.avaje.ebean.annotation.ConcurrencyMode;
+import com.avaje.ebean.annotation.EntityConcurrencyMode;
 import play.db.ebean.Model;
 
 /**
  * @author juancamiloortiz
  *
  */
+@EntityConcurrencyMode(ConcurrencyMode.NONE)
 @Entity
 public class User extends Model{
 

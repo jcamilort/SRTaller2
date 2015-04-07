@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.annotation.ConcurrencyMode;
+import com.avaje.ebean.annotation.EntityConcurrencyMode;
 import play.db.ebean.*;
 
+@EntityConcurrencyMode(ConcurrencyMode.NONE)
 @Entity
 public class Business extends Model{
 
@@ -50,15 +53,32 @@ public class Business extends Model{
 	 * La primera columna es la hora de apertura en hora militar (0-2359), -1 si no abre ese dia
 	 * La segunda columna es la hora de cierre en hora militar (0-2359), -1 si no abre ese dia
 	 */
-    @ElementCollection
+    @Transient
 	public ArrayList<ArrayList<Integer>> openTimes;
+
+    private String opentimesString;
 	
 	/**
 	 * @return the openTimes
 	 */
 
-    @ElementCollection
 	public ArrayList<ArrayList<Integer>> getOpenTimes() {
+        if(openTimes==null || openTimes.size()==0)
+        {
+            openTimes=new ArrayList<ArrayList<Integer>>();
+            if(!opentimesString.isEmpty())
+            {
+                String[] pares=opentimesString.split(";");
+                for (int i = 0; i <pares.length; i++) {
+                    ArrayList<Integer> par=new ArrayList<>();
+                    String[] p1=pares[i].split(",");
+                    par.add(Integer.parseInt(p1[0]));
+                    par.add(Integer.parseInt(p1[1]));
+                    openTimes.add(par);
+                }
+            }
+
+        }
 		return openTimes;
 	}
 	/**
@@ -155,6 +175,8 @@ public class Business extends Model{
         if(categories==null||categories.isEmpty())
         {
             categories=new ArrayList<>();
+            if(categoriesDB==null||categories.isEmpty())
+                return categories;
             String[] catids=categoriesDB.split(",");
             for( String id:catids)
             {
@@ -182,6 +204,8 @@ public class Business extends Model{
         if(attributes==null||attributes.isEmpty())
         {
             attributes=new ArrayList<>();
+            if(attributesDB==null||attributesDB.isEmpty())
+                return attributes;
             String[] atids=attributesDB.split(",");
             for( String id:atids)
             {
@@ -206,6 +230,8 @@ public class Business extends Model{
 
     @Override
     public void save() {
+
+
         if((attributesDB==null||attributesDB.isEmpty())&&attributes!=null)
         {
             attributesDB="";
@@ -213,7 +239,7 @@ public class Business extends Model{
             {
                 attributesDB+=","+at.getID();
             }
-            attributesDB=attributesDB.substring(1);
+            attributesDB=attributesDB.isEmpty()?"":attributesDB.substring(1);
         }
         else if(attributesDB!=null&&!attributesDB.isEmpty())
         {
@@ -228,20 +254,28 @@ public class Business extends Model{
                     if(atdb!=null)
                         newatr+=","+atdb.getID();
                 }
-                attributesDB=newatr.substring(1);
+                attributesDB=newatr.isEmpty()?"":newatr.substring(1);
             }
             catch (Exception e)
             {
 
             }
         }
+        opentimesString="";
+        for(ArrayList<Integer> par:getOpenTimes())
+        {
+            opentimesString+=";"+par.get(0)+","+par.get(0);
+        }
+        opentimesString=opentimesString.isEmpty()?"":opentimesString.substring(1);
 
         categoriesDB="";
-        for( Category at:categories)
+        for( Category at:getCategories())
         {
             categoriesDB+=","+at.getID();
         }
-        categoriesDB=categoriesDB.substring(1);
+        String assigned=categoriesDB.isEmpty()?"":categoriesDB.substring(1);
+        categoriesDB=assigned;
+
         super.save();
     }
 

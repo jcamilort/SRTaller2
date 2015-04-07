@@ -20,8 +20,8 @@ import org.json.simple.parser.ParseException;
 
 public class DataLoader {
 
-	public static final String rutaUsuarios = "./data/yelp_academic_dataset_user.json";
-	public static final String rutaTips = "./data/yelp_academic_dataset_tip.json";
+	public static final String rutaUsuarios = "/data/yelp_academic_dataset_user.json";
+	public static final String rutaTips = "/data/yelp_academic_dataset_tip.json";
 	public static final String rutaNegocios = "./data/yelp_academic_dataset_business.json";
 	public static final String rutaCheckins = "./data/yelp_academic_dataset_checkin.json";
 	public static final String rutaReviews = "./data/yelp_academic_dataset_review.json";
@@ -600,11 +600,12 @@ public class DataLoader {
 					rutaUsuariosTest));
 			System.out.println("Lee el archivo");
 			String line = "";
-			User usuario;
+
 			while ((line = br.readLine()) != null) {
 
 				line = line.replace("\\", "");
                 try {
+                    User usuario=new User();
 
 
                     // System.out.println("Nueva linea");
@@ -776,8 +777,6 @@ public class DataLoader {
                         amigos.add((String) friends.get(i));
                     }
 
-                    usuario = new User();
-
                     usuario.setVotes(votes);
                     usuario.setCompliments(compliments);
 
@@ -832,10 +831,11 @@ public class DataLoader {
             BufferedReader br = new BufferedReader(new FileReader(rutaNegocios));
             System.out.println("Lee el archivo");
             String line = "";
-            Business negocio = new Business();
+
 
             while ((line = br.readLine()) != null) {
                 try {
+                    Business negocio = new Business();
                     line = line.replace("\\", "");
 
                     JSONParser jsonParser = new JSONParser();
@@ -923,6 +923,7 @@ public class DataLoader {
                     negocio.setStars(stars);
                     negocio.setReview_count(review_count_int);
                     negocio.setAttributesString(atrStr);
+
 
 
                     negocio.save();
