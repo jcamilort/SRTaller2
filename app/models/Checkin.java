@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * @author juancamiloortiz
  *
  */
-@Entity
-public class Checkin extends Model {
+//@Entity
+public class Checkin {// extends Model {
 
 	/**
 	 * Default Serial Version ID
@@ -26,6 +26,7 @@ public class Checkin extends Model {
 	 * Las columnas contienen los dias de la semana
 	 * El numero de checkins en el rango de una hora por dias se encuentra en la interseccion dia-hora
 	 */
+
 
     public ArrayList<ArrayList<Integer>> checkin_info;
 	

@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 import javax.persistence.*;
 
+import com.avaje.ebean.annotation.ConcurrencyMode;
+import com.avaje.ebean.annotation.EntityConcurrencyMode;
 import play.db.ebean.*;
 
+@EntityConcurrencyMode(ConcurrencyMode.NONE)
 @Entity
 public class Business extends Model{
 
@@ -20,6 +23,8 @@ public class Business extends Model{
 	
 	public String full_address;
 	public String name;
+
+    @ElementCollection
 	public ArrayList<String> neighborhoods;
 	public String city;
 	public String state;
@@ -27,22 +32,53 @@ public class Business extends Model{
 	public double longitude;
 	public double stars;
 	public int review_count;
+
+    @Transient
 	public ArrayList<Category> categories;
-	public boolean open;
-	
-	/**
+    private String categoriesDB;
+
+    @OneToMany(mappedBy = "business")
+    public ArrayList<Tip> tips;
+
+    @Transient
+    public ArrayList<AttributeDB> attributes;
+    private String attributesDB;
+
+	public boolean open;//TODO??
+
+
+    /**
 	 * Modela los tiempos de apertura para cada uno de los 7 dias de la semana
 	 * en las filas se encuentran los dias: 0-Domingo, 6-sabado 
 	 * La primera columna es la hora de apertura en hora militar (0-2359), -1 si no abre ese dia
 	 * La segunda columna es la hora de cierre en hora militar (0-2359), -1 si no abre ese dia
 	 */
+    @Transient
 	public ArrayList<ArrayList<Integer>> openTimes;
+
+    private String opentimesString;
 	
 	/**
 	 * @return the openTimes
 	 */
 
 	public ArrayList<ArrayList<Integer>> getOpenTimes() {
+        if(openTimes==null || openTimes.size()==0)
+        {
+            openTimes=new ArrayList<ArrayList<Integer>>();
+            if(!opentimesString.isEmpty())
+            {
+                String[] pares=opentimesString.split(";");
+                for (int i = 0; i <pares.length; i++) {
+                    ArrayList<Integer> par=new ArrayList<>();
+                    String[] p1=pares[i].split(",");
+                    par.add(Integer.parseInt(p1[0]));
+                    par.add(Integer.parseInt(p1[1]));
+                    openTimes.add(par);
+                }
+            }
+
+        }
 		return openTimes;
 	}
 	/**
@@ -51,8 +87,9 @@ public class Business extends Model{
 	 * La segunda casilla el valor true (1) o false(0) del atributo
 	 */
 
-	public ArrayList<ArrayList<Integer>> attributes;
-	
+    public static Finder<String,Business> find = new Finder<String,Business>(
+            String.class, Business.class
+    );
 
 	public String getBusiness_id() {
 		return business_id;
@@ -135,6 +172,19 @@ public class Business extends Model{
 	}
 
 	public ArrayList<Category> getCategories() {
+        if(categories==null||categories.isEmpty())
+        {
+            categories=new ArrayList<>();
+            if(categoriesDB==null||categories.isEmpty())
+                return categories;
+            String[] catids=categoriesDB.split(",");
+            for( String id:catids)
+            {
+                Category f=Category.find.byId(Long.parseLong(id));
+                if(f!=null)
+                    categories.add(f);
+            }
+        }
 		return categories;
 	}
 
@@ -150,11 +200,24 @@ public class Business extends Model{
 		this.open = open;
 	}
 
-	public ArrayList<ArrayList<Integer>> getAttributes() {
+	public ArrayList<AttributeDB> getAttributes() {
+        if(attributes==null||attributes.isEmpty())
+        {
+            attributes=new ArrayList<>();
+            if(attributesDB==null||attributesDB.isEmpty())
+                return attributes;
+            String[] atids=attributesDB.split(",");
+            for( String id:atids)
+            {
+                AttributeDB f=AttributeDB.find.byId(Long.parseLong(id));
+                if(f!=null)
+                    attributes.add(f);
+            }
+        }
 		return attributes;
 	}
 
-	public void setAttributes(ArrayList<ArrayList<Integer>> attributes) {
+	public void setAttributes(ArrayList<AttributeDB> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -165,4 +228,58 @@ public class Business extends Model{
 		this.openTimes = openTimes;
 	}
 
+    @Override
+    public void save() {
+
+
+        if((attributesDB==null||attributesDB.isEmpty())&&attributes!=null)
+        {
+            attributesDB="";
+            for( AttributeDB at:attributes)
+            {
+                attributesDB+=","+at.getID();
+            }
+            attributesDB=attributesDB.isEmpty()?"":attributesDB.substring(1);
+        }
+        else if(attributesDB!=null&&!attributesDB.isEmpty())
+        {
+            String newatr="";
+            try {
+
+
+                String[] vals = attributesDB.split(",");
+                for (String v:vals)
+                {
+                    AttributeDB atdb=AttributeDB.find.where().eq("name",v).findList().get(0);
+                    if(atdb!=null)
+                        newatr+=","+atdb.getID();
+                }
+                attributesDB=newatr.isEmpty()?"":newatr.substring(1);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+        opentimesString="";
+        for(ArrayList<Integer> par:getOpenTimes())
+        {
+            opentimesString+=";"+par.get(0)+","+par.get(0);
+        }
+        opentimesString=opentimesString.isEmpty()?"":opentimesString.substring(1);
+
+        categoriesDB="";
+        for( Category at:getCategories())
+        {
+            categoriesDB+=","+at.getID();
+        }
+        String assigned=categoriesDB.isEmpty()?"":categoriesDB.substring(1);
+        categoriesDB=assigned;
+
+        super.save();
+    }
+
+    public void setAttributesString(String attributesString) {
+        this.attributesDB = attributesString;
+    }
 }

@@ -17,3 +17,4 @@ bin
 *.class
 data/*.json
 db/*
+*.sql

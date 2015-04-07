@@ -28,6 +28,12 @@ public class SemantriaController extends Controller {
         return ok(index.render(null));
     }
 
+    public static Result loadData()
+    {
+        DataLoader.loadAllDB();
+        return ok("All loaded");
+    }
+
     public static Result sentiment() {
 
         SentimentAnalizer sa=SentimentAnalizer.getInstance();
@@ -36,7 +42,7 @@ public class SemantriaController extends Controller {
             t="all good";
         sa.getSentiment(t);
 
-            DataLoader.cargarTips();
+            //DataLoader.cargarTips();
 
         return ok(index.render(null));
     }

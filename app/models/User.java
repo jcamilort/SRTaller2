@@ -6,12 +6,15 @@ package models;
 import java.util.ArrayList;
 import javax.persistence.*;
 
+import com.avaje.ebean.annotation.ConcurrencyMode;
+import com.avaje.ebean.annotation.EntityConcurrencyMode;
 import play.db.ebean.Model;
 
 /**
  * @author juancamiloortiz
  *
  */
+@EntityConcurrencyMode(ConcurrencyMode.NONE)
 @Entity
 public class User extends Model{
 
@@ -25,17 +28,30 @@ public class User extends Model{
 	public String name;
 	public int review_count;
 	public double average_stars;
+    @ElementCollection
     public ArrayList<Integer> votes;
+    @ElementCollection
     public ArrayList<Integer> compliments;
 	/**
 	 * Contenedor de ids de los amigos del usuario
 	 */
 
+    @ElementCollection
 	public ArrayList<String> friends;
+    @ElementCollection
     public ArrayList<Integer> elite;
 	public String yelping_since;
 	public int fans;
-	public ArrayList<Review> reviews;
+
+    @Transient
+	public ArrayList<Review> reviews;//todo
+
+    @OneToMany(mappedBy = "user")
+    public ArrayList<Tip> tips;
+
+    public static Finder<String,User> find = new Finder<String,User>(
+            String.class, User.class
+    );
 	
 	public User()
 	{
@@ -43,6 +59,8 @@ public class User extends Model{
 		//compliments = new int[VoteTypes.VOTE_VALUES_QUANTITY];
         votes=new ArrayList<Integer>();
         compliments=new ArrayList<Integer>();
+        tips=new ArrayList<Tip>();
+        reviews=new ArrayList<Review>();
 	}
 	/**
 	 * @return the reviews

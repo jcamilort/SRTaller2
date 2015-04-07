@@ -2,6 +2,17 @@
 
 @main("Recommender system",us) {
 
+    <style>
+    #map-canvas {
+    height: 450px;
+        width: 60%;
+    margin: 0px;
+    padding: 0px
+    }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+
+
 
     <h1>Lugares recomendados</h1>
     <h2>Tu ubicación</h2>
@@ -9,10 +20,47 @@
     <input type="text" id="longitude" name="longitude"/>
     <br/>
 
-    <div id="geolocation"></div>
+    <div id="map-canvas"></div>
     <br/>
     <label>Hora: </label><input type="text" id="hour" name="hour"/>
     <br/>
 
     <button id="search">Buscar</button>
+
+
+    <script>
+    var map;
+    function initialize() {
+    var mapOptions = {
+    zoom: 9,
+    center: new google.maps.LatLng(4.62296644,-74.0663909)
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+
+    google.maps.event.addListener(map, 'click', function(e) {
+    placeMarker(e.latLng, map);
+    });
+    }
+
+    function placeMarker(position, map) {
+
+    var marker = new google.maps.Marker({
+    position: position,
+    map: map
+    });
+    google.maps.event.addListener(marker, 'rightclick',function(e) {
+    marker.setMap(null);
+    });
+    var textLatitude = document.getElementById("latitude");
+    var textLongitude = document.getElementById("longitude");
+    textLatitude.value = position.lat();
+    textLongitude.value = position.lng();
+    map.panTo(position);
+    }
+
+     google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    </script>
 }

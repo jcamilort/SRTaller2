@@ -5,7 +5,7 @@ package models;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import play.db.ebean.Model;
 
@@ -21,8 +21,15 @@ public class Tip extends Model{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public String userID;
-	public String businees_id;
+    @Id
+    @GeneratedValue
+    public Long id;
+
+
+    @ManyToOne
+	public User user;
+    @ManyToOne
+	public Business business;
 	public String text;
 	public Date date;
 	public int likes;
@@ -35,6 +42,11 @@ public class Tip extends Model{
 	 */
 	public int sentiment;
 
+    public static Finder<Long,AttributeDB> find = new Finder<Long,AttributeDB>(
+            Long.class, AttributeDB.class
+    );
+
+
     public Tip()
     {
         sentiment=-2;
@@ -42,14 +54,14 @@ public class Tip extends Model{
 	/**
 	 * @return the userID
 	 */
-	public String getUserID() {
-		return userID;
+	public User getUser() {
+		return user;
 	}
 	/**
 	 * @return the businees_id
 	 */
-	public String getBusinees_id() {
-		return businees_id;
+	public Business getBusinees() {
+		return business;
 	}
 	/**
 	 * @return the text
@@ -76,16 +88,16 @@ public class Tip extends Model{
 		return sentiment;
 	}
 	/**
-	 * @param userID the userID to set
+	 * @param user the userID to set
 	 */
-	public void setUserID(String userID) {
-		this.userID = userID;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	/**
-	 * @param businees_id the businees_id to set
+	 * @param business the businees_id to set
 	 */
-	public void setBusinees_id(String businees_id) {
-		this.businees_id = businees_id;
+	public void setBusiness(Business business) {
+		this.business = business;
 	}
 	/**
 	 * @param text the text to set
