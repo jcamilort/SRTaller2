@@ -3,11 +3,6 @@
 
 # --- !Ups
 
-create table attribute (
-  enclosure                 tinyint(1) default 0,
-  attribute_id              integer)
-;
-
 create table business (
   business_id               varchar(255) not null,
   full_address              varchar(255),
@@ -66,8 +61,6 @@ create table user (
 # --- !Downs
 
 SET FOREIGN_KEY_CHECKS=0;
-
-drop table attribute;
 
 drop table business;
 
