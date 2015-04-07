@@ -20,16 +20,19 @@
     <input type="text" id="longitude" name="longitude"/>
     <br/>
 
-    <div id="map-canvas"></div>
+
     <br/>
     <label>Hora: </label><input type="text" id="hour" name="hour"/>
     <br/>
 
     <button id="search">Buscar</button>
 
+    <div id="map-canvas"></div>
+
 
     <script>
     var map;
+        var lastMarker;
     function initialize() {
     var mapOptions = {
     zoom: 9,
@@ -39,6 +42,8 @@
     mapOptions);
 
     google.maps.event.addListener(map, 'click', function(e) {
+        if(lastMarker)
+            lastMarker.setMap(null);
     placeMarker(e.latLng, map);
     });
     }
@@ -57,6 +62,7 @@
     textLatitude.value = position.lat();
     textLongitude.value = position.lng();
     map.panTo(position);
+        lastMarker=marker;
     }
 
      google.maps.event.addDomListener(window, 'load', initialize);
