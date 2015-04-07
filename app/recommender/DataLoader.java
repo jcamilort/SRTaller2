@@ -291,7 +291,7 @@ public class DataLoader {
         {
             stringAtrs+= "," + myat.toString();
         }
-        stringAtrs=stringAtrs.substring(1);
+        stringAtrs=stringAtrs==""?"":stringAtrs.substring(1);
             return stringAtrs;
     } catch (Exception e) {
         System.out.println(e.getClass() + " :: " + e.getMessage());
@@ -597,7 +597,7 @@ public class DataLoader {
 			// ArrayList<String> compliment_collector = new ArrayList<String>();
 
 			BufferedReader br = new BufferedReader(new FileReader(
-					rutaUsuariosTest));
+					rutaUsuarios));
 			System.out.println("Lee el archivo");
 			String line = "";
 
