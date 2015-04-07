@@ -277,7 +277,9 @@ public class DataLoader {
                                     atributo.setName2(padre.getName()+"_"+atributo.getName());
                                 }
                             }
-                            atsBusiness.add(atributo);
+
+                            if(!subatributos.get(atn2Val).getClass().equals(Boolean.class)||(boolean)subatributos.get(atn2Val))
+                                atsBusiness.add(atributo);
                         }
                     }
                 }
