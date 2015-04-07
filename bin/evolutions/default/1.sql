@@ -4,12 +4,12 @@
 # --- !Ups
 
 create table attribute (
-  enclosure                 integer(1),
+  enclosure                 tinyint(1) default 0,
   attribute_id              integer)
 ;
 
 create table business (
-  business_id               varchar(255),
+  business_id               varchar(255) not null,
   full_address              varchar(255),
   name                      varchar(255),
   city                      varchar(255),
@@ -18,12 +18,14 @@ create table business (
   longitude                 double,
   stars                     double,
   review_count              integer,
-  open                      integer(1))
+  open                      tinyint(1) default 0,
+  constraint pk_business primary key (business_id))
 ;
 
 create table category (
-  category_id               integer,
-  name                      varchar(255))
+  category_id               integer auto_increment not null,
+  name                      varchar(255),
+  constraint pk_category primary key (category_id))
 ;
 
 create table checkin (
@@ -35,7 +37,7 @@ create table review (
   user_id                   varchar(255),
   stars                     double,
   text                      varchar(255),
-  date                      timestamp,
+  date                      datetime,
   sentiment                 integer)
 ;
 
@@ -43,18 +45,19 @@ create table tip (
   user_id                   varchar(255),
   businees_id               varchar(255),
   text                      varchar(255),
-  date                      timestamp,
+  date                      datetime,
   likes                     integer,
   sentiment                 integer)
 ;
 
 create table user (
-  user_id                   varchar(255),
+  user_id                   varchar(255) not null,
   name                      varchar(255),
   review_count              integer,
   average_stars             double,
   yelping_since             varchar(255),
-  fans                      integer)
+  fans                      integer,
+  constraint pk_user primary key (user_id))
 ;
 
 
@@ -62,7 +65,7 @@ create table user (
 
 # --- !Downs
 
-PRAGMA foreign_keys = OFF;
+SET FOREIGN_KEY_CHECKS=0;
 
 drop table attribute;
 
@@ -78,5 +81,5 @@ drop table tip;
 
 drop table user;
 
-PRAGMA foreign_keys = ON;
+SET FOREIGN_KEY_CHECKS=1;
 
