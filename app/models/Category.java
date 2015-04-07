@@ -20,10 +20,16 @@ public class Category extends Model{
 	private static final long serialVersionUID = 1L;
 
     @Id
-	public int category_id;
+    @GeneratedValue
+	public long category_id;
 	
 	public String name;
-	
+
+
+    public static Finder<Long,Category> find = new Finder<Long,Category>(
+            Long.class, Category.class
+    );
+
 	public Category()
 	{
 		
@@ -33,12 +39,12 @@ public class Category extends Model{
 	{
 		this.name = nameP;
 	}
-	public void setID(int idP)
+	public void setID(long idP)
 	{
 		this.category_id = idP;
 	}
 	
-	public int getID()
+	public long getID()
 	{
 		return category_id;
 	}

@@ -13,8 +13,7 @@ import play.db.ebean.Model;
  * @author juancamiloortiz
  *
  */
-@Entity
-public class Attribute extends Model{
+public class Attribute{
 	
 	/**
 	 * Default Serial Version
@@ -31,7 +30,8 @@ public class Attribute extends Model{
 	public ArrayList<Attribute> encloses;
 	
 	public String name;
-	
+
+
 	/**
 	 * @return the name
 	 */

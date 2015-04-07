@@ -33,6 +33,7 @@ public class Application extends Controller {
         Http.Cookie result = request().cookie("user_id");
         //User logged=User
 
+
         return ok(search.render(null));
     }
     public static Result evaluation() {
