@@ -512,7 +512,7 @@ public class DataLoader {
                     t.setUser(User.find.byId(ui));
 					t.setLikes(likes);
 					t.setDate(d);
-					t.setText(te);
+					t.setText(te.substring(0, Math.min(te.length(), 250)));
 					t.save();
 				} catch (ParseException e) {
 					e.printStackTrace();
