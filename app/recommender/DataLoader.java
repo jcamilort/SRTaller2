@@ -647,6 +647,8 @@ public class DataLoader {
 				String name = (String) jsonObject.get("name");
 				// System.out.println("User's name is: " + name);
 				String user_id = (String) jsonObject.get("user_id");
+				//long user_id = FileDataModelRewrite.stringToLong(user_id_str);
+				
 				long review_count_long = (Long) jsonObject.get("review_count");
 				int review_count = (int) review_count_long;
 
