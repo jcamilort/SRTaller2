@@ -20,8 +20,8 @@ import org.json.simple.parser.ParseException;
 
 public class DataLoader {
 
-	public static final String rutaUsuarios = "/data/yelp_academic_dataset_user.json";
-	public static final String rutaTips = "/data/yelp_academic_dataset_tip.json";
+	public static final String rutaUsuarios = "./data/yelp_academic_dataset_user.json";
+	public static final String rutaTips = "./data/yelp_academic_dataset_tip.json";
 	public static final String rutaNegocios = "./data/yelp_academic_dataset_business.json";
 	public static final String rutaCheckins = "./data/yelp_academic_dataset_checkin.json";
 	public static final String rutaReviews = "./data/yelp_academic_dataset_review.json";
