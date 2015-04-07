@@ -1,3 +1,5 @@
+
+
 /**
  * 
  */
@@ -42,8 +44,8 @@ public class Tip extends Model{
 	 */
 	public int sentiment;
 
-    public static Finder<Long,AttributeDB> find = new Finder<Long,AttributeDB>(
-            Long.class, AttributeDB.class
+    public static Finder<Long,Tip> find = new Finder<Long,Tip>(
+            Long.class, Tip.class
     );
 
 
