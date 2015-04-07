@@ -29,7 +29,17 @@ public class Attribute{
 	 */
 	public ArrayList<Attribute> encloses;
 	
-	public String name;
+	private String name;
+
+    public String getName2() {
+        return name2;
+    }
+
+    public void setName2(String name2) {
+        this.name2 = name2;
+    }
+
+    private String name2;
 
 
 	/**
@@ -81,4 +91,9 @@ public class Attribute{
 	{
 		encloses.add(attribute);
 	}
+
+    @Override
+    public String toString() {
+        return name2==null|| name2.isEmpty()?name:name2;
+    }
 }

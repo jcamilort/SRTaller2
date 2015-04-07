@@ -35,8 +35,12 @@ public class DataLoader {
 
 	public static EntityCollector colector;
 	private static String rutaCategorias = "./data/categories.txt";
+    private static String rutaAtributos= "./data/attributes.txt";
+    private static ArrayList<Attribute> arbol=new ArrayList<Attribute>();
+    private static ArrayList<String> attr_n0 = new ArrayList<String>();
+    private static ArrayList<String> attr_n1 = new ArrayList<String>();
 
-	public static void main(String[] args0) {
+    public static void main(String[] args0) {
 		colector = EntityCollector.getInstance();
 
 		//buildCategories();
@@ -61,10 +65,16 @@ public class DataLoader {
     }
 
     private static void cargarAtributos() {
-        if(AttributeDB.find.all().size()>0)
-            return;
         try {
-            BufferedReader br=new BufferedReader(new FileReader(rutaCategorias));
+            if (AttributeDB.find.all().size() > 0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
+        try {
+            BufferedReader br=new BufferedReader(new FileReader(rutaAtributos));
             String line = "";
             while ((line = br.readLine()) != null) {
                 AttributeDB at=new AttributeDB();
@@ -79,8 +89,15 @@ public class DataLoader {
     }
 
     private static void cargarCategorias() {
-        if(Category.find.all().size()>0)
-            return;
+        try {
+            if(Category.find.all().size()>0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
+
         try {
             BufferedReader br=new BufferedReader(new FileReader(rutaCategorias));
             String line = "";
@@ -96,202 +113,237 @@ public class DataLoader {
         }
     }
 
+    private static String getAtrs(JSONObject atributos)
+    {
+        try{
+        ArrayList<Attribute> atsBusiness = new ArrayList<Attribute>();
+        // System.out.println("Nueva linea");
+        // System.out.println(line);
+
+
+
+        // Attributes Key Set Extraction
+        Set keySet = atributos.keySet();
+        Iterator<?> keys = keySet.iterator();
+
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            System.out.println(atributos.get(key).getClass());
+            if (atributos.get(key).getClass().equals(Boolean.class)) {
+                System.out.println("Atr n0");
+                if (!attr_n0.contains(key)) {
+                    attr_n0.add(key);
+
+                    // Agrega el atributo al primer nivel del arbol
+                    Attribute atributo = new Attribute();
+                    atributo.setName(key);
+                    atributo.setEnclosure(false);
+
+                    arbol.add(atributo);
+                    if((boolean)atributos.get(key))
+                        atsBusiness.add(atributo);
+                }
+            } else if (atributos.get(key).getClass()
+                    .equals(Long.class)) {
+                Long value = (Long) atributos.get(key);
+                System.out.println("Atr n1");
+                if (!attr_n1.contains(value.toString())) {
+                    attr_n1.add(value.toString());
+
+                    // Si el atributo no existe debe agregar el key
+                    // al primer nivel del arbol
+                    // Y el valor al segundo nivel
+                    Attribute atributo = new Attribute();
+                    atributo.setName(value.toString());
+                    atributo.setEnclosure(false);
+
+                    Attribute padre = null;
+                    if (!attr_n0.contains(key)) {
+                        attr_n0.add(key);
+
+                        // El atributo padre no existe, lo debe
+                        // agregar al primer nivel del arbol
+
+                        padre = new Attribute();
+                        padre.setName(key);
+                        padre.setEnclosure(true);
+                        padre.addChildren(atributo);
+                        atributo.setName2(padre.getName()+"_"+atributo.getName());
+
+
+                        arbol.add(padre);
+                    } else {
+                        // El atributo padre existe, debe agregar al
+                        // hijo en el segundo nivel
+                        boolean termino = false;
+                        for (int i = 0; i < arbol.size()
+                                && !termino; i++) {
+                            padre = arbol.get(i);
+                            if (padre.getName().equals(key)) {
+                                termino = true;
+                            }
+                        }
+                        if (termino) {
+                            padre.addChildren(atributo);
+                            atributo.setName2(padre.getName()+"_"+atributo.getName());
+                        }
+                    }
+                    atsBusiness.add(atributo);
+                }
+            } else if (atributos.get(key).getClass()
+                    .equals(String.class)) {
+                String value = (String) atributos.get(key);
+                System.out.println("Atr n1");
+
+                if (!attr_n1.contains(value)) {
+
+                    Attribute atributo = new Attribute();
+                    atributo.setName(value);
+                    atributo.setEnclosure(false);
+
+                    attr_n1.add(value);
+
+                    Attribute padre = null;
+                    if (!attr_n0.contains(key)) {
+                        attr_n0.add(key);
+
+                        padre = new Attribute();
+                        padre.setName(key);
+                        padre.setEnclosure(true);
+                        padre.addChildren(atributo);
+                        atributo.setName2(padre.getName()+"_"+atributo.getName());
+
+                        arbol.add(padre);
+                    } else {
+                        boolean termino = false;
+                        for (int i = 0; i < arbol.size()
+                                && !termino; i++) {
+                            padre = arbol.get(i);
+                            if (padre.getName().equals(key)) {
+                                termino = true;
+                            }
+                        }
+                        if (termino) {
+                            padre.addChildren(atributo);
+                            atributo.setName2(padre.getName()+"_"+atributo.getName());
+                        }
+                    }
+                    atsBusiness.add(atributo);
+                }
+            } else if (atributos.get(key).getClass()
+                    .equals(JSONObject.class)) {
+                System.out.println("Atr n2");
+                JSONObject subatributos = (JSONObject) atributos
+                        .get(key);
+                if (subatributos == null) {
+                    if (!attr_n1.contains(key)) {
+                        attr_n1.add(key);
+                    }
+                } else {
+                    Set keySet2 = subatributos.keySet();
+                    Iterator<?> itern2 = keySet2.iterator();
+                    while (itern2.hasNext()) {
+                        String atn2Val = (String) itern2.next();
+                        if (!attr_n1.contains(atn2Val)) {
+
+                            Attribute atributo = new Attribute();
+                            atributo.setName(atn2Val);
+                            atributo.setEnclosure(false);
+
+                            attr_n1.add(atn2Val);
+
+                            Attribute padre = null;
+                            if (!attr_n0.contains(key)) {
+
+                                attr_n0.add(key);
+                                padre = new Attribute();
+                                padre.setName(key);
+                                padre.setEnclosure(true);
+                                padre.addChildren(atributo);
+                                atributo.setName2(padre.getName()+"_"+atributo.getName());
+
+                                arbol.add(padre);
+                            } else {
+                                boolean termino = false;
+                                for (int i = 0; i < arbol.size()
+                                        && !termino; i++) {
+                                    padre = arbol.get(i);
+                                    if (padre.getName().equals(key)) {
+                                        termino = true;
+                                    }
+                                }
+                                if (termino) {
+                                    padre.addChildren(atributo);
+                                    atributo.setName2(padre.getName()+"_"+atributo.getName());
+                                }
+                            }
+                            atsBusiness.add(atributo);
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        String stringAtrs="";
+        for (Attribute myat:atsBusiness)
+        {
+            stringAtrs+= "," + myat.toString();
+        }
+        stringAtrs=stringAtrs.substring(1);
+            return stringAtrs;
+    } catch (Exception e) {
+        System.out.println(e.getClass() + " :: " + e.getMessage());
+        //e.printStackTrace();
+            return "";
+    }
+
+    }
     private static void buildAttributes() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaNegocios));
 
-			ArrayList<String> attr_n0 = new ArrayList<String>();
-			ArrayList<String> attr_n1 = new ArrayList<String>();
 
-			ArrayList<Attribute> arbol = new ArrayList<Attribute>();
+
 
 			System.out.println("Vamos a extraer los atributos");
 			String line = "";
 			while ((line = br.readLine()) != null) {
 				try {
 
-					line = line.replace("\\", "");
+                    line = line.replace("\\", "");
 
-					// System.out.println("Nueva linea");
-					// System.out.println(line);
 
-					JSONParser jsonParser = new JSONParser();
-					JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
+                    JSONParser jsonParser = new JSONParser();
+                    JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
 
-					JSONObject hours_structure = (JSONObject) jsonObject
-							.get("hours");
+                    JSONObject hours_structure = (JSONObject) jsonObject
+                            .get("hours");
 
-					// TODO terminar de extraer horas y atributos
-					JSONObject atributos = (JSONObject) jsonObject
-							.get("attributes");
+                    // TODO terminar de extraer horas y atributos
+                    JSONObject atributos = (JSONObject) jsonObject
+                            .get("attributes");
 
-					// Attributes Key Set Extraction
-					Set keySet = atributos.keySet();
-					Iterator<?> valuesIter = atributos.values().iterator();
-					Iterator<?> keys = keySet.iterator();
+                    getAtrs(atributos);
 
-					while (keys.hasNext()) {
-						String key = (String) keys.next();
-						System.out.println(atributos.get(key).getClass());
-						if (atributos.get(key).getClass().equals(Boolean.class)) {
-							System.out.println("Atr n0");
-							if (!attr_n0.contains(key)) {
-								attr_n0.add(key);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-								// Agrega el atributo al primer nivel del arbol
-								Attribute atributo = new Attribute();
-								atributo.setName(key);
-								atributo.setEnclosure(false);
 
-								arbol.add(atributo);
-							}
-						} else if (atributos.get(key).getClass()
-								.equals(Long.class)) {
-							Long value = (Long) atributos.get(key);
-							System.out.println("Atr n1");
-							if (!attr_n1.contains(value.toString())) {
-								attr_n1.add(value.toString());
-
-								// Si el atributo no existe debe agregar el key
-								// al primer nivel del arbol
-								// Y el valor al segundo nivel
-								Attribute atributo = new Attribute();
-								atributo.setName(value.toString());
-								atributo.setEnclosure(false);
-
-								Attribute padre = null;
-								if (!attr_n0.contains(key)) {
-									attr_n0.add(key);
-
-									// El atributo padre no existe, lo debe
-									// agregar al primer nivel del arbol
-
-									padre = new Attribute();
-									padre.setName(key);
-									padre.setEnclosure(true);
-									padre.addChildren(atributo);
-
-									arbol.add(padre);
-								} else {
-									// El atributo padre existe, debe agregar al
-									// hijo en el segundo nivel
-									boolean termino = false;
-									for (int i = 0; i < arbol.size()
-											&& !termino; i++) {
-										padre = arbol.get(i);
-										if (padre.name.equals(key)) {
-											termino = true;
-										}
-									}
-									if (termino) {
-										padre.addChildren(atributo);
-									}
-								}
-							}
-						} else if (atributos.get(key).getClass()
-								.equals(String.class)) {
-							String value = (String) atributos.get(key);
-							System.out.println("Atr n1");
-
-							if (!attr_n1.contains(value)) {
-
-								Attribute atributo = new Attribute();
-								atributo.setName(value);
-								atributo.setEnclosure(false);
-
-								attr_n1.add(value);
-
-								Attribute padre = null;
-								if (!attr_n0.contains(key)) {
-									attr_n0.add(key);
-
-									padre = new Attribute();
-									padre.setName(key);
-									padre.setEnclosure(true);
-									padre.addChildren(atributo);
-
-									arbol.add(padre);
-								} else {
-									boolean termino = false;
-									for (int i = 0; i < arbol.size()
-											&& !termino; i++) {
-										padre = arbol.get(i);
-										if (padre.name.equals(key)) {
-											termino = true;
-										}
-									}
-									if (termino) {
-										padre.addChildren(atributo);
-									}
-								}
-							}
-						} else if (atributos.get(key).getClass()
-								.equals(JSONObject.class)) {
-							System.out.println("Atr n2");
-							JSONObject subatributos = (JSONObject) atributos
-									.get(key);
-							if (subatributos == null) {
-								if (!attr_n1.contains(key)) {
-									attr_n1.add(key);
-								}
-							} else {
-								Set keySet2 = subatributos.keySet();
-								Iterator<?> itern2 = keySet2.iterator();
-								while (itern2.hasNext()) {
-									String atn2Val = (String) itern2.next();
-									if (!attr_n1.contains(atn2Val)) {
-
-										Attribute atributo = new Attribute();
-										atributo.setName(atn2Val);
-										atributo.setEnclosure(false);
-
-										attr_n1.add(atn2Val);
-
-										Attribute padre = null;
-										if (!attr_n0.contains(key)) {
-
-											attr_n0.add(key);
-											padre = new Attribute();
-											padre.setName(key);
-											padre.setEnclosure(true);
-											padre.addChildren(atributo);
-
-											arbol.add(padre);
-										} else {
-											boolean termino = false;
-											for (int i = 0; i < arbol.size()
-													&& !termino; i++) {
-												padre = arbol.get(i);
-												if (padre.name.equals(key)) {
-													termino = true;
-												}
-											}
-											if (termino) {
-												padre.addChildren(atributo);
-											}
-										}
-									}
-								}
-							}
-
-						}
-					}
-				} catch (Exception e) {
-					System.out.println(e.getClass() + " :: " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
+            }
 
 			System.out.println("Attributes:");
 			for (int i = 0; i < arbol.size(); i++) {
 				if(!arbol.get(i).enclosure){
-					System.out.println(arbol.get(i).name);					
+					System.out.println(arbol.get(i).getName());
 				}
 				else{
 					ArrayList<Attribute> subattributes = arbol.get(i).encloses;
 					for(int j = 0; j<subattributes.size();j++)
 					{
-						System.out.println(arbol.get(i).name+"_"+subattributes.get(j).name);
+						System.out.println(arbol.get(i).getName()+"_"+subattributes.get(j).getName());
 					}
 				}
 			}
@@ -423,8 +475,15 @@ public class DataLoader {
 	}
 
 	public static void cargarTips() {
-        if(Tip.find.all().size()>0)
-            return;
+        try {
+
+            if(Tip.find.all().size()>0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaTips));
 			System.out.println("Lee el archivo");
@@ -524,8 +583,14 @@ public class DataLoader {
 	}
 
 	private static void cargarUsuarios() {
-        if(User.find.all().size()>0)
-            return;
+        try {
+            if (User.find.all().size() > 0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
 		try {
 
 			// ArrayList<String> vote_collector = new ArrayList<String>();
@@ -752,8 +817,14 @@ public class DataLoader {
 	}
 
     private static void cargarNegociosDB() {
-        if(Business.find.all().size()>0)
-            return;
+        try {
+            if (Business.find.all().size() > 0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
         try {
             ArrayList<String> category_collector = new ArrayList<String>();
             ArrayList<String> attribute_collector = new ArrayList<String>();
@@ -761,63 +832,19 @@ public class DataLoader {
             BufferedReader br = new BufferedReader(new FileReader(rutaNegocios));
             System.out.println("Lee el archivo");
             String line = "";
-            Business negocio;
+            Business negocio = new Business();
 
             while ((line = br.readLine()) != null) {
                 try {
-                    String atrStr="";
-
                     line = line.replace("\\", "");
 
                     JSONParser jsonParser = new JSONParser();
                     JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
 
-                    JSONArray ats=(JSONArray)jsonObject.get("attributes");
-                    for (Object at:ats)
-                    {
-                        String key1=((JSONObject)at).keySet().iterator().next().toString();
-                        if(at instanceof JSONArray)
-                        {
-                            JSONArray atar=(JSONArray)at;
-                            for (int i = 0; i < atar.size(); i++) {
-                                Iterator iter = ((JSONObject) atar.get(i)).keySet().iterator();
-                                while(iter.hasNext())
-                                {
-                                    String key=iter.next().toString();
-                                    atrStr+=","+key1+"_"+((JSONObject)at).get(key);
-                                }
-                            }
+                    JSONObject ats=(JSONObject)jsonObject.get("attributes");
+                    String atrStr=getAtrs(ats);
 
-                        }
-                        else {
-                            atrStr+=","+((JSONObject)at).get(key1);
-                        }
-                    }
-                    atrStr=atrStr.substring(1);
-
-                    /*
-                    JSONObject atributos = (JSONObject) jsonObject
-                            .get("attributes");
-
-                    // Attributes Key Set Extraction
-                    Set keySet = atributos.keySet();
-                    System.out.println(keySet.toString());
-                    Iterator<?> keys = keySet.iterator();
-                    int count = 0;
-                    while (keys.hasNext()) {
-                        String key = (String) keys.next(); // Cool funny useful
-
-                        System.out.println("_____Attribute tag " + count + ": "
-                                + key);
-                        if (!attribute_collector.contains(key)) {
-                            attribute_collector.add(key);
-                        }
-                        count++;
-                    }
-                    */
-
-                    JSONArray categorias = (JSONArray) jsonObject
-                            .get("categories");
+                    JSONArray categorias = (JSONArray) jsonObject.get("categories");
                     ArrayList<Category> categorias_negocio = new ArrayList<Category>();
 
                     for (int i = 0; i < categorias.size();i++)
@@ -831,110 +858,14 @@ public class DataLoader {
                         }
                     }
 
-                    //horas:
-
-                    // TODO terminar de extraer horas
-                    JSONObject hours_structure = (JSONObject)jsonObject.get("hours");
-
-                    JSONObject monday = (JSONObject)hours_structure.get("Monday");
-                    ArrayList<Integer> monday_array = new ArrayList<Integer>(2);
-
-                    JSONObject tuesday = (JSONObject)hours_structure.get("Tuesday");
-                    ArrayList<Integer> tuesday_array = new ArrayList<Integer>(2);
-
-                    JSONObject wednesday = (JSONObject)hours_structure.get("Wednesday");
-                    ArrayList<Integer> wednesday_array = new ArrayList<Integer>(2);
-
-                    JSONObject thursday = (JSONObject)hours_structure.get("Thursday");
-                    ArrayList<Integer> thursday_array = new ArrayList<Integer>(2);
-
-                    JSONObject friday = (JSONObject)hours_structure.get("Friday");
-                    ArrayList<Integer> friday_array = new ArrayList<Integer>(2);
-
-                    JSONObject saturday = (JSONObject)hours_structure.get("Saturday");
-                    ArrayList<Integer> saturday_array = new ArrayList<Integer>(2);
-
-                    JSONObject sunday = (JSONObject)hours_structure.get("Sunday");
-                    ArrayList<Integer> sunday_array = new ArrayList<Integer>(2);
-
-
-                    ArrayList<ArrayList<Integer>> openTimes = new ArrayList<ArrayList<Integer>>();
-
-                    if(monday==null)
+                    try {
+                        ArrayList<ArrayList<Integer>> opentimes = getOpenTimes(jsonObject);
+                        negocio.setOpenTimes(opentimes);
+                    }
+                    catch(Exception e)
                     {
-                        monday_array.add(0,0);
-                        monday_array.add(1,0);
+                        System.err.println("without opentimes");
                     }
-                    else{
-
-                        //TODO
-                        String open  = (String) monday.get("open");
-                        String close = (String) monday.get("close");
-                        monday_array.add(0,0);
-                        monday_array.add(1,0 );
-                    }
-                    if(tuesday==null)
-                    {
-                        tuesday_array.add(0,0);
-                        tuesday_array.add(1,0);
-                    }
-                    else{
-                        tuesday_array.add(0,(Integer) tuesday.get("open"));
-                        tuesday_array.add(1,(Integer) tuesday.get("close"));
-                    }
-                    if(wednesday==null)
-                    {
-                        wednesday_array.add(0,0);
-                        wednesday_array.add(1,0);
-                    }
-                    else{
-                        wednesday_array.add(0,(Integer) wednesday.get("open"));
-                        wednesday_array.add(1,(Integer) wednesday.get("close"));
-                    }
-                    if(thursday==null)
-                    {
-                        thursday_array.add(0,0);
-                        thursday_array.add(1,0);
-                    }
-                    else{
-                        thursday_array.add(0,(Integer) thursday.get("open"));
-                        thursday_array.add(1,(Integer) thursday.get("close"));
-                    }
-                    if(friday==null)
-                    {
-                        friday_array.add(0,0);
-                        friday_array.add(1,0);
-                    }
-                    else{
-                        friday_array.add(0,(Integer) friday.get("open"));
-                        friday_array.add(1,(Integer) friday.get("close"));
-                    }
-                    if(saturday==null)
-                    {
-                        saturday_array.add(0,0);
-                        saturday_array.add(1,0);
-                    }
-                    else{
-                        saturday_array.add(0,(Integer) saturday.get("open"));
-                        saturday_array.add(1,(Integer) saturday.get("close"));
-                    }
-                    if(sunday==null)
-                    {
-                        sunday_array.add(0,0);
-                        sunday_array.add(1,0);
-                    }
-                    else{
-                        sunday_array.add(0,(Integer) sunday.get("open"));
-                        sunday_array.add(1,(Integer) sunday.get("close"));
-                    }
-
-                    openTimes.add(0,sunday_array);
-                    openTimes.add(1,monday_array);
-                    openTimes.add(2,tuesday_array);
-                    openTimes.add(3,wednesday_array);
-                    openTimes.add(4,thursday_array);
-                    openTimes.add(5,friday_array);
-                    openTimes.add(6,saturday_array);
 /*
                     Iterator<Category> iter = colector.getCategories()
                             .iterator();
@@ -980,7 +911,6 @@ public class DataLoader {
                     // System.out.println("Business name is: " + name);
 
                     // TODO terminar de asignar atributos y horas
-                    negocio = new Business();
 
                     negocio.setCategories(categorias_negocio);
                     negocio.setName(name);
@@ -993,7 +923,7 @@ public class DataLoader {
                     negocio.setStars(stars);
                     negocio.setReview_count(review_count_int);
                     negocio.setAttributesString(atrStr);
-                    negocio.setOpenTimes(openTimes);
+
 
                     negocio.save();
                     // colector.addBusiness(negocio);
@@ -1245,4 +1175,112 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
+
+    public static ArrayList<ArrayList<Integer>> getOpenTimes(JSONObject jsonObject) {
+        //horas:
+
+        // TODO terminar de extraer horas
+        JSONObject hours_structure = (JSONObject)jsonObject.get("hours");
+
+        JSONObject monday = (JSONObject)hours_structure.get("Monday");
+        ArrayList<Integer> monday_array = new ArrayList<Integer>(2);
+
+        JSONObject tuesday = (JSONObject)hours_structure.get("Tuesday");
+        ArrayList<Integer> tuesday_array = new ArrayList<Integer>(2);
+
+        JSONObject wednesday = (JSONObject)hours_structure.get("Wednesday");
+        ArrayList<Integer> wednesday_array = new ArrayList<Integer>(2);
+
+        JSONObject thursday = (JSONObject)hours_structure.get("Thursday");
+        ArrayList<Integer> thursday_array = new ArrayList<Integer>(2);
+
+        JSONObject friday = (JSONObject)hours_structure.get("Friday");
+        ArrayList<Integer> friday_array = new ArrayList<Integer>(2);
+
+        JSONObject saturday = (JSONObject)hours_structure.get("Saturday");
+        ArrayList<Integer> saturday_array = new ArrayList<Integer>(2);
+
+        JSONObject sunday = (JSONObject)hours_structure.get("Sunday");
+        ArrayList<Integer> sunday_array = new ArrayList<Integer>(2);
+
+
+        ArrayList<ArrayList<Integer>> openTimes = new ArrayList<ArrayList<Integer>>();
+
+        if(monday==null)
+        {
+            monday_array.add(0,0);
+            monday_array.add(1,0);
+        }
+        else{
+
+            //TODO
+            String open  = (String) monday.get("open");
+            String close = (String) monday.get("close");
+            monday_array.add(0,0);
+            monday_array.add(1,0 );
+        }
+        if(tuesday==null)
+        {
+            tuesday_array.add(0,0);
+            tuesday_array.add(1,0);
+        }
+        else{
+            tuesday_array.add(0,(Integer) tuesday.get("open"));
+            tuesday_array.add(1,(Integer) tuesday.get("close"));
+        }
+        if(wednesday==null)
+        {
+            wednesday_array.add(0,0);
+            wednesday_array.add(1,0);
+        }
+        else{
+            wednesday_array.add(0,(Integer) wednesday.get("open"));
+            wednesday_array.add(1,(Integer) wednesday.get("close"));
+        }
+        if(thursday==null)
+        {
+            thursday_array.add(0,0);
+            thursday_array.add(1,0);
+        }
+        else{
+            thursday_array.add(0,(Integer) thursday.get("open"));
+            thursday_array.add(1,(Integer) thursday.get("close"));
+        }
+        if(friday==null)
+        {
+            friday_array.add(0,0);
+            friday_array.add(1,0);
+        }
+        else{
+            friday_array.add(0,(Integer) friday.get("open"));
+            friday_array.add(1,(Integer) friday.get("close"));
+        }
+        if(saturday==null)
+        {
+            saturday_array.add(0,0);
+            saturday_array.add(1,0);
+        }
+        else{
+            saturday_array.add(0,(Integer) saturday.get("open"));
+            saturday_array.add(1,(Integer) saturday.get("close"));
+        }
+        if(sunday==null)
+        {
+            sunday_array.add(0,0);
+            sunday_array.add(1,0);
+        }
+        else{
+            sunday_array.add(0,(Integer) sunday.get("open"));
+            sunday_array.add(1,(Integer) sunday.get("close"));
+        }
+
+        openTimes.add(0,sunday_array);
+        openTimes.add(1,monday_array);
+        openTimes.add(2,tuesday_array);
+        openTimes.add(3,wednesday_array);
+        openTimes.add(4,thursday_array);
+        openTimes.add(5,friday_array);
+        openTimes.add(6,saturday_array);
+        return openTimes;
+    }
 }

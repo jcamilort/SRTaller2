@@ -215,6 +215,26 @@ public class Business extends Model{
             }
             attributesDB=attributesDB.substring(1);
         }
+        else if(attributesDB!=null&&!attributesDB.isEmpty())
+        {
+            String newatr="";
+            try {
+
+
+                String[] vals = attributesDB.split(",");
+                for (String v:vals)
+                {
+                    AttributeDB atdb=AttributeDB.find.where().eq("name",v).findList().get(0);
+                    if(atdb!=null)
+                        newatr+=","+atdb.getID();
+                }
+                attributesDB=newatr.substring(1);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
 
         categoriesDB="";
         for( Category at:categories)
