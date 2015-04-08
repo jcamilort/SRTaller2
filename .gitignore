@@ -13,8 +13,9 @@ dist
 /.project
 /RUNNING_PID
 /.settings
-bin
+bin/*
 *.class
 data/*.json
 db/*
 *.sql
+*.DS_STORE
