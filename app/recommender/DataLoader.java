@@ -454,7 +454,7 @@ public class DataLoader {
 //					review.setUser_id(user_id);
 					// review.save();
 
-					writer.println(business_id + "	" + user_id + "		" + stars);
+					writer.println(business_id + ";" + user_id + ";" + stars);
 
 				} catch (Exception e) {
 					System.out.println("EXCEPTION THROWN: " + e.getClass()

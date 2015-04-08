@@ -92,7 +92,7 @@ public class CollaborativeRecommender {
 	 {
 	 User user = new User();
 	 user.setUser_id("6TPxhpHqFedjMvBuw6pF3w");
-	 executeRecommender(user, 100, 100, EUCLIDEAN);
+	 executeRecommender(user, 100, 100, PEARSON);
 	 }
 	 
 	public static List<RecommendedItem> executeRecommender(User user,
@@ -116,9 +116,10 @@ public class CollaborativeRecommender {
 
 			// go through every line
 			while ((line = br.readLine()) != null) {
-				String[] parts = line.split("	");
+				String[] parts = line.split(";");
 				String person = parts[0].trim();
 				String likeName = parts[1].trim();
+				float preference = Float.parseFloat(parts[2].trim());
 
 				// other lines contained but not used
 				// String category = line[2];
@@ -146,8 +147,8 @@ public class CollaborativeRecommender {
 					preferecesOfUsers.put(userLong, userPrefList);
 				}
 				// add the like that we just found to this user
-				userPrefList.add(new GenericPreference(userLong, itemLong, 1));
-				System.out.println("Adding " + person + "(" + userLong+ ") to " + likeName + "(" + itemLong + ")");
+				userPrefList.add(new GenericPreference(userLong, itemLong, preference));
+				System.out.println("Adding " + person + "(" + userLong+ ") to " + likeName + "(" + itemLong + ") with preference "+preference);
 			}
 
 			// create the corresponding mahout data structure from the map
@@ -173,7 +174,7 @@ public class CollaborativeRecommender {
 			UserNeighborhood neighborhood = new NearestNUserNeighborhood(neighbors, similarity, dataModel);
 			
 			// Instantiate the recommender
-			
+
 			recommender = new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
 			
 			recommenderGBIR = new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));

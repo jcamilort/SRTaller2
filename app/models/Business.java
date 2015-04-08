@@ -70,7 +70,7 @@ public class Business extends Model{
             {
                 String[] pares=opentimesString.split(";");
                 for (int i = 0; i <pares.length; i++) {
-                    ArrayList<Integer> par=new ArrayList<>();
+                    ArrayList<Integer> par=new ArrayList<Integer>();
                     String[] p1=pares[i].split(",");
                     par.add(Integer.parseInt(p1[0]));
                     par.add(Integer.parseInt(p1[1]));
@@ -174,7 +174,7 @@ public class Business extends Model{
 	public ArrayList<Category> getCategories() {
         if(categories==null||categories.isEmpty())
         {
-            categories=new ArrayList<>();
+            categories=new ArrayList<Category>();
             if(categoriesDB==null||categories.isEmpty())
                 return categories;
             String[] catids=categoriesDB.split(",");
@@ -203,7 +203,7 @@ public class Business extends Model{
 	public ArrayList<AttributeDB> getAttributes() {
         if(attributes==null||attributes.isEmpty())
         {
-            attributes=new ArrayList<>();
+            attributes=new ArrayList<AttributeDB>();
             if(attributesDB==null||attributesDB.isEmpty())
                 return attributes;
             String[] atids=attributesDB.split(",");
