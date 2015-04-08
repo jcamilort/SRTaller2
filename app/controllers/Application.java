@@ -27,8 +27,8 @@ public class Application extends Controller {
     public static Result search()
     {
         DynamicForm data = Form.form().bindFromRequest();
-        long lat=Long.parseLong(data.get("latitude"));
-        long longi=Long.parseLong(data.get("longitude"));
+        double lat=Double.parseDouble(data.get("latitude"));
+        double longi=Double.parseDouble(data.get("longitude"));
         String hora=data.get("hour");
         Http.Cookie result = request().cookie("user_id");
         //User logged=User
