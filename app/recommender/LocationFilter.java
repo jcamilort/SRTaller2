@@ -13,7 +13,6 @@ public class LocationFilter {
 	}
 	public static void obtnerSitiosCercanos(double latitud, double longitud)
 	{
-
 		String url = URL_BASE_MAP_GPS+latitud+","+longitud+MAP_GPS_KEY;
 	}
 }
