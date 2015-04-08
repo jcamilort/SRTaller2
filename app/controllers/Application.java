@@ -26,13 +26,16 @@ public class Application extends Controller {
 
     public static Result search()
     {
-        DynamicForm data = Form.form().bindFromRequest();
-        double lat=Double.parseDouble(data.get("latitude"));
-        double longi=Double.parseDouble(data.get("longitude"));
-        String hora=data.get("hour");
-        Http.Cookie result = request().cookie("user_id");
-        //User logged=User
+        try {
+            DynamicForm data = Form.form().bindFromRequest();
+            double lat = Double.parseDouble(data.get("latitude"));
+            double longi = Double.parseDouble(data.get("longitude"));
+            String hora = data.get("hour");
+            Http.Cookie result = request().cookie("user_id");
+            //User logged=User
 
+        }
+        catch(Exception e){}
 
         return ok(search.render(null));
     }

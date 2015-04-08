@@ -5,53 +5,69 @@
 @main("Hybrid Recommender",null) {
 
 
-    <h1>Tus lugares recomendados</h1>
-    <select id="categories_list"><option>Add a category</option>
-        <option value="health">Health</option>
-        <option value="food">Food</option>
-    </select>
-    <div id="categories"></div>
+    <h1 class="text-center center-block">Tus lugares recomendados</h1>
+    <section id="categories_section">
+    <label for="categories" style="float:left">Categorías: </label>
+
+    <input id="categories_selected" name="categories"  placeholder="Escribe posibles categorías"/>
+    <button id="btn_search">Actualizar</button>
+    <button id="btn_cleantags">Limpiar</button>
+    </section>
     <br/>
 
-    <div id="attributes">
-        <ul>
-            <li>
+    <div id="attributes" class="text-center">
+        <h4>¿Aún no? refina tus preferencias:</h4>
+        <div id="attributes_list">
+            <div>
                 <input type="checkbox" id="attr_24hours"><label for="attr_24hours">24 hours</label>
-            </li>
-            <li>
+            </div>
+            <div>
                 <input type="checkbox" id="attr_domicile"><label for="attr_domicile">Domicile</label>
-            </li>
-            <li>
+            </div>
+            <div>
                 <input type="checkbox" id="attr_economic"><label for="attr_economic">Economic</label>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
     <div id="results">
-        <div class="row">
-            <div class="col-md-1">Business</div>
-            <div class="col-md-1">Estimation</div>
-        </div>
-        <ul>
-            <li>
-                <div class="row">
-                    <div class="col-md-1">Hard rock</div>
-                    <div class="col-md-1">5.0</div>
-                </div>
-            </li>
-            <li>
-                <div class="row">
-                    <div class="col-md-1">West Coffee</div>
-                    <div class="col-md-1">5.0</div>
-                </div>
-            </li>
-            <li>
-                <div class="row">
-                    <div class="col-md-1">America's Hotel</div>
-                    <div class="col-md-1">4.5</div>
-                </div>
-            </li>
-        </ul>
+        <table class="table center-simple">
+            <thead>
+                <tr>
+                    <th>Negocio</th>
+                    <th>Estimación</th>
+                    <th>Ver más</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Hard rock</td>
+                    <td>5.0</td>
+                    <td><a>+</a></td>
+                </tr>
+                <tr>
+                    <td>West Coffee</td>
+                    <td>5.0</td>
+                    <td><a>+</a></td>
+                </tr>
+                <tr>
+                    <td>America's Hotel</td>
+                    <td>4.5</td>
+                    <td><a>+</a></td>
+                </tr>
+            </tbody>
+            </table>
     </div>
     <br/>
+
+    <script>
+        var sampleTags=["uno","dos","tres"];
+    $("#categories_selected").tagit({
+    availableTags: sampleTags,
+    allowSpaces: true,
+        showAutocompleteOnFocus:true
+    });
+
+        $('#categories').select(function(){$('#categories' ).selected})
+    </script>
 
 }

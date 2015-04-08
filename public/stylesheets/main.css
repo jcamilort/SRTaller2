@@ -23,3 +23,34 @@ input[type="text"],input[type="number"]{
 #search{
     margin-top: 15px;
 }
+
+#categories_list{
+    float:left;
+    margin-right: 15px;
+}
+#attributes{
+    clear: both;
+    display: block;
+    float: left;
+    width: 20%;
+}
+ul.tagit{
+    float: left;
+    margin-right: 15px!important;
+    width: 50%;
+}
+#categories_section{
+    margin-bottom: 30px;
+    margin-top: 30px;
+    min-width: 65%;
+    float:right;
+}
+
+#results>table{
+    width:60%
+}
+
+.center-simple{
+    margin-left: auto;
+    margin-right: auto;
+}
