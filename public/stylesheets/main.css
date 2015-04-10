@@ -1,5 +1,7 @@
 /* custom css*/
-
+input[type="checkbox"]{
+    margin:4px!important;
+}
 label{
     margin-right: 3px;
 }
@@ -37,12 +39,12 @@ input[type="text"],input[type="number"]{
 ul.tagit{
     float: left;
     margin-right: 15px!important;
-    width: 50%;
+    width: 70%;
 }
 #categories_section{
     margin-bottom: 30px;
     margin-top: 30px;
-    min-width: 65%;
+    min-width: 75%;
     float:right;
 }
 
@@ -53,4 +55,23 @@ ul.tagit{
 .center-simple{
     margin-left: auto;
     margin-right: auto;
+}
+
+
+.ui-autocomplete {
+    max-height: 150px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}
+
+label[for="userid"],input[name="userid"]
+{
+    float:left;
 }

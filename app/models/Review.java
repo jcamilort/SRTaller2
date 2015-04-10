@@ -33,6 +33,7 @@ public class Review extends Model{
 	 * Modela los votos sobre el review de las caracteristicas en el arreglo
 	 */
 
+    @Transient
 	public ArrayList<Integer> votes;
 
     /**
@@ -83,6 +84,7 @@ public class Review extends Model{
 	/**
 	 * @return the votes
 	 */
+
 	public ArrayList<Integer> getVotes() {
 		return votes;
 	}

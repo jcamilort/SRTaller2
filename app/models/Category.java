@@ -5,7 +5,13 @@ package models;
 
 import javax.persistence.*;
 
+import org.json.simple.JSONArray;
 import play.db.ebean.Model;
+import play.db.ebean.Transactional;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author juancamiloortiz
@@ -26,7 +32,7 @@ public class Category extends Model{
 	public String name;
 
 
-    public static Finder<Long,Category> find = new Finder<Long,Category>(
+    public static Finder<Long,Category> finder = new Finder<Long,Category>(
             Long.class, Category.class
     );
 
@@ -53,4 +59,18 @@ public class Category extends Model{
 	{
 		return name;
 	}
+
+
+    public static List<String> getAll()
+    {
+
+        List<Category> r = Category.finder.select("name").findList();
+
+        List<String> strings= new ArrayList<>();
+        for (Category c:r)
+        {
+            strings.add(c.getName());
+        }
+        return strings;
+    }
 }

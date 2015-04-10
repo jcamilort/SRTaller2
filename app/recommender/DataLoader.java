@@ -62,6 +62,7 @@ public class DataLoader {
         cargarNegociosDB();
         cargarUsuarios();
         cargarTips();
+        //cargarReviewsDB();
     }
 
     private static void cargarAtributos() {
@@ -90,7 +91,7 @@ public class DataLoader {
 
     private static void cargarCategorias() {
         try {
-            if(Category.find.all().size()>0)
+            if(Category.finder.all().size()>0)
                 return;
         }
         catch(Exception e)
@@ -388,7 +389,6 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
-
 	private static void cargarReviews() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaReviews));
@@ -413,9 +413,17 @@ public class DataLoader {
 					String user_id = (String) jsonObject.get("user_id");
 					long stars_long = (Long) jsonObject.get("stars");
 					double stars = (double) stars_long;
-//					String text = (String) jsonObject.get("text");
-//					Date d = (new SimpleDateFormat("yyyy-MM-dd"))
-//							.parse(jsonObject.get("date").toString());
+					String text = (String) jsonObject.get("text");
+                    Date d=new Date();
+                    try{
+                        d = (new SimpleDateFormat("yyyy-MM-dd"))
+                                .parse(jsonObject.get("date").toString());
+                    }
+                    catch(Exception ex)
+                    {
+
+                    }
+
 //
 //					// Vote Extraction
 //					JSONObject structure = (JSONObject) jsonObject.get("votes");
@@ -446,13 +454,13 @@ public class DataLoader {
 //					votes.add(1, funny);
 //					votes.add(2, useful);
 //
-//					review.setBusiness_id(business_id);
+					review.setBusiness_id(business_id);
 //					review.setVotes(votes);
-//					review.setDate(d);
-//					review.setStars(stars);
-//					review.setText(text);
-//					review.setUser_id(user_id);
-					// review.save();
+					review.setDate(d);
+					review.setStars(stars);
+					review.setText(text);
+					review.setUser_id(user_id);
+					review.save();
 
 					writer.println(business_id + ";" + user_id + ";" + stars);
 
@@ -853,7 +861,7 @@ public class DataLoader {
                     {
                         try {
                             String ct = categorias.get(i).toString();
-                            categorias_negocio.add(Category.find.where().eq("name", ct).findList().get(0));
+                            categorias_negocio.add(Category.finder.where().eq("name", ct).findList().get(0));
                         }catch (Exception e)
                         {
                             e.printStackTrace();
@@ -924,7 +932,8 @@ public class DataLoader {
                     negocio.setState(state);
                     negocio.setStars(stars);
                     negocio.setReview_count(review_count_int);
-                    negocio.setAttributesString(atrStr);
+                    negocio.setAttributes(getAttributesList(atrStr));
+                    //negocio.setAttributesString(atrStr);
 
 
 
@@ -954,7 +963,27 @@ public class DataLoader {
             e.printStackTrace();
         }
     }
-	private static void cargarNegocios() {
+
+    private static ArrayList<AttributeDB> getAttributesList(String atrStr) {
+
+        ArrayList<AttributeDB> resp=new ArrayList<>();
+        String[] all=atrStr.split(",");
+        for (String a:all)
+        {
+            try{
+                resp.add(AttributeDB.find.where().eq("name",a).findList()
+                        .get(0));
+
+            }
+            catch(Exception e){
+                System.err.println("Error with attribute "+a);
+                System.err.println("ewa: "+e.getMessage());
+        }
+        }
+        return resp;
+    }
+
+    private static void cargarNegocios() {
 		try {
 			ArrayList<String> category_collector = new ArrayList<String>();
 			ArrayList<String> attribute_collector = new ArrayList<String>();

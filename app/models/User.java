@@ -4,6 +4,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 import com.avaje.ebean.annotation.ConcurrencyMode;
@@ -49,6 +50,15 @@ public class User extends Model{
     @OneToMany(mappedBy = "user")
     public ArrayList<Tip> tips;
 
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "usercategories")
+    public List<Category> categories;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "userattributes")
+    public List<AttributeDB> attributes;
+
     public static Finder<String,User> find = new Finder<String,User>(
             String.class, User.class
     );
@@ -61,6 +71,8 @@ public class User extends Model{
         compliments=new ArrayList<Integer>();
         tips=new ArrayList<Tip>();
         reviews=new ArrayList<Review>();
+        attributes=new ArrayList<>();
+        categories=new ArrayList<>();
 	}
 	/**
 	 * @return the reviews

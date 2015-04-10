@@ -1,15 +1,18 @@
-@(us:User)
+@(msg:String,us:User,items:List[Recommendation])
+@import play.api.libs.json.Json
 
-@()
-
-@main("Hybrid Recommender",null) {
+@main(msg,"Hybrid Recommender",us) {
 
 
     <h1 class="text-center center-block">Tus lugares recomendados</h1>
     <section id="categories_section">
+
+
+
     <label for="categories" style="float:left">Categorías: </label>
 
     <input id="categories_selected" name="categories"  placeholder="Escribe posibles categorías"/>
+
     <button id="btn_search">Actualizar</button>
     <button id="btn_cleantags">Limpiar</button>
     </section>
@@ -59,15 +62,71 @@
     </div>
     <br/>
 
-    <script>
-        var sampleTags=["uno","dos","tres"];
+
+    <script type="text/javascript">
+    var sampleTags = "@Category.getAll()";
+    sampleTags = sampleTags.substring(1, sampleTags.length - 2).split(",");
+    //var sampleTags=["aloha","adios","Amiguito","Asador","Asadero"];
     $("#categories_selected").tagit({
-    availableTags: sampleTags,
-    allowSpaces: true,
-        showAutocompleteOnFocus:true
+    //availableTags: sampleTags,
+    caseSensitive: false,
+    allowSpaces: true//,showAutocompleteOnFocus:true
     });
 
-        $('#categories').select(function(){$('#categories' ).selected})
+
+    function split(val) {
+    return val.split(/,\s*/);
+    }
+
+    function extractLast(term) {
+    return split(term).pop();
+    }
+
+    //$( "#categories_section .tagit-new>input" ).replaceWith( "<input id='newtag' />" );
+    $("#categories_section .tagit-new>input").hide();
+    $("#categories_section .tagit-new>input").parent().append("<input id='tags2' type='text' class='ui-widget-content'/>");
+
+    $("#tags2")
+    //$( "#newtag")
+    // don't navigate away from the field on tab when selecting an item
+    .bind("keydown", function (event) {
+    if (event.keyCode === $.ui.keyCode.TAB &&
+    $(this).autocomplete("instance").menu.active) {
+    event.preventDefault();
+    }
+    })
+    .autocomplete({
+    minLength: 0,
+    source: function (request, response) {
+    // delegate back to autocomplete, but extract the last term
+    response($.ui.autocomplete.filter(
+    sampleTags, extractLast(request.term)));
+    },
+    focus: function () {
+    // prevent value inserted on focus
+    return false;
+    },
+    select: function (event, ui) {
+    var terms = split(this.value);
+    // remove the current input
+    terms.pop();
+    // add the selected item
+    terms.push(ui.item.value);
+
+    $("#categories_selected").tagit("createTag", ui.item.value);
+    //$( "#tags2" ).val("");
+    // add placeholder to get the comma-and-space at the end
+    terms.push("");
+
+    this.value = "";
+    return false;
+    }
+    });
+
+    $('#btn_cleantags').click(function () {
+    $("#categories_selected").tagit("removeAll");
+    });
     </script>
+
 
 }

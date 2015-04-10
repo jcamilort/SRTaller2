@@ -1,5 +1,9 @@
 package controllers;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlQuery;
+import com.avaje.ebean.SqlRow;
+import models.Recommendation;
 import models.User;
 import play.*;
 import play.data.DynamicForm;
@@ -7,40 +11,146 @@ import play.data.Form;
 import play.mvc.*;
 
 import views.html.*;
+import recommender.HybridRecommender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application extends Controller {
 
-    public static Result index() {
+    public static User getLoggedUser()
+    {
+        String uid="";
+        uid=request().cookies().get("user_id").value();
+        if(uid!=null&&!uid.isEmpty())
+            return User.find.byId(uid);
+        return null;
+    }
+    public static Result randomUserId()
+    {
+        try{
+        List<SqlRow> q = Ebean.createSqlQuery("select * from user order by rand() limit 1").findList();
+        return ok(q.get(0).getString("user_id"));
 
-        User testUser=new User();
-        testUser.setName("Juanito");
-        testUser.setUser_id("123");
-        response().setCookie("user_id","123");
-
-        return ok(index.render(testUser));//"Hybrid recommender system"));
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return ok("");
+        }
     }
 
-    public static Result results() {
-        return ok(recommender.render());//"Hybrid recommender system"));
+    public static Result index() {
+
+        User logged=getLoggedUser();
+
+        return ok(index.render(logged));//"Hybrid recommender system"));
     }
 
     public static Result search()
     {
+        DynamicForm data = null;
+        double lat=0;
+        double longi=0;
+        String hora="";
+        String user_id="";
+
+        String msg="";
+
+        String[] categoriesList=new String[0];
+        String[] attributesList=new String[0];
+
         try {
-            DynamicForm data = Form.form().bindFromRequest();
-            double lat = Double.parseDouble(data.get("latitude"));
-            double longi = Double.parseDouble(data.get("longitude"));
-            String hora = data.get("hour");
-            Http.Cookie result = request().cookie("user_id");
-            //User logged=User
+            data = Form.form().bindFromRequest();
+        }
+        catch (Exception e)
+        {
+            msg+="loading form..."+e.getMessage();
+        }
+        if(data!=null)
+        {
+            try{
+                lat = Double.parseDouble(data.get("latitude"));
+                longi= Double.parseDouble(data.get("longitude"));
+            }
+            catch(Exception e)
+            {
+                msg+="\nWithout geolocation";
+            }
+
+            try{
+                hora = data.get("hour");
+            }
+            catch(Exception e)
+            {
+                msg+="\nWithout hour";
+            }
+
+            try{
+                categoriesList= data.get("categories").split(",");
+            }
+            catch(Exception e)
+            {
+                msg+="\nWithout explicit categories";
+            }
+
+            try{
+                attributesList= data.get("attributes").split(",");
+            }
+            catch(Exception e)
+            {
+                msg+="\nWithout explicit attributes";
+            }
+
+            try{
+                user_id = request().cookie("user_id").value();
+            }
+            catch(Exception e)
+            {
+                msg+="\nWithout user";
+            }
 
         }
-        catch(Exception e){}
 
-        return ok(search.render(null));
+        HybridRecommender hr=HybridRecommender.getInstance();
+
+        double[] pos=new double[2];
+        pos[0]=lat;
+        pos[1]=longi;
+        User logged=null;
+        String useridTemp=user_id;
+
+        try
+        {
+            user_id=data.get("userid");
+        }
+        catch(Exception e)
+        {
+        }
+        if(user_id==null)
+        {
+            user_id=useridTemp;
+
+        }
+        if(!user_id.isEmpty()) {
+            try {
+                logged = User.find.byId(user_id);
+            }
+            catch(Exception e)
+            {
+                msg+="\n"+"User error...user_id:"+user_id;
+            }
+        }
+
+        response().setCookie("user_id",user_id);
+
+        ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
+
+        return ok(search.render(msg,logged,items));
     }
     public static Result evaluation() {
         return ok(evaluation.render());//"Hybrid recommender system"));
     }
+
 
 }

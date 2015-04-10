@@ -33,16 +33,18 @@ public class Business extends Model{
 	public double stars;
 	public int review_count;
 
-    @Transient
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "businesscategories")
 	public ArrayList<Category> categories;
-    private String categoriesDB;
+    //private String categoriesDB;
 
     @OneToMany(mappedBy = "business")
     public ArrayList<Tip> tips;
 
-    @Transient
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "businessattributes")
     public ArrayList<AttributeDB> attributes;
-    private String attributesDB;
+    //private String attributesDB;
 
 	public boolean open;//TODO??
 
@@ -172,6 +174,7 @@ public class Business extends Model{
 	}
 
 	public ArrayList<Category> getCategories() {
+        /*
         if(categories==null||categories.isEmpty())
         {
             categories=new ArrayList<Category>();
@@ -180,11 +183,13 @@ public class Business extends Model{
             String[] catids=categoriesDB.split(",");
             for( String id:catids)
             {
-                Category f=Category.find.byId(Long.parseLong(id));
+                Category f=Category.finder.byId(Long.parseLong(id));
                 if(f!=null)
                     categories.add(f);
             }
-        }
+        }*/
+        if(categories==null)
+            return new ArrayList<>();
 		return categories;
 	}
 
@@ -201,6 +206,7 @@ public class Business extends Model{
 	}
 
 	public ArrayList<AttributeDB> getAttributes() {
+        /*
         if(attributes==null||attributes.isEmpty())
         {
             attributes=new ArrayList<AttributeDB>();
@@ -214,6 +220,9 @@ public class Business extends Model{
                     attributes.add(f);
             }
         }
+        */
+        if(attributes==null)
+            return new ArrayList<>();
 		return attributes;
 	}
 
@@ -231,7 +240,7 @@ public class Business extends Model{
     @Override
     public void save() {
 
-
+/*
         if((attributesDB==null||attributesDB.isEmpty())&&attributes!=null)
         {
             attributesDB="";
@@ -275,11 +284,9 @@ public class Business extends Model{
         }
         String assigned=categoriesDB.isEmpty()?"":categoriesDB.substring(1);
         categoriesDB=assigned;
+*/
 
         super.save();
     }
 
-    public void setAttributesString(String attributesString) {
-        this.attributesDB = attributesString;
-    }
 }
