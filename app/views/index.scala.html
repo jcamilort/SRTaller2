@@ -46,7 +46,7 @@
     });
 
 
-    var map;
+    var map, layer;
         var lastMarker;
     function initialize() {
     var mapOptions = {
@@ -55,6 +55,14 @@
     };
     map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
     google.maps.event.addListener(map, 'click',geodeleg);
+    
+   layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: '\'Location\'',
+      from: '1WtuOzZqOYiiMQ24qapSyzz3AHaYl6hfoh3J7oLKn'
+    }
+  });
+  layer.setMap(map);
     }
 
     function geodeleg(e){

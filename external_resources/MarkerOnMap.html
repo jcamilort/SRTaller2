@@ -13,7 +13,7 @@
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
     <script>
-    var map;
+    var map, layer;
 function initialize() {
   var mapOptions = {
     zoom: 4,
@@ -25,6 +25,14 @@ function initialize() {
   google.maps.event.addListener(map, 'click', function(e) {
     placeMarker(e.latLng, map);
   });
+  
+   layer = new google.maps.FusionTablesLayer({
+    query: {
+      select: '\'Location\'',
+      from: '1WtuOzZqOYiiMQ24qapSyzz3AHaYl6hfoh3J7oLKn'
+    }
+  });
+  layer.setMap(map);
 }
 
 function placeMarker(position, map) {
