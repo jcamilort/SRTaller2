@@ -21,7 +21,15 @@ public class Application extends Controller {
     public static User getLoggedUser()
     {
         String uid="";
-        uid=request().cookies().get("user_id").value();
+        try
+        {
+            uid=request().cookies().get("user_id").value();
+        }
+        catch(Exception e)
+        {
+            
+        }
+
         if(uid!=null&&!uid.isEmpty())
             return User.find.byId(uid);
         return null;
