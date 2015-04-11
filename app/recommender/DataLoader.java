@@ -62,7 +62,7 @@ public class DataLoader {
         cargarNegociosDB();
         cargarUsuarios();
         cargarTips();
-        //cargarReviewsDB();
+        cargarReviews();
     }
 
     private static void cargarAtributos() {
