@@ -458,7 +458,7 @@ public class DataLoader {
 //					review.setVotes(votes);
 					review.setDate(d);
 					review.setStars(stars);
-					review.setText(text);
+                    review.setText(text.substring(0, Math.min(text.length(), 250)));
 					review.setUser_id(user_id);
 					review.save();
 
