@@ -52,7 +52,7 @@ public class LocationFilter {
 			e.printStackTrace();
 			return null;
 		}
-	}
+    }
 
 	public static JSONObject receiveJSON(String url) {
 		BufferedReader in = null;

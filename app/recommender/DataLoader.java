@@ -922,7 +922,11 @@ public class DataLoader {
 
                     // TODO terminar de asignar atributos y horas
 
+                    System.out.println("n categs:"+categorias_negocio!=null?categorias_negocio.size():"0");
+                    ArrayList<AttributeDB> alist = getAttributesList(atrStr);
+                    System.out.println("n attrs:"+alist!=null?alist.size():"0");
                     negocio.setCategories(categorias_negocio);
+                    negocio.setAttributes(alist);
                     negocio.setName(name);
                     negocio.setFull_address(full_address);
                     negocio.setLatitude(latitude);
@@ -932,10 +936,8 @@ public class DataLoader {
                     negocio.setState(state);
                     negocio.setStars(stars);
                     negocio.setReview_count(review_count_int);
-                    negocio.setAttributes(getAttributesList(atrStr));
+
                     //negocio.setAttributesString(atrStr);
-
-
 
                     negocio.save();
                     // colector.addBusiness(negocio);
