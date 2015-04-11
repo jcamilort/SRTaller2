@@ -24,7 +24,9 @@ import java.util.ArrayList;
  */
 public class ContentRecommender {
 
-    private final GenericItemBasedRecommender recommender;
+    private static ContentRecommender instance;
+    
+	private final GenericItemBasedRecommender recommender;
     private final PlusAnonymousConcurrentUserDataModel plusDataModel;
     private DataModel datamodel;
     public ContentRecommender()
@@ -89,5 +91,12 @@ public class ContentRecommender {
         return new EvaluationResult();
 
     }
+    
 
+	public static ContentRecommender getInstance() {
+		if(instance == null){
+			instance = new ContentRecommender();
+		}
+		return instance;
+	}
 }

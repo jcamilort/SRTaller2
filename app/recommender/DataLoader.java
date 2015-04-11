@@ -40,7 +40,7 @@ public class DataLoader {
     private static ArrayList<String> attr_n1 = new ArrayList<String>();
 
     public static void main(String[] args0) {
-		colector = EntityCollector.getInstance();
+		//colector = EntityCollector.getInstance();
 
 		//buildCategories();
 		//buildAttributes();
@@ -140,7 +140,7 @@ public class DataLoader {
                     atributo.setEnclosure(false);
 
                     arbol.add(atributo);
-                    if((boolean)atributos.get(key))
+                    if(Boolean.parseBoolean((String)atributos.get(key)))
                         atsBusiness.add(atributo);
                 }
             } else if (atributos.get(key).getClass()
@@ -278,7 +278,7 @@ public class DataLoader {
                                 }
                             }
 
-                            if(!subatributos.get(atn2Val).getClass().equals(Boolean.class)||(boolean)subatributos.get(atn2Val))
+                            if(!subatributos.get(atn2Val).getClass().equals(Boolean.class)||Boolean.parseBoolean((String)subatributos.get(atn2Val)))
                                 atsBusiness.add(atributo);
                         }
                     }
@@ -408,29 +408,27 @@ public class DataLoader {
 			while ((line = br.readLine()) != null) {
 
 				try {
-					Review review = new Review();
+//					Review review = new Review();
 				//	line = line.replace("\\", "");
 				//	System.out.println("Nueva linea");
-					System.out.println(line);
 
 					JSONParser jsonParser = new JSONParser();
 					JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
-					System.out.println(jsonObject.toJSONString());
 
 					String business_id = (String) jsonObject.get("business_id");
 					String user_id = (String) jsonObject.get("user_id");
 					long stars_long = (Long) jsonObject.get("stars");
 					double stars = (double) stars_long;
-					String text = (String) jsonObject.get("text");
-                    Date d=new Date();
-                    try{
-                        d = (new SimpleDateFormat("yyyy-MM-dd"))
-                                .parse(jsonObject.get("date").toString());
-                    }
-                    catch(Exception ex)
-                    {
-
-                    }
+//					String text = (String) jsonObject.get("text");
+//                    Date d=new Date();
+//                    try{
+//                        d = (new SimpleDateFormat("yyyy-MM-dd"))
+//                                .parse(jsonObject.get("date").toString());
+//                    }
+//                    catch(Exception ex)
+//                    {
+//
+//                    }
 
 //
 //					// Vote Extraction
@@ -462,15 +460,15 @@ public class DataLoader {
 //					votes.add(1, funny);
 //					votes.add(2, useful);
 //
-					review.setBusiness_id(business_id);
+//					review.setBusiness_id(business_id);
 //					review.setVotes(votes);
-					review.setDate(d);
-					review.setStars(stars);
-                    review.setText(text.substring(0, Math.min(text.length(), 250)));
-					review.setUser_id(user_id);
-					review.save();
-
-					writer.println(business_id + ";" + user_id + ";" + stars);
+//					review.setDate(d);
+//					review.setStars(stars);
+//                    review.setText(text.substring(0, Math.min(text.length(), 250)));
+//					review.setUser_id(user_id);
+//					review.save();
+					System.out.println(user_id + ";" + business_id + ";" + stars);
+					writer.println(user_id + ";" + business_id + ";" + stars);
 
 				} catch (Exception e) {
 					System.out.println("EXCEPTION THROWN: " + e.getClass()
@@ -976,7 +974,7 @@ public class DataLoader {
 
     private static ArrayList<AttributeDB> getAttributesList(String atrStr) {
 
-        ArrayList<AttributeDB> resp=new ArrayList<>();
+        ArrayList<AttributeDB> resp=new ArrayList<AttributeDB>();
         String[] all=atrStr.split(",");
         for (String a:all)
         {
