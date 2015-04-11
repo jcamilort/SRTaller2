@@ -28,6 +28,10 @@ public class Review extends Model{
 	public double stars;
 	public String text;
 	public Date date;
+
+    public static Finder<Long,Review> finder = new Finder<Long,Review>(
+            Long.class, Review.class
+    );
 	
 	/**
 	 * Modela los votos sobre el review de las caracteristicas en el arreglo

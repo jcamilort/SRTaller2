@@ -390,6 +390,14 @@ public class DataLoader {
 		}
 	}
 	private static void cargarReviews() {
+        try {
+            if(Review.finder.all().size()>0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(rutaReviews));
 			System.out.println("Lee el archivo");
