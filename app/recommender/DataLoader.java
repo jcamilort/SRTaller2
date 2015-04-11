@@ -68,7 +68,7 @@ public class DataLoader {
 
     private static void generateContentModel() {
         try {
-            List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from itemcontent").findList();
+            List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from item_content").findList();
             if(q.get(0).getInteger("count")>0)
                 return;
         }
@@ -83,7 +83,9 @@ public class DataLoader {
         for (SqlRow row:q)
         {
             try{
-                User.find.byId(row.getString("uid")).categories.add(Category.finder.byId(row.getLong("cid")));
+                User tempo=User.find.byId(row.getString("uid"));
+                tempo.categories.add(Category.finder.byId(row.getLong("cid")));
+                tempo.save();
 
             }
             catch(Exception ex){}
