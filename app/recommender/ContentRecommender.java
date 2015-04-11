@@ -13,8 +13,8 @@ import org.apache.mahout.cf.taste.model.PreferenceArray;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
 import play.Play;
-import play.api.Application;
-import play.api.db.DB;
+
+import play.db.*;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -29,9 +29,8 @@ public class ContentRecommender {
     private DataModel datamodel;
     public ContentRecommender()
     {
-        DataSource ds = DB.getDataSource("default", (Application) Play.application());
-        //TODO create view with null timestamp and value=1;
-        datamodel=new MySQLJDBCDataModel(ds,"businesscategories_view","business_business_id","category_category_id","view_val","view_stamp");
+        DataSource ds = DB.getDataSource();
+        datamodel=new MySQLJDBCDataModel(ds,"itemcontent","itemlong_id","feature_id","rating",null);
 
         ItemSimilarity similarity = new TanimotoCoefficientSimilarity(datamodel);
         recommender=new GenericItemBasedRecommender(datamodel,similarity);

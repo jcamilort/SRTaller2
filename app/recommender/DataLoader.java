@@ -12,6 +12,7 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 import models.*;
 
+import org.apache.mahout.cf.taste.impl.model.MemoryIDMigrator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -62,6 +63,48 @@ public class DataLoader {
         cargarUsuarios();
         cargarTips();
         cargarReviews();
+        generateContentModel();
+    }
+
+    private static void generateContentModel() {
+        try {
+            List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from itemcontent").findList();
+            if(q.get(0).getInteger("count")>0)
+                return;
+        }
+        catch(Exception e)
+        {
+            //does not exist
+        }
+
+        List<SqlRow> q = Ebean
+                .createSqlQuery(" select user.user_id as uid,category_category_id as cid from user join review on user.user_id=review.user_id join businesscategories on businesscategories.business_business_id = review.business_id ")
+                .findList();
+        for (SqlRow row:q)
+        {
+            try{
+                User.find.byId(row.getString("uid")).categories.add(Category.finder.byId(row.getLong("cid")));
+
+            }
+            catch(Exception ex){}
+        }
+
+        List<SqlRow> q2 = Ebean
+                .createSqlQuery(" select * from businesscategories")
+                .findList();
+
+        MemoryIDMigrator thing2long = new MemoryIDMigrator();
+
+        for (SqlRow row:q)
+        {
+            try{
+                String sid=row.getString("business_business_id");
+                ItemContent ic=new ItemContent(sid,thing2long.toLongID(sid),row.getInteger("category_category_id"),1);
+                ic.save();
+            }
+            catch(Exception ex){}
+        }
+
     }
 
     private static void cargarAtributos() {

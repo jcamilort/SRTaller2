@@ -213,8 +213,6 @@ public class CollaborativeRecommender {
 	 * If less then 10 things are found the array will contain less elements. If
 	 * no recommendations are found the array will contain 0 elements.
 	 * 
-	 * @param personName
-	 *            The Facebook name of the person
 	 * @return a string array with recommendations
 	 * @throws TasteException
 	 *             If anything goes wrong a TasteException is thrown

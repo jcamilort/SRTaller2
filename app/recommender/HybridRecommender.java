@@ -1,5 +1,6 @@
 package recommender;
 
+import models.Business;
 import models.Recommendation;
 import models.User;
 
@@ -15,7 +16,29 @@ public class HybridRecommender {
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
         //TODO
-        return new ArrayList<Recommendation>();
+        ArrayList<Recommendation> returned = new ArrayList<Recommendation>();
+
+        //
+        /*
+        Business bt=new Business();
+        bt.setName("un business");
+        bt.setBusiness_id("id1");
+        returned.add(new Recommendation(bt,4.8));
+
+        bt=new Business();
+        bt.setName("otro business");
+        bt.setBusiness_id("id2");
+        returned.add(new Recommendation(bt,4.8));
+
+        bt=new Business();
+        bt.setName("tercer business");
+        bt.setBusiness_id("id3");
+        returned.add(new Recommendation(bt,4.8));
+        */
+        ContentRecommender crec=new ContentRecommender();
+
+        crec.recommend(null,"",null,categories,null);
+        return returned;
 
     }
 

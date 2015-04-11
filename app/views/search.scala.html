@@ -43,20 +43,17 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>Hard rock</td>
+                    <td>Hard rock (sample)</td>
                     <td>5.0</td>
                     <td><a>+</a></td>
                 </tr>
-                <tr>
-                    <td>West Coffee</td>
-                    <td>5.0</td>
-                    <td><a>+</a></td>
-                </tr>
-                <tr>
-                    <td>America's Hotel</td>
-                    <td>4.5</td>
-                    <td><a>+</a></td>
-                </tr>
+                @for(r <- items) {
+                    <tr>
+                        <td>@r.getBusiness().getName()</td>
+                        <td>@r.getEstimatedRating</td>
+                        <td><a target="_blank" href="/business/@r.getBusiness().getBusiness_id">+</a></td>
+                    </tr>
+                }
             </tbody>
             </table>
     </div>

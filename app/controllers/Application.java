@@ -3,8 +3,12 @@ package controllers;
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlRow;
+import com.google.gson.JsonObject;
+import models.Business;
 import models.Recommendation;
 import models.User;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import play.*;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -161,4 +165,8 @@ public class Application extends Controller {
     }
 
 
+    public static Result getBusiness(String id) {
+        JSONObject jo=new JSONObject();
+        return ok(business.render(Business.find.byId(id)));
+    }
 }
