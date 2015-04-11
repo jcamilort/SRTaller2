@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -35,7 +36,7 @@ public class Business extends Model{
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "businesscategories")
-	public ArrayList<Category> categories;
+	public List<Category> categories;
     //private String categoriesDB;
 
     @OneToMany(mappedBy = "business")
@@ -43,7 +44,7 @@ public class Business extends Model{
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "businessattributes")
-    public ArrayList<AttributeDB> attributes;
+    public List<AttributeDB> attributes;
     //private String attributesDB;
 
 	public boolean open;//TODO??
@@ -173,7 +174,7 @@ public class Business extends Model{
 		this.review_count = review_count;
 	}
 
-	public ArrayList<Category> getCategories() {
+	public List<Category> getCategories() {
         /*
         if(categories==null||categories.isEmpty())
         {
@@ -205,7 +206,7 @@ public class Business extends Model{
 		this.open = open;
 	}
 
-	public ArrayList<AttributeDB> getAttributes() {
+	public List<AttributeDB> getAttributes() {
         /*
         if(attributes==null||attributes.isEmpty())
         {
