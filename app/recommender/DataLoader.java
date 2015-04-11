@@ -6,11 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
 import models.*;
 
 import org.json.simple.JSONArray;
@@ -391,7 +390,8 @@ public class DataLoader {
 	}
 	private static void cargarReviews() {
         try {
-            if(Review.finder.all().size()>0)
+            List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from review").findList();
+            if(q.get(0).getInteger("count")>0)
                 return;
         }
         catch(Exception e)
