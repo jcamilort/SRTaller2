@@ -44,7 +44,10 @@ public class ContentRecommender {
     {
         Category[] cs = new Category[0];
         if(categories==null||categories.length==0)
-            if(user!=null) cs=user.categories.toArray(new Category[user.categories.size()]);
+            if(user!=null) {
+                user.updateCategories();
+                cs=user.categories.toArray(new Category[user.categories.size()]);
+            }
         else
         {
             cs=new Category[categories.length];

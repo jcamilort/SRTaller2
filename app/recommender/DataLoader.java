@@ -77,27 +77,13 @@ public class DataLoader {
             //does not exist
         }
 
-        List<SqlRow> q = Ebean
-                .createSqlQuery(" select user.user_id as uid,category_category_id as cid from user join review on user.user_id=review.user_id join businesscategories on businesscategories.business_business_id = review.business_id ")
-                .findList();
-        for (SqlRow row:q)
-        {
-            try{
-                User tempo=User.find.byId(row.getString("uid"));
-                tempo.categories.add(Category.finder.byId(row.getLong("cid")));
-                tempo.save();
-
-            }
-            catch(Exception ex){}
-        }
-
         List<SqlRow> q2 = Ebean
                 .createSqlQuery(" select * from businesscategories")
                 .findList();
 
         MemoryIDMigrator thing2long = new MemoryIDMigrator();
 
-        for (SqlRow row:q)
+        for (SqlRow row:q2)
         {
             try{
                 String sid=row.getString("business_business_id");
