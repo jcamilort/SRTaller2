@@ -58,7 +58,41 @@ public class Application extends Controller {
 
         return ok(index.render(logged));//"Hybrid recommender system"));
     }
+    
+    public static Result indexPost() {
 
+        DynamicForm data = Form.form().bindFromRequest();
+    	String user_id="";
+        String useridTemp=user_id;
+
+        User logged = null;
+		
+        try
+        {
+            user_id=data.get("userid");
+        }
+        catch(Exception e)
+        {
+        }
+        if(user_id==null)
+        {
+            user_id=useridTemp;
+
+        }
+        if(!user_id.isEmpty()) {
+            try {
+                logged = User.find.byId(user_id);
+            }
+            catch(Exception e)
+            {
+            	
+            }
+        }
+
+        response().setCookie("user_id",user_id);
+        
+        return ok(index.render(logged));//"Hybrid recommender system"));
+    }
     public static Result searchGet()
     {
         String user_id="";
@@ -91,7 +125,7 @@ public class Application extends Controller {
         if(logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        ArrayList<String> cstr=new ArrayList<>();
+        ArrayList<String> cstr=new ArrayList<String>();
         for (String cs:categoriesList)
         {
             cstr.add(cs);
@@ -196,13 +230,15 @@ public class Application extends Controller {
         }
 
         response().setCookie("user_id",user_id);
-
+        if(logged == null){
+        	System.out.println("EL USUARIO ES NULO!");
+        }
         ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
 
         if((categoriesList==null||categoriesList.length==0)&&logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        ArrayList<String> cstr=new ArrayList<>();
+        ArrayList<String> cstr=new ArrayList<String>();
         for (String cs:categoriesList)
         {
             cstr.add(cs);

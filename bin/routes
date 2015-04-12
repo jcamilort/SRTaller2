@@ -4,7 +4,7 @@
 
 # Home page
 GET         /                    controllers.Application.index()
-POST        /index               controllers.Application.index()
+POST        /index               controllers.Application.indexPost()
 GET         /data                controllers.SemantriaController.loadData()
 GET         /semantria           controllers.SemantriaController.index()
 GET         /sentiment           controllers.SemantriaController.sentiment()

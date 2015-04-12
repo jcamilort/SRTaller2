@@ -60,7 +60,7 @@ public class CollaborativeRecommender {
 	 * model can be become quite memory consuming. In our case it will be around
 	 * 2 mb.
 	 */
-	private static DataModel dataModel;
+	private static DataModel dataModel = null;
 
 	private static GenericBooleanPrefItemBasedRecommender recommenderGBIR;
 
@@ -96,7 +96,8 @@ public class CollaborativeRecommender {
 		executeRecommender("uMKK1Ans4DrUsxlliIH_xA", 100, 10, EUCLIDEAN);
 	}
 
-	public static void generateDataModel() {
+	public static void generateDataModel() 
+	{
 		try {
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
@@ -220,20 +221,14 @@ public class CollaborativeRecommender {
 				System.out.println("Got recommendations..."+recommendations.size());
 				
 				Business found = Business.find.byId(thing2long.toStringID(rec.getItemID()));
-				System.out.println("Found business..."+found.getName()+" "+found.getBusiness_id());
+				if(found!=null){
+					System.out.println("Found business..."+found.getName()+" "+found.getBusiness_id());
 				
-				Recommendation recom = new Recommendation(found, rec.getValue());
-
-				result.add(recom);
-
-				System.out.println(rec.getItemID() + " :: " + rec.getValue());
+					Recommendation recom = new Recommendation(found, rec.getValue());
+					result.add(recom);
+				}
 			}
-
-			// System.out.println("BOOLEAN PREFERENCES");
-			//
-			// for( String rec : recommendationsBooleanPref){
-			// System.out.println(rec);
-			// }
+			System.out.println("All collaborative recommendations added");
 			return result;
 
 		} catch (TasteException e) {
@@ -261,7 +256,8 @@ public class CollaborativeRecommender {
 	 * @throws TasteException
 	 *             If anything goes wrong a TasteException is thrown
 	 */
-	public static List<RecommendedItem> recommendThings(String user_id,int numberOfRecommendations) throws TasteException {
+	public static List<RecommendedItem> recommendThings(String user_id,int numberOfRecommendations) throws TasteException
+	{
 		// List<String> recommendations = new ArrayList<String>();
 		List<RecommendedItem> items = null;
 		try {
@@ -293,6 +289,7 @@ public class CollaborativeRecommender {
 	public static CollaborativeRecommender getInstance() {
 		if (instance == null) {
 			instance = new CollaborativeRecommender();
+			instance.generateDataModel();
 		}
 		return instance;
 	}
