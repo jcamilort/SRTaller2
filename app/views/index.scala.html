@@ -47,7 +47,7 @@
 
         var la=@us.getMedianLatitude();
          var lo=@us.getMedianLongitude();
-        var newpos=new google.maps.LatLng();
+        var newpos=new google.maps.LatLng(la,lo);
         placeMarker ( newpos, map ) ;
         }
         return false;

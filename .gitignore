@@ -20,3 +20,4 @@ db/*
 *.sql
 *.DS_STORE
 *.log
+*.datamodel
