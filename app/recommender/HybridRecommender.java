@@ -11,14 +11,13 @@ import java.util.ArrayList;
  */
 public class HybridRecommender {
 
-    private static final int RADIO_FILTRO = 2000;
+    private static final int RADIO_FILTRO = 25000;
 	private static HybridRecommender instance;
     private static CollaborativeRecommender colaborativo;
     private static ContentRecommender contenido;
     
     public static void main(String [] args)
     {
-
    	 	User user = new User();
    	 	user.setUser_id("uMKK1Ans4DrUsxlliIH_xA");
 
@@ -28,13 +27,16 @@ public class HybridRecommender {
     public HybridRecommender()
     {
     	colaborativo = CollaborativeRecommender.getInstance();
-    	//contenido =  ContentRecommender.getInstance();
+    	contenido =  ContentRecommender.getInstance();
     }
 
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
     	//TODO filtrar por posicion y horas
     	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], RADIO_FILTRO);
+    	colaborativo.generateDataModelPositionBased(cercanos);
+    	
+    	contenido.setFilteredBusinessGeo(cercanos);
 //    	for(Business b:cercanos){
 //    		if(b!=null)
 //    		System.out.println(b.getBusiness_id()+" :: "+b.getName());

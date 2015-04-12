@@ -66,34 +66,150 @@ public class CollaborativeRecommender {
 
 	private static CollaborativeRecommender instance;
 
-	/**
-	 * // * This function will init the recommender // * it will load the CSV
-	 * file from the resource folder, // * parse it and create the necessary
-	 * data structures // * to create a recommender. // * The //
-	 */
-	// @PostConstruct
-	// public void initRecommender() {
-	//
-	// try {
-	//
-	// } catch (FileNotFoundException e) {
-	// System.out.println(DATA_FILE_NAME+" was not found"+ e.getMessage());
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// System.out.println("Error during reading line of file"+ e.getMessage());
-	// e.printStackTrace();
-	// }
-	// }
-
 	public static final int PEARSON = 1;
 	public static final int SPEARMAN = 2;
 	public static final int EUCLIDEAN = 3;
 
 	public static final long user_id_test = 5;
 
+	private static final String rutaReviewInfoLocationBased = null;
+
 	public static void main(String[] args) {
 		//generateDataModel();
 		executeRecommender("uMKK1Ans4DrUsxlliIH_xA", 100, 10, EUCLIDEAN);
+	}
+	
+	public static void generateDataModelPositionBased(ArrayList<Business> businesses){
+		try {
+			// create a file out of the resource
+			File data = new File(rutaReviewInfo);
+
+			// create a map for saving the preferences (likes) for
+			// a certain person
+			Map<Long, List<Preference>> preferecesOfUsers = new HashMap<Long, List<Preference>>();
+
+			// use a CSV parser for reading the file
+			// use UTF-8 as character set
+			BufferedReader br = new BufferedReader(new FileReader(data));
+
+			String line;
+			String negocio_anterior = "";
+			boolean contenido_anterior  = false;
+			// go through every line
+			while ((line = br.readLine()) != null) {
+				String[] parts = line.split(";");
+				String likeName = parts[1].trim();
+				
+				if(negocio_anterior.equals(likeName)){
+					if(contenido_anterior){
+						String person = parts[0].trim();
+						float preference = Float.parseFloat(parts[2]);
+						
+						// create a long from the person name
+						long userLong = thing2long.toLongID(person);
+						
+						// store the mapping for the user
+						thing2long.storeMapping(userLong, person);
+						
+						// create a long from the like name
+						long itemLong = thing2long.toLongID(likeName);
+						
+						// store the mapping for the item
+						thing2long.storeMapping(itemLong, likeName);
+						
+						List<Preference> userPrefList;
+						
+						// if we already have a userPrefList use it
+						// otherwise create a new one.
+						if ((userPrefList = preferecesOfUsers.get(userLong)) == null) {
+							userPrefList = new ArrayList<Preference>();
+							preferecesOfUsers.put(userLong, userPrefList);
+						}
+						// add the like that we just found to this user
+						userPrefList.add(new GenericPreference(userLong, itemLong,
+								preference));
+						System.out.println("Adding " + person + "(" + userLong
+								+ ") to " + likeName + "(" + itemLong
+								+ ") with preference " + preference);
+					}
+				}
+				else{
+					negocio_anterior = likeName;
+					if(isContainedIn(likeName, businesses)){
+						contenido_anterior=true;
+						String person = parts[0].trim();
+						float preference = Float.parseFloat(parts[2]);
+						
+						// create a long from the person name
+						long userLong = thing2long.toLongID(person);
+						
+						// store the mapping for the user
+						thing2long.storeMapping(userLong, person);
+						
+						// create a long from the like name
+						long itemLong = thing2long.toLongID(likeName);
+						
+						// store the mapping for the item
+						thing2long.storeMapping(itemLong, likeName);
+						
+						List<Preference> userPrefList;
+						
+						// if we already have a userPrefList use it
+						// otherwise create a new one.
+						if ((userPrefList = preferecesOfUsers.get(userLong)) == null) {
+							userPrefList = new ArrayList<Preference>();
+							preferecesOfUsers.put(userLong, userPrefList);
+						}
+						// add the like that we just found to this user
+						userPrefList.add(new GenericPreference(userLong, itemLong,
+								preference));
+						System.out.println("Adding " + person + "(" + userLong
+								+ ") to " + likeName + "(" + itemLong
+								+ ") with preference " + preference);
+					}
+					else{
+						contenido_anterior = false;
+					}			
+					
+				}
+				
+
+			}
+
+			// create the corresponding mahout data structure from the map
+			FastByIDMap<PreferenceArray> preferecesOfUsersFastMap = new FastByIDMap<PreferenceArray>();
+			for (Entry<Long, List<Preference>> entry : preferecesOfUsers
+					.entrySet()) {
+				preferecesOfUsersFastMap.put(entry.getKey(),
+						new GenericUserPreferenceArray(entry.getValue()));
+			}
+
+			// create a data model
+			dataModel = new GenericDataModel(preferecesOfUsersFastMap);
+
+			FileOutputStream fos = new FileOutputStream("dataModelLocation.model");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+			oos.writeObject(dataModel);
+			System.out.println("DataModel Generated!");
+			oos.close();
+
+		} catch (IOException e) {
+			System.out.println("Exception: " + e.getClass() + ": "
+					+ e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private static boolean isContainedIn(String business_id, ArrayList<Business> businesses) {
+		boolean termino = false;
+		for (int i = 0 ; i < businesses.size() && !termino; i++)
+		{
+			if(businesses.get(i).business_id.equals(business_id)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void generateDataModel() 
@@ -178,7 +294,8 @@ public class CollaborativeRecommender {
 
 			ArrayList<Recommendation> result = new ArrayList<Recommendation>();
 			
-			FileInputStream fis = new FileInputStream("dataModel.model");
+			//FileInputStream fis = new FileInputStream("dataModel.model");
+			FileInputStream fis = new FileInputStream("dataModelLocation.model");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 
 			dataModel = (DataModel) ois.readObject();

@@ -200,7 +200,7 @@ public class ContentRecommender {
 
     private String calculateJoinGeoFiltered() {
         //TODO iterate over geofilterBusinessArray
-        if(filteredBusinessGeo)
+        //if(filteredBusinessGeo)
         return "";
     }
 
