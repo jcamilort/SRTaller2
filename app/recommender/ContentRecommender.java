@@ -238,29 +238,6 @@ public class ContentRecommender {
         {
             Long au = plusDataModel.takeAvailableUser();
             plusDataModel.setTempPrefs(getPreferenceArray(cs,au),au);
-            /*
-            try {
-                recommendations = recommenderCol.recommend(au, 30);
-
-
-                for (int i = 0; i < recommendations.size(); i++) {
-                    try {
-                        RecommendedItem recommendation = recommendations.get(i);
-                        List<SqlRow> q = Ebean.createSqlQuery("select item_id from item_content where itemlong_id=" + recommendation.getItemID()).findList();
-                        String bid = q.get(0).getString("item_id");
-                        Business rec = Business.find.byId(bid);
-                        returned.add(new Recommendation(rec, recommendation.getValue()));
-                    }
-                    catch(Exception ex)
-                    {
-                        ex.printStackTrace();
-                    }
-                }
-            } catch (TasteException e) {
-                e.printStackTrace();
-            }
-
-*/
             try {
                 long[] myneigh = neighborhood.getUserNeighborhood(au);
 

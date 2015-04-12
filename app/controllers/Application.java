@@ -55,6 +55,8 @@ public class Application extends Controller {
     public static Result index() {
 
         User logged=getLoggedUser();
+        if(logged!=null)
+            response().setCookie("user_id",logged.getUser_id());
 
         return ok(index.render(logged));//"Hybrid recommender system"));
     }
