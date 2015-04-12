@@ -5,8 +5,8 @@ package models;
  */
 public class Recommendation {
 
-    private Business business;
-    private double estimatedRating;
+    public Business business;
+    public double estimatedRating;
 
     public Recommendation()
     {}

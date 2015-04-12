@@ -15,7 +15,7 @@ import play.data.Form;
 import play.mvc.*;
 
 import views.html.*;
-import recommender.*;
+import recommender.HybridRecommender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,24 +54,47 @@ public class Application extends Controller {
 
     public static Result index() {
 
-        User logged=null;
-        String user_id="";
-        try {
-            DynamicForm data = Form.form().bindFromRequest();
-            user_id = data.get("userid");
-            logged=User.find.byId(user_id);
-        }catch (Exception e){}
-
-        if(logged==null)
-        {
-            logged=getLoggedUser();
-        }
+        User logged=getLoggedUser();
         if(logged!=null)
             response().setCookie("user_id",logged.getUser_id());
 
         return ok(index.render(logged));//"Hybrid recommender system"));
     }
+    
+    public static Result indexPost() {
 
+        DynamicForm data = Form.form().bindFromRequest();
+    	String user_id="";
+        String useridTemp=user_id;
+
+        User logged = null;
+		
+        try
+        {
+            user_id=data.get("userid");
+        }
+        catch(Exception e)
+        {
+        }
+        if(user_id==null)
+        {
+            user_id=useridTemp;
+
+        }
+        if(!user_id.isEmpty()) {
+            try {
+                logged = User.find.byId(user_id);
+            }
+            catch(Exception e)
+            {
+            	
+            }
+        }
+
+        response().setCookie("user_id",user_id);
+        
+        return ok(index.render(logged));//"Hybrid recommender system"));
+    }
     public static Result searchGet()
     {
         String user_id="";
@@ -97,15 +120,14 @@ public class Application extends Controller {
         response().setCookie("user_id",user_id);
 
 
-        //ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
-        ArrayList<Recommendation> items = ContentRecommender.getInstance().recommend(null, null, logged, null, null);
+        ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
 
 
         String[] categoriesList=new String[0];
         if(logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        ArrayList<String> cstr=new ArrayList<>();
+        ArrayList<String> cstr=new ArrayList<String>();
         for (String cs:categoriesList)
         {
             cstr.add(cs);
@@ -179,7 +201,7 @@ public class Application extends Controller {
 
         }
 
-        //HybridRecommender hr=HybridRecommender.getInstance();
+        HybridRecommender hr=HybridRecommender.getInstance();
 
         double[] pos=new double[2];
         pos[0]=lat;
@@ -210,14 +232,15 @@ public class Application extends Controller {
         }
 
         response().setCookie("user_id",user_id);
-
-        ContentRecommender cr=ContentRecommender.getInstance();
-        ArrayList<Recommendation> items = cr.recommend(pos, hora, logged, categoriesList, attributesList);
+        if(logged == null){
+        	System.out.println("EL USUARIO ES NULO!");
+        }
+        ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
 
         if((categoriesList==null||categoriesList.length==0)&&logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        ArrayList<String> cstr=new ArrayList<>();
+        ArrayList<String> cstr=new ArrayList<String>();
         for (String cs:categoriesList)
         {
             cstr.add(cs);

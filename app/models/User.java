@@ -227,7 +227,8 @@ public class User extends Model{
                 catch(Exception ex){}
 
             }
-            save();
+            this.update();
+            //save();
 
         }
 

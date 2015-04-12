@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class ContentRecommender {
 
-    private static final int MAX_REVIEWED = 2000;
+    private static final int MAX_REVIEWED = 1000;
     private final TanimotoCoefficientSimilarity similarity;
     private final MySQLJDBCDataModel datamodel2;
     private final PlusAnonymousConcurrentUserDataModel plusDataModel2;
@@ -39,6 +39,9 @@ public class ContentRecommender {
     private DataModel datamodel;
     private int maxRec;
     private static ContentRecommender instance;
+    private boolean geoFiltered;
+
+    private ArrayList<Business> filteredBusinessGeo;
 
     public ContentRecommender()
     {
@@ -72,6 +75,14 @@ public class ContentRecommender {
 
     public ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
+        if(latlong!=null&&latlong.length>0)
+        {
+            geoFiltered=true;
+            double[] geoFilter = latlong;
+        }
+        else geoFiltered=false;
+
+
         long t1=System.currentTimeMillis();
         Category[] cs = new Category[0];
         if(categories==null||categories.length==0) {
@@ -141,39 +152,42 @@ public class ContentRecommender {
 
     public double getJaccardSimilarity(long[] c1,long[] c2)
     {
-        String theQuery="";
-        int co1=0,co2=0,cot=0;
+        int cojoin=0,cot=0;
         if(c1.length==0|| c2.length==0)
         {
             return 0;
         }
         String completeQuery="select count(*) as co from category where ";
+        String where1= "where category_id=3 or category_id=4";
+        String where2="where category_id=3 or category_id=4";
+
         if(c1.length>0)
         {
-            theQuery="select count(*) as co from category where ";
+            where1="where ";
             String tqWhere="";
             for (int i = 0; i < c1.length; i++) {
                 tqWhere+= " or category_id=" + c1[i];
             }
-            theQuery+=tqWhere.substring(3);
+            where1+=tqWhere.substring(3);
+
             completeQuery+=tqWhere.substring(3);
-            co1 = Ebean.createSqlQuery(theQuery).findList().get(0).getInteger("co");
         }
         if(c2.length>0)
         {
-            theQuery="select count(*) as co from category where ";
+            where2="";
             String tqWhere="";
             for (int i = 0; i < c2.length; i++) {
                 tqWhere+=" or category_id="+c2[i];
             }
-            theQuery+=tqWhere.substring(3);
+            where2+=tqWhere.substring(3);
             completeQuery+=tqWhere.substring(3);
-            co2 = Ebean.createSqlQuery(theQuery).findList().get(0).getInteger("co");
         }
+        String queryJoin="select count(*) co from (select category_id cid from category"+where1+") c2 join category on cid=category_id "+where2;
 
-        cot = Ebean.createSqlQuery(theQuery).findList().get(0).getInteger("co");
+        cot = Ebean.createSqlQuery(completeQuery).findList().get(0).getInteger("co");
+        cojoin= Ebean.createSqlQuery(queryJoin).findList().get(0).getInteger("co");
 
-        return (double)cot/(double)(co1+co2);
+        return (double)cojoin/(double)cot;
     }
     public double getJaccardSimilarity(Category[] c1,Category[]  c2)
     {
@@ -189,6 +203,13 @@ public class ContentRecommender {
     }
     public String[] getAllPosibleSimilarBusiness(String uid,Category[] cs)
     {
+        String joinstatement="";
+
+        if(geoFiltered)
+        {
+            joinstatement=calculateJoinGeoFiltered();
+        }
+
         String theQuery="";
         if(cs.length>0)
         {
@@ -200,7 +221,8 @@ public class ContentRecommender {
             theQuery+=tqWhere.substring(3);
         }
         else{
-            theQuery="select distinct business_business_id from usercategories join businesscategories on businesscategories.category_category_id=usercategories.category_category_id where user_user_id=\""+uid+"\"";
+            theQuery="select distinct business_business_id from usercategories join businesscategories on businesscategories.category_category_id=usercategories.category_category_id " +joinstatement+
+                    "where user_user_id=\""+uid+"\" order by rand() limit "+MAX_REVIEWED;
         }
         List<SqlRow> re = Ebean.createSqlQuery(theQuery).findList();
         String[] returned=new String[re.size()];
@@ -212,8 +234,10 @@ public class ContentRecommender {
         return returned;
     }
 
-
-
+    private String calculateJoinGeoFiltered() {
+        //TODO iterate over geofilterBusinessArray
+        return "";
+    }
 
 
     public ArrayList<Recommendation> recommend2(double[] latlong,String hour, User user,String[] categories,String[] attributes)
@@ -296,20 +320,7 @@ public class ContentRecommender {
 
     }
 
-    public Object getContentModel() {
-//        Map<Long, List<Preference>> preferecesOfUsers = new HashMap<Long, List<Preference>>();
-//
-//        List<Preference> userPrefList;
-//
-//        // if we already have a userPrefList use it
-//        // otherwise create a new one.
-//        if ((userPrefList = preferecesOfUsers.get(userLong)) == null) {
-//            userPrefList = new ArrayList<Preference>();
-//            preferecesOfUsers.put(userLong, userPrefList);
-//        }
-//        // add the like that we just found to this user
-//        userPrefList.add(new GenericPreference(userLong, itemLong, preference));
-//        System.out.println("Adding " + person + "(" + userLong+ ") to " + likeName + "(" + itemLong + ") with preference "+preference);
-        return null;
+    public void setFilteredBusinessGeo(ArrayList<Business> filteredBusinessGeo) {
+        this.filteredBusinessGeo = filteredBusinessGeo;
     }
 }

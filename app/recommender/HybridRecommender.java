@@ -27,15 +27,19 @@ public class HybridRecommender {
     public HybridRecommender()
     {
     	colaborativo = CollaborativeRecommender.getInstance();
-    	colaborativo.generateDataModel();
     	//contenido =  ContentRecommender.getInstance();
     }
 
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
     	//TODO filtrar por posicion y horas
-    	LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], 2000);
-        
+    	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], 2000);
+//    	for(Business b:cercanos){
+//    		if(b!=null)
+//    		System.out.println(b.getBusiness_id()+" :: "+b.getName());
+//    	}
+    	
+    	//TODO generate the new dataModels
     	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user.user_id, categories,attributes);
     	ArrayList<Recommendation> contentRecs = getContentRecommendations( latlong,hour,  user, categories,attributes);
         
@@ -44,6 +48,7 @@ public class HybridRecommender {
     	{
     		finalRecs.add(null);
     	}
+    	
     	int posIntro;
     	for( int i = 0 ; i < collabRecs.size(); i ++)
     	{
@@ -59,14 +64,26 @@ public class HybridRecommender {
     			}
     		}
     	}
+    	for(int i=finalRecs.size()-1 ; i>=0; i--){
+    		if(finalRecs.get(i)==null){
+    			finalRecs.remove(i);
+    			System.out.println("NULL RECOMMENDATION REMOVED");
+    		}
+    	}
+    	for(int i = 0; i< finalRecs.size() ; i++){
+    		if(finalRecs.get(i)==null)
+    			System.out.println("NULO!!! "+i);
+    	}
         return finalRecs;
     }
 
-    private static boolean introducirAntes(Recommendation rec, int posIntro, ArrayList<Recommendation> finalRecs) {
+
+	private static boolean introducirAntes(Recommendation rec, int posIntro, ArrayList<Recommendation> finalRecs) {
 		boolean termino = false;
 		boolean respuesta = false;
 		
     	if(finalRecs.get(posIntro)==null){
+    		finalRecs.remove(posIntro);
 			finalRecs.set(posIntro, rec);
 			respuesta = true;
 		}
@@ -105,8 +122,6 @@ public class HybridRecommender {
 	private static ArrayList<Recommendation> getContentRecommendations(double[] latlong, String hour, User user, String[] categories,String[] attributes) {
 		ArrayList<Recommendation> returned = new ArrayList<Recommendation>();
     	
-    	//
-    	/*
         Business bt=new Business();
         bt.setName("un business");
         bt.setBusiness_id("id1");
@@ -121,10 +136,8 @@ public class HybridRecommender {
         bt.setName("tercer business");
         bt.setBusiness_id("id3");
         returned.add(new Recommendation(bt,4.8));
-    	 */
-    	ContentRecommender crec=new ContentRecommender();
     	
-    	returned = crec.recommend(latlong,hour,user,categories,attributes);
+    	//returned = contenido.recommend(latlong,hour,user,categories,attributes);
     	return returned;
 	}
 
@@ -133,13 +146,7 @@ public class HybridRecommender {
 			String[] attributes) {
 		int neighbors = 10;
 		int similarityMethod = CollaborativeRecommender.EUCLIDEAN;
-//		if(user!=null){
-//			ArrayList<Recommendation> respuesta = colaborativo.executeRecommender(user_id, 20, neighbors, similarityMethod);
-//			return respuesta;
-//		}
-//		else
-//			return colaborativo.executeRecommender("", 20, neighbors, similarityMethod);
-//			
+
 		return colaborativo.executeRecommender(user_id, 20, neighbors, similarityMethod);
 		//return colaborativo.executeRecommender("6TPxhpHqFedjMvBuw6pF3w", 20, neighbors, similarityMethod);
 	}
