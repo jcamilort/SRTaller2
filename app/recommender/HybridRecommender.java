@@ -37,7 +37,7 @@ public class HybridRecommender {
         */
         ContentRecommender crec=new ContentRecommender();
 
-        crec.recommend(null,"",null,categories,null);
+        crec.recommend(latlong,hour,user,categories,attributes);
         return returned;
 
     }
