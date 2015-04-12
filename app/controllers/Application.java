@@ -59,6 +59,41 @@ public class Application extends Controller {
         return ok(index.render(logged));//"Hybrid recommender system"));
     }
 
+    public static Result searchGet()
+    {
+        String user_id="";
+        String msg="";
+        User logged=null;
+        try{
+            user_id = request().cookie("user_id").value();
+        }
+        catch(Exception e)
+        {
+            msg+="\nWithout user";
+        }
+        if(!user_id.isEmpty()) {
+            try {
+                logged = User.find.byId(user_id);
+            }
+            catch(Exception e)
+            {
+                msg+="\n"+"User error...user_id:"+user_id;
+            }
+        }
+
+        response().setCookie("user_id",user_id);
+
+
+        ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
+
+
+        String[] categoriesList=new String[];
+        if(logged!=null)
+            categoriesList=logged.getCategoriesStr();
+
+        return ok(search.render(msg,logged,items,categoriesList));
+
+    }
     public static Result search()
     {
         DynamicForm data = null;
@@ -158,7 +193,10 @@ public class Application extends Controller {
 
         ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
 
-        return ok(search.render(msg,logged,items));
+        if((categoriesList==null||categoriesList.length==0)&&logged!=null)
+            categoriesList=logged.getCategoriesStr();
+
+        return ok(search.render(msg,logged,items,categoriesList));
     }
     public static Result evaluation() {
         return ok(evaluation.render());//"Hybrid recommender system"));

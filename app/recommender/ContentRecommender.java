@@ -11,13 +11,17 @@ import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 import org.apache.mahout.cf.taste.impl.model.PlusAnonymousConcurrentUserDataModel;
 import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLJDBCDataModel;
+import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
+import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.TanimotoCoefficientSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.model.PreferenceArray;
+import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
+import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import play.Play;
 
 import play.db.*;
@@ -31,20 +35,30 @@ import java.util.List;
  */
 public class ContentRecommender {
 
-    private final GenericItemBasedRecommender recommender;
+    private final TanimotoCoefficientSimilarity similarity;
+    //private final GenericItemBasedRecommender recommender;
+    private GenericUserBasedRecommender recommender;
     private final PlusAnonymousConcurrentUserDataModel plusDataModel;
+    private NearestNUserNeighborhood neighborhood;
     private DataModel datamodel;
     public ContentRecommender()
     {
         DataSource ds = DB.getDataSource();
         datamodel=new MySQLJDBCDataModel(ds,"item_content","itemlong_id","feature_id","rating",null);
 
-        ItemSimilarity similarity = new TanimotoCoefficientSimilarity(datamodel);
+        //ItemSimilarity similarity = new TanimotoCoefficientSimilarity(datamodel);
+        similarity = new TanimotoCoefficientSimilarity(datamodel);
 
 
         plusDataModel = new PlusAnonymousConcurrentUserDataModel(datamodel,100);
         //plusDataModel=(PlusAnonymousConcurrentUserDataModel)recommender.getDataModel();
-        recommender=new GenericItemBasedRecommender(datamodel,similarity);
+        //recommender=new GenericItemBasedRecommender(datamodel,similarity);
+        //recommender=new GenericUserBasedRecommender(datamodel,similarity);
+        try {
+            neighborhood=new NearestNUserNeighborhood(20,similarity,datamodel);
+        } catch (TasteException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -77,8 +91,7 @@ public class ContentRecommender {
         {
             Long au = plusDataModel.takeAvailableUser();
             plusDataModel.setTempPrefs(getPreferenceArray(cs,au),au);
-
-            List<RecommendedItem> recommendations = null;
+            /*
             try {
                 recommendations = recommender.recommend(au, 30);
 
@@ -100,6 +113,27 @@ public class ContentRecommender {
                 e.printStackTrace();
             }
 
+*/
+            try {
+                long[] myneigh = neighborhood.getUserNeighborhood(au);
+
+                for (int i = 0; i < myneigh.length; i++) {
+                    try {
+                        //RecommendedItem recommendation = recommendations.get(i);
+                        List<SqlRow> q = Ebean.createSqlQuery("select item_id from item_content where itemlong_id=" + myneigh[i]).findList();
+                        String bid = q.get(0).getString("item_id");
+                        Business rec = Business.find.byId(bid);
+                        returned.add(new Recommendation(rec, similarity.userSimilarity(au,myneigh[i])));
+                    }
+                    catch(Exception ex)
+                    {
+                        ex.printStackTrace();
+                    }
+                }
+
+            } catch (TasteException e) {
+                e.printStackTrace();
+            }
             plusDataModel.releaseUser(au);
 
             SqlUpdate down = Ebean.createSqlUpdate("DELETE FROM item_content WHERE itemlong_id = "+au);

@@ -1,4 +1,4 @@
-@(msg:String,us:User,items:List[Recommendation])
+@(msg:String,us:User,items:List[Recommendation],categs:List[String])
 @import play.api.libs.json.Json
 
 @main(msg,"Hybrid Recommender",us) {
@@ -122,6 +122,12 @@
     $('#btn_cleantags').click(function () {
     $("#categories_selected").tagit("removeAll");
     });
+
+
+        //preload categories by user
+        @for(c<-categs){
+        $("#categories_selected").tagit("createTag", "@c");
+    }
 
         $('#btn_search' ).click(function(){
             var ats=$("input[name=attributes]:checked").map(

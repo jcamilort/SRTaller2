@@ -64,8 +64,8 @@ public class User extends Model{
     public static Finder<String,User> find = new Finder<String,User>(
             String.class, User.class
     );
-	
-	public User()
+
+    public User()
 	{
 		//votes = new int[VoteTypes.VOTE_VALUES_QUANTITY];
 		//compliments = new int[VoteTypes.VOTE_VALUES_QUANTITY];
@@ -231,5 +231,16 @@ public class User extends Model{
 
         }
 
+    }
+
+    public String[] getCategoriesStr() {
+
+        updateCategories();
+        String ansa="";
+        for (Category c:categories)
+        {
+            ansa+=","+c.getName();
+        }
+        return ansa.length()==0?new String[0]:ansa.substring(1).split(",");
     }
 }
