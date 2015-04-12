@@ -15,7 +15,7 @@ import play.data.Form;
 import play.mvc.*;
 
 import views.html.*;
-import recommender.HybridRecommender;
+import recommender.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,18 @@ public class Application extends Controller {
 
     public static Result index() {
 
-        User logged=getLoggedUser();
+        User logged=null;
+        String user_id="";
+        try {
+            DynamicForm data = Form.form().bindFromRequest();
+            user_id = data.get("userid");
+            logged=User.find.byId(user_id);
+        }catch (Exception e){}
+
+        if(logged==null)
+        {
+            logged=getLoggedUser();
+        }
         if(logged!=null)
             response().setCookie("user_id",logged.getUser_id());
 
@@ -86,7 +97,8 @@ public class Application extends Controller {
         response().setCookie("user_id",user_id);
 
 
-        ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
+        //ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
+        ArrayList<Recommendation> items = ContentRecommender.getInstance().recommend(null, null, logged, null, null);
 
 
         String[] categoriesList=new String[0];
@@ -167,7 +179,7 @@ public class Application extends Controller {
 
         }
 
-        HybridRecommender hr=HybridRecommender.getInstance();
+        //HybridRecommender hr=HybridRecommender.getInstance();
 
         double[] pos=new double[2];
         pos[0]=lat;
@@ -199,7 +211,8 @@ public class Application extends Controller {
 
         response().setCookie("user_id",user_id);
 
-        ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
+        ContentRecommender cr=ContentRecommender.getInstance();
+        ArrayList<Recommendation> items = cr.recommend(pos, hora, logged, categoriesList, attributesList);
 
         if((categoriesList==null||categoriesList.length==0)&&logged!=null)
             categoriesList=logged.getCategoriesStr();
