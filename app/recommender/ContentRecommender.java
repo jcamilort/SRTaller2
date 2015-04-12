@@ -38,6 +38,7 @@ public class ContentRecommender {
     private NearestNUserNeighborhood neighborhood;
     private DataModel datamodel;
     private int maxRec;
+    private static ContentRecommender instance;
 
     public ContentRecommender()
     {
@@ -61,6 +62,12 @@ public class ContentRecommender {
             e.printStackTrace();
         }
         maxRec=20;
+    }
+
+    public static ContentRecommender getInstance() {
+        if(instance==null)
+            instance=new ContentRecommender();
+        return instance;
     }
 
     public ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
@@ -109,11 +116,11 @@ public class ContentRecommender {
             }
             Double[][] ordered=orderAll(similB);
 
-            for (int j = 0; i < maxRec&&i<bids.length; i++) {
+            for (int j = 0; j < maxRec&&j<bids.length; j++) {
                 Recommendation r = new Recommendation();
-                int index=ordered[i][0].intValue();
+                int index=ordered[j][0].intValue();
                 r.setBusiness(Business.find.byId(bids[index]));
-                r.setEstimatedRating(ordered[i][1]);
+                r.setEstimatedRating(ordered[j][1]);
                 returned.add(r);
             }
         }
@@ -125,7 +132,7 @@ public class ContentRecommender {
         Comparator<Double[]> arrayComparator = new Comparator<Double[]>() {
             @Override
             public int compare(Double[] o1, Double[] o2) {
-                return o1[0].compareTo(o2[0]);
+                return o2[1].compareTo(o1[1]);
             }
         };
         Arrays.sort(similB, arrayComparator);
