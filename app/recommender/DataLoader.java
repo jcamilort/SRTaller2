@@ -87,8 +87,10 @@ public class DataLoader {
             //does not exist
         }
 
-        List<SqlRow> q2 = Ebean
-                .createSqlQuery(" select * from businesscategories")
+        SqlQuery sqlQuery = Ebean.createSqlQuery(" select * from businesscategories");
+        sqlQuery.setMaxRows(3000000);
+
+        List<SqlRow> q2 = sqlQuery
                 .findList();
 
         MemoryIDMigrator thing2long = new MemoryIDMigrator();
