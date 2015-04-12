@@ -46,8 +46,8 @@ public class User extends Model{
 	public String yelping_since;
 	public int fans;
 
-    @Transient
-	public ArrayList<Review> reviews;//todo
+
+	public ArrayList<Review> reviews;
 
     @OneToMany(mappedBy = "user")
     public ArrayList<Tip> tips;
@@ -217,7 +217,7 @@ public class User extends Model{
             categories=new ArrayList<Category>();
 
             List<SqlRow> q = Ebean
-                    .createSqlQuery(" select category_category_id as cid from review join businesscategories on businesscategories.business_business_id = review.business_id where user_id=\""+user_id+"\"")
+                    .createSqlQuery(" select distinct category_category_id as cid from review join businesscategories on businesscategories.business_business_id = review.business_id where user_id=\""+user_id+"\"")
                     .findList();
             for (SqlRow row:q)
             {
