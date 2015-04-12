@@ -94,16 +94,22 @@ public class ContentRecommender {
         {
             String[] bids=getAllPosibleSimilarBusiness(user==null?null:user.getUser_id(),cs);
             Double[][] similB=new Double[bids.length][2];
-            for (int i = 0; i < similB.length&&i<MAX_REVIEWED; i++)
+            int i=0;
+            for (i = 0; i < similB.length&&i<MAX_REVIEWED; i++)
             {
                 List<Category> clist = Business.find.byId(bids[i]).categories;
                 Category[] cl2 = clist.toArray(new Category[clist.size()]);
                 similB[i][1]=getJaccardSimilarity(cl2,cs);
                 similB[i][0]=(double)i;
             }
+            for (; i < similB.length; i++)
+            {
+                similB[i][1]=new Double(0);
+                similB[i][0]=(double)i;
+            }
             Double[][] ordered=orderAll(similB);
 
-            for (int i = 0; i < maxRec&&i<bids.length; i++) {
+            for (int j = 0; i < maxRec&&i<bids.length; i++) {
                 Recommendation r = new Recommendation();
                 int index=ordered[i][0].intValue();
                 r.setBusiness(Business.find.byId(bids[index]));
