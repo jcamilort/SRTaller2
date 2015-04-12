@@ -21,8 +21,6 @@ public class ItemContent extends Model{
 	 * Default Serial Version
 	 */
 	private static final long serialVersionUID = 1L;
-
-    @Id
 	public long itemlong_id;
     public long feature_id;//category id;
     public float rating;//1 if exists

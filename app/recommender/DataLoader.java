@@ -90,7 +90,9 @@ public class DataLoader {
                 ItemContent ic=new ItemContent(sid,thing2long.toLongID(sid),row.getInteger("category_category_id"),1);
                 ic.save();
             }
-            catch(Exception ex){}
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
 
     }
