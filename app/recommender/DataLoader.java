@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlRow;
 import models.*;
 
@@ -69,10 +70,14 @@ public class DataLoader {
     private static void generateContentModel() {
         try {
             List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from item_content").findList();
-            List<SqlRow> q2 = Ebean
-                    .createSqlQuery(" select * from businesscategories")
+            SqlQuery qtemp = Ebean
+                    .createSqlQuery(" select * from businesscategories");
+            Set<SqlRow> q3 = qtemp.findSet();
+
+            List<SqlRow> q2 = qtemp
                     .findList();
             System.out.println("\nATTENTION... THERE ARE "+q2.size()+" ROWS IN BUSINESSCATEGORIES....\n");
+            System.out.println("\nwith set... THERE ARE "+q3.size()+" ROWS IN BUSINESSCATEGORIES....\n");
 
             if(q.get(0).getInteger("count")>0)
                 return;
