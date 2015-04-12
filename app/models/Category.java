@@ -66,7 +66,7 @@ public class Category extends Model{
 
         List<Category> r = Category.finder.select("name").findList();
 
-        List<String> strings= new ArrayList<>();
+        List<String> strings= new ArrayList<String>();
         for (Category c:r)
         {
             strings.add(c.getName());

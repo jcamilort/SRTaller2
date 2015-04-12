@@ -51,7 +51,7 @@
     function initialize() {
     var mapOptions = {
     zoom: 12,
-    center: new google.maps.LatLng(4.62296644,-74.0663909)
+    center: new google.maps.LatLng(33.4483771,-112.07403729)
     };
     map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
     google.maps.event.addListener(map, 'click',geodeleg);
@@ -62,7 +62,7 @@
       from: '1WtuOzZqOYiiMQ24qapSyzz3AHaYl6hfoh3J7oLKn'
     }
   });
-  layer.setMap(map);
+  layer.setMap(null);
     }
 
     function geodeleg(e){

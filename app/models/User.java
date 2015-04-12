@@ -73,8 +73,8 @@ public class User extends Model{
         compliments=new ArrayList<Integer>();
         tips=new ArrayList<Tip>();
         reviews=new ArrayList<Review>();
-        attributes=new ArrayList<>();
-        categories=new ArrayList<>();
+        attributes=new ArrayList<AttributeDB>();
+        categories=new ArrayList<Category>();
 	}
 	/**
 	 * @return the reviews

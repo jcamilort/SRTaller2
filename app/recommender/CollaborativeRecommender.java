@@ -2,16 +2,20 @@ package recommender;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import models.User;
-
+import models.Business;
+import models.Recommendation;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
@@ -20,10 +24,8 @@ import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
 import org.apache.mahout.cf.taste.impl.model.MemoryIDMigrator;
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericBooleanPrefItemBasedRecommender;
-import org.apache.mahout.cf.taste.impl.recommender.GenericBooleanPrefUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
 import org.apache.mahout.cf.taste.impl.similarity.EuclideanDistanceSimilarity;
-import org.apache.mahout.cf.taste.impl.similarity.LogLikelihoodSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.PearsonCorrelationSimilarity;
 import org.apache.mahout.cf.taste.impl.similarity.SpearmanCorrelationSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
@@ -62,6 +64,8 @@ public class CollaborativeRecommender {
 
 	private static GenericBooleanPrefItemBasedRecommender recommenderGBIR;
 
+	private static CollaborativeRecommender instance;
+
 	/**
 	 * // * This function will init the recommender // * it will load the CSV
 	 * file from the resource folder, // * parse it and create the necessary
@@ -85,22 +89,15 @@ public class CollaborativeRecommender {
 	public static final int SPEARMAN = 2;
 	public static final int EUCLIDEAN = 3;
 
-	
-	 public static final long user_id_test = 5;
-	
-	 public static void main(String[] args)
-	 {
-	 User user = new User();
-	 user.setUser_id("6TPxhpHqFedjMvBuw6pF3w");
-	 executeRecommender(user, 100, 100, PEARSON);
-	 }
-	 
-	public static List<RecommendedItem> executeRecommender(User user,
-			int numberOfRecommendations, int neighbors,
-			int similarityMethod) {
-		try {
-			
+	public static final long user_id_test = 5;
 
+	public static void main(String[] args) {
+		//generateDataModel();
+		executeRecommender("uMKK1Ans4DrUsxlliIH_xA", 100, 10, EUCLIDEAN);
+	}
+
+	public static void generateDataModel() {
+		try {
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
 
@@ -119,12 +116,7 @@ public class CollaborativeRecommender {
 				String[] parts = line.split(";");
 				String person = parts[0].trim();
 				String likeName = parts[1].trim();
-				float preference = Float.parseFloat(parts[2].trim());
-
-				// other lines contained but not used
-				// String category = line[2];
-				// String id = line[3];
-				// String created_time = line[4];
+				float preference = Float.parseFloat(parts[2]);
 
 				// create a long from the person name
 				long userLong = thing2long.toLongID(person);
@@ -147,20 +139,54 @@ public class CollaborativeRecommender {
 					preferecesOfUsers.put(userLong, userPrefList);
 				}
 				// add the like that we just found to this user
-				userPrefList.add(new GenericPreference(userLong, itemLong, preference));
-				System.out.println("Adding " + person + "(" + userLong+ ") to " + likeName + "(" + itemLong + ") with preference "+preference);
+				userPrefList.add(new GenericPreference(userLong, itemLong,
+						preference));
+				System.out.println("Adding " + person + "(" + userLong
+						+ ") to " + likeName + "(" + itemLong
+						+ ") with preference " + preference);
 			}
 
 			// create the corresponding mahout data structure from the map
 			FastByIDMap<PreferenceArray> preferecesOfUsersFastMap = new FastByIDMap<PreferenceArray>();
-			for (Entry<Long, List<Preference>> entry : preferecesOfUsers.entrySet()) {
-				preferecesOfUsersFastMap.put(entry.getKey(),new GenericUserPreferenceArray(entry.getValue()));
+			for (Entry<Long, List<Preference>> entry : preferecesOfUsers
+					.entrySet()) {
+				preferecesOfUsersFastMap.put(entry.getKey(),
+						new GenericUserPreferenceArray(entry.getValue()));
 			}
 
 			// create a data model
 			dataModel = new GenericDataModel(preferecesOfUsersFastMap);
-			System.out.println("Numero de Usuarios: "+dataModel.getNumUsers()+"Numero de Items: "+dataModel.getNumItems());
+
+			FileOutputStream fos = new FileOutputStream("dataModel.model");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+			oos.writeObject(dataModel);
+			System.out.println("DataModel Generated!");
+			oos.close();
+
+		} catch (IOException e) {
+			System.out.println("Exception: " + e.getClass() + ": "
+					+ e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public static ArrayList<Recommendation> executeRecommender(String userID,
+			int numberOfRecommendations, int neighbors, int similarityMethod) {
+		try {
+
+			ArrayList<Recommendation> result = new ArrayList<Recommendation>();
 			
+			FileInputStream fis = new FileInputStream("dataModel.model");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+
+			dataModel = (DataModel) ois.readObject();
+
+			ois.close();
+
+			System.out.println("Numero de Usuarios: " + dataModel.getNumUsers()
+					+ "Numero de Items: " + dataModel.getNumItems());
+
 			UserSimilarity similarity;
 			if (similarityMethod == PEARSON) {
 				// Pearson
@@ -170,33 +196,46 @@ public class CollaborativeRecommender {
 			} else {
 				similarity = new EuclideanDistanceSimilarity(dataModel);
 			}
-			
+
 			UserNeighborhood neighborhood = new NearestNUserNeighborhood(neighbors, similarity, dataModel);
-			
+
 			// Instantiate the recommender
 
-			recommender = new GenericUserBasedRecommender(dataModel, neighborhood, similarity);
-			
-			recommenderGBIR = new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));
+			recommender = new GenericUserBasedRecommender(dataModel,neighborhood, similarity);
+
+			//recommenderGBIR = new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));
 
 			System.out.println("Getting the recommendations...");
-			
-			List<String> recommendations = recommendThings(user.user_id, numberOfRecommendations);
 
-			List<String> recommendationsBooleanPref = booleanRecommendThings(user.user_id, numberOfRecommendations);
+			List<RecommendedItem> recommendations = recommendThings(userID, numberOfRecommendations);
 			
+			if(recommendations.size()==0)
+				System.out.println("No recommendations");
+
+			// List<String> recommendationsBooleanPref =
+			// booleanRecommendThings(user.user_id, numberOfRecommendations);
+
 			System.out.println("USER-BASED");
-			for( String rec : recommendations){
-				System.out.println(rec);
+			for (RecommendedItem rec : recommendations) {
+				System.out.println("Got recommendations..."+recommendations.size());
+				
+				Business found = Business.find.byId(thing2long.toStringID(rec.getItemID()));
+				System.out.println("Found business..."+found.getName()+" "+found.getBusiness_id());
+				
+				Recommendation recom = new Recommendation(found, rec.getValue());
+
+				result.add(recom);
+
+				System.out.println(rec.getItemID() + " :: " + rec.getValue());
 			}
 
-			System.out.println("BOOLEAN PREFERENCES");
-			
-			for( String rec : recommendationsBooleanPref){
-				System.out.println(rec);
-			}
-			
-			
+			// System.out.println("BOOLEAN PREFERENCES");
+			//
+			// for( String rec : recommendationsBooleanPref){
+			// System.out.println(rec);
+			// }
+			return result;
+
 		} catch (TasteException e) {
 			System.out.println("Exception: " + e.getClass() + ": "
 					+ e.getMessage());
@@ -205,9 +244,14 @@ public class CollaborativeRecommender {
 			System.out.println("Exception: " + e.getClass() + ": "
 					+ e.getMessage());
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Exception: " + e.getClass() + ": "
+					+ e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}
+
 	/**
 	 * Returns up to 10 recommendations for a certain person as a string array.
 	 * If less then 10 things are found the array will contain less elements. If
@@ -217,10 +261,26 @@ public class CollaborativeRecommender {
 	 * @throws TasteException
 	 *             If anything goes wrong a TasteException is thrown
 	 */
-	public static List<String> recommendThings(String user_id, int numberOfRecommendations) throws TasteException {
+	public static List<RecommendedItem> recommendThings(String user_id,int numberOfRecommendations) throws TasteException {
+		// List<String> recommendations = new ArrayList<String>();
+		List<RecommendedItem> items = null;
+		try {
+			items = recommender.recommend(thing2long.toLongID(user_id), numberOfRecommendations);
+//			 for (RecommendedItem item : items) {
+//				 recommendations.add(thing2long.toStringID(item.getItemID()));
+//			 }
+		} catch (TasteException e) {
+			throw e;
+		}
+		return items;
+	}
+
+	public static List<String> booleanRecommendThings(String user_id,
+			int numberOfRecommendations) throws TasteException {
 		List<String> recommendations = new ArrayList<String>();
 		try {
-			List<RecommendedItem> items = recommender.recommend(thing2long.toLongID(user_id), numberOfRecommendations);
+			List<RecommendedItem> items = recommenderGBIR.recommend(
+					thing2long.toLongID(user_id), numberOfRecommendations);
 			for (RecommendedItem item : items) {
 				recommendations.add(thing2long.toStringID(item.getItemID()));
 			}
@@ -229,17 +289,11 @@ public class CollaborativeRecommender {
 		}
 		return recommendations;
 	}
-	
-	public static List<String> booleanRecommendThings(String user_id, int numberOfRecommendations) throws TasteException {
-		List<String> recommendations = new ArrayList<String>();
-		try {
-			List<RecommendedItem> items = recommenderGBIR.recommend(thing2long.toLongID(user_id), numberOfRecommendations);
-			for (RecommendedItem item : items) {
-				recommendations.add(thing2long.toStringID(item.getItemID()));
-			}
-		} catch (TasteException e) {
-			throw e;
+
+	public static CollaborativeRecommender getInstance() {
+		if (instance == null) {
+			instance = new CollaborativeRecommender();
 		}
-		return recommendations;
+		return instance;
 	}
 }

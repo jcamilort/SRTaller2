@@ -15,8 +15,8 @@ import org.json.JSONObject;
 
 public class LocationFilter {
 
-	public final static String URL_BASE_MAP_GPS = "https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20business_id%20FROM%201WtuOzZqOYiiMQ24qapSyzz3AHaYl6hfoh3J7oLKn%20WHERE%20ST_INTERSECTS(Location,CIRCLE(LATLNG(";
-	public final static String MAP_GPS_KEY = "))&key=AIzaSyCGl5NEl5viaCeaUR5lIK2hgJCYDaXtbo4";
+	public final static String URL_BASE_MAP_GPS_ST_INTERSECTS = "https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20business_id%20FROM%201WtuOzZqOYiiMQ24qapSyzz3AHaYl6hfoh3J7oLKn%20WHERE%20ST_INTERSECTS(Location,CIRCLE(LATLNG(";
+	public final static String MAP_GPS_KEY = "&key=AIzaSyCGl5NEl5viaCeaUR5lIK2hgJCYDaXtbo4";
 
 	/**
 	 * @param args
@@ -29,8 +29,8 @@ public class LocationFilter {
 			double longitud, int radioM) {
 		try {
 			String[] id_collection = null;
-			String url = URL_BASE_MAP_GPS + latitud + "," + longitud + "),"
-					+ radioM + MAP_GPS_KEY;
+			String url = URL_BASE_MAP_GPS_ST_INTERSECTS + latitud + "," + longitud + "),"
+					+ radioM + "))"+MAP_GPS_KEY;
 			JSONObject json = receiveJSON(url);
 
 			String rta = null;

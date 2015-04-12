@@ -41,7 +41,7 @@
                     <th>Ver más</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id = "recommendlist">
                 <tr>
                     <td>Hard rock (sample)</td>
                     <td>5.0</td>
@@ -144,6 +144,14 @@
             });
                 //todo submit form
         });
+    </script>
+    <script>
+    var myArr = @items;
+    var pos = document.getElementById("recommendlist")
+	for (var index in myArr) {
+		var extraStuff = "<tr><td>"+myArr[index].business.name+"</td><td>"+myArr[index].estimatedRating+"</td><td><a>+</a></td></tr>"
+		pos.innerHTML = pos.innerHTML + 'Extra stuff';
+	}
     </script>
 
 

@@ -190,7 +190,7 @@ public class Business extends Model{
             }
         }*/
         if(categories==null)
-            return new ArrayList<>();
+            return new ArrayList<Category>();
 		return categories;
 	}
 
@@ -223,7 +223,7 @@ public class Business extends Model{
         }
         */
         if(attributes==null)
-            return new ArrayList<>();
+            return new ArrayList<AttributeDB>();
 		return attributes;
 	}
 
