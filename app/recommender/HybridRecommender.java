@@ -34,13 +34,10 @@ public class HybridRecommender {
     {
     	//TODO filtrar por posicion y horas
     	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], RADIO_FILTRO);
-    	colaborativo.generateDataModelPositionBased(cercanos);
+    	//colaborativo.generateDataModelPositionBased(cercanos);
+    	colaborativo.generateDataModel();
     	
-    	contenido.setFilteredBusinessGeo(cercanos);
-//    	for(Business b:cercanos){
-//    		if(b!=null)
-//    		System.out.println(b.getBusiness_id()+" :: "+b.getName());
-//    	}
+//    	contenido.setFilteredBusinessGeo(cercanos);
     	
     	//TODO generate the new dataModels
     	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user.user_id, categories,attributes);
@@ -155,7 +152,6 @@ public class HybridRecommender {
 		int similarityMethod = CollaborativeRecommender.EUCLIDEAN;
 
 		return colaborativo.executeRecommender(user_id, 20, neighbors, similarityMethod);
-		//return colaborativo.executeRecommender("6TPxhpHqFedjMvBuw6pF3w", 20, neighbors, similarityMethod);
 	}
 
 	public static EvaluationResult evaluate (double radioLoc,String hour, double trainingPercentage,int evalMethod)
