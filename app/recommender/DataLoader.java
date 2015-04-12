@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlRow;
 import models.*;
 
@@ -69,6 +70,14 @@ public class DataLoader {
     private static void generateContentModel() {
         try {
             List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from item_content").findList();
+            SqlQuery qtemp = Ebean
+                    .createSqlQuery(" select * from businesscategories");
+            qtemp.setMaxRows(200000);
+
+            List<SqlRow> q2 = qtemp
+                    .findList();
+            System.out.println("\nATTENTION... THERE ARE "+q2.size()+" ROWS IN BUSINESSCATEGORIES....\n");
+
             if(q.get(0).getInteger("count")>0)
                 return;
         }
@@ -77,8 +86,10 @@ public class DataLoader {
             //does not exist
         }
 
-        List<SqlRow> q2 = Ebean
-                .createSqlQuery(" select * from businesscategories")
+        SqlQuery sqlQuery = Ebean.createSqlQuery(" select * from businesscategories");
+        sqlQuery.setMaxRows(3000000);
+
+        List<SqlRow> q2 = sqlQuery
                 .findList();
 
         MemoryIDMigrator thing2long = new MemoryIDMigrator();
@@ -90,7 +101,9 @@ public class DataLoader {
                 ItemContent ic=new ItemContent(sid,thing2long.toLongID(sid),row.getInteger("category_category_id"),1);
                 ic.save();
             }
-            catch(Exception ex){}
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
 
     }

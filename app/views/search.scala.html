@@ -1,4 +1,4 @@
-@(msg:String,us:User,items:List[Recommendation])
+@(msg:String,us:User,items:List[Recommendation],categs:List[String])
 @import play.api.libs.json.Json
 
 @main(msg,"Hybrid Recommender",us) {
@@ -22,13 +22,13 @@
         <h4>¿Aún no? refina tus preferencias:</h4>
         <div id="attributes_list">
             <div>
-                <input type="checkbox" id="attr_24hours"><label for="attr_24hours">24 hours</label>
+                <input type="checkbox" id="attr_24hours" name="attributes"><label for="attr_24hours">24 hours</label>
             </div>
             <div>
-                <input type="checkbox" id="attr_domicile"><label for="attr_domicile">Domicile</label>
+                <input type="checkbox" id="attr_domicile" name="attributes"><label for="attr_domicile">Domicile</label>
             </div>
             <div>
-                <input type="checkbox" id="attr_economic"><label for="attr_economic">Economic</label>
+                <input type="checkbox" id="attr_economic" name="attributes"><label for="attr_economic">Economic</label>
             </div>
         </div>
     </div>
@@ -63,7 +63,6 @@
     <script type="text/javascript">
     var sampleTags = "@Category.getAll()";
     sampleTags = sampleTags.substring(1, sampleTags.length - 2).split(",");
-    //var sampleTags=["aloha","adios","Amiguito","Asador","Asadero"];
     $("#categories_selected").tagit({
     //availableTags: sampleTags,
     caseSensitive: false,
@@ -123,6 +122,28 @@
     $('#btn_cleantags').click(function () {
     $("#categories_selected").tagit("removeAll");
     });
+
+
+        //preload categories by user
+        @for(c<-categs){
+        $("#categories_selected").tagit("createTag", "@c");
+    }
+
+        $('#btn_search' ).click(function(){
+            var ats=$("input[name=attributes]:checked").map(
+            function () {return this.value;}).get().join(",");
+            var uid="@if(us!=null){@us.user_id};";
+            $.post("/search",
+            {
+            categories: $("#categories_selected" ).val(),
+            attributes: ats,
+            user_id: uid
+            },
+            function(data, status){
+            alert("Data: " + data + "\nStatus: " + status);
+            });
+                //todo submit form
+        });
     </script>
     <script>
     var myArr = @items;

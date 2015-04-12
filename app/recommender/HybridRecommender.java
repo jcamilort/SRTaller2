@@ -103,9 +103,29 @@ public class HybridRecommender {
 	}
 
 	private static ArrayList<Recommendation> getContentRecommendations(double[] latlong, String hour, User user, String[] categories,String[] attributes) {
-		ContentRecommender crec=new ContentRecommender();
+		ArrayList<Recommendation> returned = new ArrayList<Recommendation>();
+    	
+    	//
+    	/*
+        Business bt=new Business();
+        bt.setName("un business");
+        bt.setBusiness_id("id1");
+        returned.add(new Recommendation(bt,4.8));
 
-        return crec.recommend(latlong,hour,user,categories,attributes);
+        bt=new Business();
+        bt.setName("otro business");
+        bt.setBusiness_id("id2");
+        returned.add(new Recommendation(bt,4.8));
+
+        bt=new Business();
+        bt.setName("tercer business");
+        bt.setBusiness_id("id3");
+        returned.add(new Recommendation(bt,4.8));
+    	 */
+    	ContentRecommender crec=new ContentRecommender();
+    	
+    	returned = crec.recommend(latlong,hour,user,categories,attributes);
+    	return returned;
 	}
 
 	private static ArrayList<Recommendation> getCollaborativeRecommendations(
