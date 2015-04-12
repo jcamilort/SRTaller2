@@ -87,7 +87,7 @@ public class Application extends Controller {
         ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
 
 
-        String[] categoriesList=new String[];
+        String[] categoriesList=new String[0];
         if(logged!=null)
             categoriesList=logged.getCategoriesStr();
 
