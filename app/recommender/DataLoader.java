@@ -69,6 +69,11 @@ public class DataLoader {
     private static void generateContentModel() {
         try {
             List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from item_content").findList();
+            List<SqlRow> q2 = Ebean
+                    .createSqlQuery(" select * from businesscategories")
+                    .findList();
+            System.out.println("\nATTENTION... THERE ARE "+q2.size()+" ROWS IN BUSINESSCATEGORIES....\n");
+
             if(q.get(0).getInteger("count")>0)
                 return;
         }
