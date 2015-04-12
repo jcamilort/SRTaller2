@@ -91,7 +91,13 @@ public class Application extends Controller {
         if(logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        return ok(search.render(msg,logged,items,categoriesList));
+        ArrayList<String> cstr=new ArrayList<>();
+        for (String cs:categoriesList)
+        {
+            cstr.add(cs);
+        }
+
+        return ok(search.render(msg,logged,items,cstr));
 
     }
     public static Result search()
@@ -196,7 +202,13 @@ public class Application extends Controller {
         if((categoriesList==null||categoriesList.length==0)&&logged!=null)
             categoriesList=logged.getCategoriesStr();
 
-        return ok(search.render(msg,logged,items,categoriesList));
+        ArrayList<String> cstr=new ArrayList<>();
+        for (String cs:categoriesList)
+        {
+            cstr.add(cs);
+        }
+
+        return ok(search.render(msg,logged,items,cstr));
     }
     public static Result evaluation() {
         return ok(evaluation.render());//"Hybrid recommender system"));
