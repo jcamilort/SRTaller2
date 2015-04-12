@@ -8,6 +8,13 @@ public class Recommendation {
     private Business business;
     private double estimatedRating;
 
+    public Recommendation()
+    {}
+    public Recommendation(Business b,double r)
+    {
+        business=b;
+        estimatedRating =r;
+    }
     public double getEstimatedRating() {
         return estimatedRating;
     }

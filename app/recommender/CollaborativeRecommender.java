@@ -220,11 +220,9 @@ public class CollaborativeRecommender {
 				System.out.println("Got recommendations..."+recommendations.size());
 				
 				Business found = Business.find.byId(thing2long.toStringID(rec.getItemID()));
-				System.out.println("Found business...");
+				System.out.println("Found business..."+found.getName()+" "+found.getBusiness_id());
 				
-				Recommendation recom = new Recommendation();
-				recom.setBusiness(found);
-				recom.setEstimatedRating(rec.getValue());
+				Recommendation recom = new Recommendation(found, rec.getValue());
 
 				result.add(recom);
 
@@ -259,8 +257,6 @@ public class CollaborativeRecommender {
 	 * If less then 10 things are found the array will contain less elements. If
 	 * no recommendations are found the array will contain 0 elements.
 	 * 
-	 * @param personName
-	 *            The Facebook name of the person
 	 * @return a string array with recommendations
 	 * @throws TasteException
 	 *             If anything goes wrong a TasteException is thrown

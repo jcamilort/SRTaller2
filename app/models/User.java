@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.annotation.ConcurrencyMode;
 import com.avaje.ebean.annotation.EntityConcurrencyMode;
 import play.db.ebean.Model;
@@ -207,6 +209,27 @@ public class User extends Model{
 	public void setReviews(ArrayList<Review> reviews) {
 		this.reviews = reviews;
 	}
-	
 
+
+    public void updateCategories() {
+        if(categories==null||categories.isEmpty())
+        {
+            categories=new ArrayList<Category>();
+
+            List<SqlRow> q = Ebean
+                    .createSqlQuery(" select category_category_id as cid from review join businesscategories on businesscategories.business_business_id = review.business_id where user_id=\""+user_id+"\"")
+                    .findList();
+            for (SqlRow row:q)
+            {
+                try{
+                    categories.add(Category.finder.byId(row.getLong("cid")));
+                }
+                catch(Exception ex){}
+
+            }
+            save();
+
+        }
+
+    }
 }

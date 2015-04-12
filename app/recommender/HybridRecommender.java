@@ -1,5 +1,6 @@
 package recommender;
 
+import models.Business;
 import models.Recommendation;
 import models.User;
 
@@ -18,7 +19,7 @@ public class HybridRecommender {
     {
 
    	 	User user = new User();
-   	 	user.setUser_id("6TPxhpHqFedjMvBuw6pF3w");
+   	 	user.setUser_id("uMKK1Ans4DrUsxlliIH_xA");
 
    	 	recommend(null, null, user, null, null);
     }
@@ -32,7 +33,10 @@ public class HybridRecommender {
 
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
-    	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user, categories,attributes);
+    	//TODO filtrar por posicion y horas
+    	LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], 2000);
+        
+    	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user.user_id, categories,attributes);
     	ArrayList<Recommendation> contentRecs = getContentRecommendations( latlong,hour,  user, categories,attributes);
         
     	ArrayList<Recommendation> finalRecs = new ArrayList<Recommendation>();
@@ -55,7 +59,6 @@ public class HybridRecommender {
     			}
     		}
     	}
-    	//TODO filtrar por posicion y horas
         return finalRecs;
     }
 
@@ -100,20 +103,24 @@ public class HybridRecommender {
 	}
 
 	private static ArrayList<Recommendation> getContentRecommendations(double[] latlong, String hour, User user, String[] categories,String[] attributes) {
-		// TODO Auto-generated method stub
-		return new ArrayList<Recommendation>();
+		ContentRecommender crec=new ContentRecommender();
+
+        return crec.recommend(latlong,hour,user,categories,attributes);
 	}
 
 	private static ArrayList<Recommendation> getCollaborativeRecommendations(
-			double[] latlong, String hour, User user, String[] categories,
+			double[] latlong, String hour, String user_id, String[] categories,
 			String[] attributes) {
 		int neighbors = 10;
 		int similarityMethod = CollaborativeRecommender.EUCLIDEAN;
-		if(user!=null)
-			return colaborativo.executeRecommender(user.user_id, 20, neighbors, similarityMethod);
-		else
-			return colaborativo.executeRecommender("", 20, neighbors, similarityMethod);
-			
+//		if(user!=null){
+//			ArrayList<Recommendation> respuesta = colaborativo.executeRecommender(user_id, 20, neighbors, similarityMethod);
+//			return respuesta;
+//		}
+//		else
+//			return colaborativo.executeRecommender("", 20, neighbors, similarityMethod);
+//			
+		return colaborativo.executeRecommender(user_id, 20, neighbors, similarityMethod);
 		//return colaborativo.executeRecommender("6TPxhpHqFedjMvBuw6pF3w", 20, neighbors, similarityMethod);
 	}
 
