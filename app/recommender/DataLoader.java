@@ -72,12 +72,11 @@ public class DataLoader {
             List<SqlRow> q = Ebean.createSqlQuery("select count(*) as count from item_content").findList();
             SqlQuery qtemp = Ebean
                     .createSqlQuery(" select * from businesscategories");
-            Set<SqlRow> q3 = qtemp.findSet();
+            qtemp.setMaxRows(200000);
 
             List<SqlRow> q2 = qtemp
                     .findList();
             System.out.println("\nATTENTION... THERE ARE "+q2.size()+" ROWS IN BUSINESSCATEGORIES....\n");
-            System.out.println("\nwith set... THERE ARE "+q3.size()+" ROWS IN BUSINESSCATEGORIES....\n");
 
             if(q.get(0).getInteger("count")>0)
                 return;
