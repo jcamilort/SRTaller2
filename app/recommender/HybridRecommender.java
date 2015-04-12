@@ -11,7 +11,8 @@ import java.util.ArrayList;
  */
 public class HybridRecommender {
 
-    private static HybridRecommender instance;
+    private static final int RADIO_FILTRO = 2000;
+	private static HybridRecommender instance;
     private static CollaborativeRecommender colaborativo;
     private static ContentRecommender contenido;
     
@@ -33,7 +34,7 @@ public class HybridRecommender {
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
     	//TODO filtrar por posicion y horas
-    	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], 2000);
+    	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], RADIO_FILTRO);
 //    	for(Business b:cercanos){
 //    		if(b!=null)
 //    		System.out.println(b.getBusiness_id()+" :: "+b.getName());
@@ -44,7 +45,10 @@ public class HybridRecommender {
     	ArrayList<Recommendation> contentRecs = getContentRecommendations( latlong,hour,  user, categories,attributes);
         
     	ArrayList<Recommendation> finalRecs = new ArrayList<Recommendation>();
-    	for( int i = 0 ; i<40 ; i++)
+    	int ultimaPos=collabRecs.size()+contentRecs.size();
+    	
+    	//Los llena de nulos para 'reservar' el espacio y poder acceder a las posiciones especificas
+    	for( int i = 0 ; i<ultimaPos ; i++)
     	{
     		finalRecs.add(null);
     	}
@@ -53,16 +57,23 @@ public class HybridRecommender {
     	for( int i = 0 ; i < collabRecs.size(); i ++)
     	{
     		Recommendation collab = collabRecs.get(i);
-    		for( int j = 0 ; j<contentRecs.size() ; j ++){
+    		
+    		boolean termino = false;
+    		for( int j = 0 ; j<contentRecs.size() && !termino ; j ++){
     			Recommendation content = contentRecs.get(j);
+    			
     			if(collab.getBusiness().business_id.equals(content.getBusiness().business_id)){
+    				//Promedio de posicion entre las dos listas
     				posIntro = (i+j)/2;
     				boolean intro = introducirAntes(collab, posIntro, finalRecs);
     				if(!intro){
     					introducirDespues(collab, posIntro, finalRecs);
     				}
+    				termino = true;
     			}
     		}
+    		if(!termino)
+    			finalRecs.add(collab);
     	}
     	for(int i=finalRecs.size()-1 ; i>=0; i--){
     		if(finalRecs.get(i)==null){
@@ -71,10 +82,10 @@ public class HybridRecommender {
     		}
     	}
     	for(int i = 0; i< finalRecs.size() ; i++){
-    		if(finalRecs.get(i)==null)
-    			System.out.println("NULO!!! "+i);
+    		System.out.println(finalRecs.get(i).business.name);
     	}
-        return finalRecs;
+    	return finalRecs;
+        //return collabRecs;
     }
 
 
@@ -82,17 +93,18 @@ public class HybridRecommender {
 		boolean termino = false;
 		boolean respuesta = false;
 		
-    	if(finalRecs.get(posIntro)==null){
-    		finalRecs.remove(posIntro);
+		if(posIntro<0)
+			respuesta = false;
+		else if(finalRecs.get(posIntro)==null){
 			finalRecs.set(posIntro, rec);
+			System.out.println("Added Antes: "+rec.business.name+" en "+posIntro);
 			respuesta = true;
 		}
-    	else if(posIntro<0)
-    		respuesta = false;
 		else{
 			termino = introducirAntes(finalRecs.get(posIntro), posIntro-1, finalRecs);
 			if(termino){
 				finalRecs.set(posIntro, rec);
+				System.out.println("Added Antes 2: "+rec.business.name+" en "+posIntro);
 				respuesta = true;
 			}
 			else
@@ -102,21 +114,14 @@ public class HybridRecommender {
 	}
     
     private static boolean introducirDespues(Recommendation rec, int posIntro, ArrayList<Recommendation> finalRecs) {
-		boolean respuesta = false;
-		boolean termino = false;
-		
-		finalRecs.add(posIntro, rec);
-		for( int i = posIntro ; i< finalRecs.size() && !termino; i++){
-			if(finalRecs.get(posIntro)==null){
-				finalRecs.remove(posIntro);
-				termino = true;
-				respuesta = true;
-			}
+		try{
+			finalRecs.add(posIntro, rec);
+			System.out.println("Added Despues: "+rec.business.name+" en "+posIntro);
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
 		}
-		if(!termino)
-			respuesta = false;
-		
-    	return respuesta;
 	}
 
 	private static ArrayList<Recommendation> getContentRecommendations(double[] latlong, String hour, User user, String[] categories,String[] attributes) {

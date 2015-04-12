@@ -289,7 +289,7 @@ public class CollaborativeRecommender {
 	public static CollaborativeRecommender getInstance() {
 		if (instance == null) {
 			instance = new CollaborativeRecommender();
-			instance.generateDataModel();
+			CollaborativeRecommender.generateDataModel();
 		}
 		return instance;
 	}
