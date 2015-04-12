@@ -28,6 +28,7 @@ public class ContentRecommender {
 
     public ContentRecommender()
     {
+        filteredBusinessGeo=new ArrayList<Business>();
         maxRecommendations =20;
     }
 
@@ -186,7 +187,7 @@ public class ContentRecommender {
         }
         else{
             theQuery="select distinct business_business_id from usercategories join businesscategories on businesscategories.category_category_id=usercategories.category_category_id " +joinstatement+
-                    "where user_user_id=\""+uid+"\" order by rand() limit "+MAX_REVIEWED;
+                    " where user_user_id=\""+uid+"\" order by rand() limit "+MAX_REVIEWED;
         }
         List<SqlRow> re = Ebean.createSqlQuery(theQuery).findList();
         String[] returned=new String[re.size()];
@@ -199,8 +200,20 @@ public class ContentRecommender {
     }
 
     private String calculateJoinGeoFiltered() {
-        //TODO iterate over geofilterBusinessArray
-        //if(filteredBusinessGeo)
+
+        if(filteredBusinessGeo.size()>0)
+        {
+            String where="";
+
+            for (Business b:filteredBusinessGeo)
+            {
+                where+="or business_id=\""+b.business_id+"\" ";
+            }
+            where=where.substring(3);
+
+            String join="join (select businness_id from business where "+where+") bfilter on bfilter.business_id=business_business_id";
+            return join;
+        }
         return "";
     }
 

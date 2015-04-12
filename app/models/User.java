@@ -4,6 +4,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.*;
 
@@ -64,6 +65,9 @@ public class User extends Model{
     public static Finder<String,User> find = new Finder<String,User>(
             String.class, User.class
     );
+
+    @Transient
+    private ArrayList<Business> visited;
 
     public User()
 	{
@@ -210,6 +214,49 @@ public class User extends Model{
 		this.reviews = reviews;
 	}
 
+    public List<Business> getVisitedBusiness()
+    {
+     if(visited==null||visited.isEmpty()) {
+
+         visited = new ArrayList<Business>();
+         List<SqlRow> q = Ebean.createSqlQuery("select distinct business.business_id bid from business join review on review.business_id=business.business_id").findList();
+         for (SqlRow r : q) {
+             visited.add(Business.find.byId(r.getString("bid")));
+         }
+     }
+        return visited;
+    }
+    public double[] getMedianLocation()
+    {
+        double[] ansa=new double[2];
+        getVisitedBusiness();
+        double[] latitudes=new double[visited.size()];
+        double[] longitudes=new double[visited.size()];
+
+        for (int i = 0; i < visited.size(); i++) {
+
+            latitudes[i]=visited.get(i).latitude;
+            longitudes[i]=visited.get(i).longitude;
+        }
+        Arrays.sort(latitudes);
+        double medianLat;
+        if (latitudes.length % 2 == 0)
+            medianLat = ((double)latitudes[latitudes.length/2] + (double)latitudes[latitudes.length/2 - 1])/2;
+        else
+            medianLat = (double) latitudes[latitudes.length/2];
+
+        Arrays.sort(longitudes);
+        double medianLong;
+        if (longitudes.length % 2 == 0)
+            medianLong = ((double)longitudes[longitudes.length/2] + (double)longitudes[longitudes.length/2 - 1])/2;
+        else
+            medianLong = (double) longitudes[longitudes.length/2];
+
+        ansa[0]=medianLat;
+        ansa[0]=medianLong;
+        return ansa;
+    }
+
 
     public void updateCategories() {
         if(categories==null||categories.isEmpty())
@@ -228,8 +275,6 @@ public class User extends Model{
 
             }
             this.update();
-            //save();
-
         }
 
     }

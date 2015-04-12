@@ -47,8 +47,7 @@ public class Business extends Model{
     public List<AttributeDB> attributes;
     //private String attributesDB;
 
-	public boolean open;//TODO??
-
+	public boolean open;//ignorado
 
     /**
 	 * Modela los tiempos de apertura para cada uno de los 7 dias de la semana

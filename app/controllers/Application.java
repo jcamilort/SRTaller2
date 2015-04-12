@@ -120,7 +120,8 @@ public class Application extends Controller {
         response().setCookie("user_id",user_id);
 
 
-        ArrayList<Recommendation> items = HybridRecommender.getInstance().recommend(null, null, logged, null, null);
+        ArrayList<Recommendation> items = new ArrayList<Recommendation>();//avoid recommend with get!
+        // /HybridRecommender.getInstance().recommend(null, null, logged, null, null);
 
 
         String[] categoriesList=new String[0];
