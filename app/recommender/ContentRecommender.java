@@ -255,8 +255,16 @@ public class ContentRecommender {
         return "";
     }
 
-    public EvaluationResult evaluate (boolean radio,int maxBusinessNeighb, double trainingPercentage)
+    public EvaluationResult evaluate (boolean radio,int maxBusinessNeighb, double trainingPercentage, int nUsers,int maxrec)
     {
+
+        EvaluationResult er=new EvaluationResult();
+        er.description="Recomendador de contenido: {filtra por radio="+radio+
+                "%,negocios revisados="+maxBusinessNeighb
+                +", porcentaje entrenamiento= "+(int)(trainingPercentage*100)
+                +", #usuarios prueba= "+nUsers
+                +", numero de recomendaciones x usuario= "+maxrec+"}";
+        maxRecommendations=maxrec;
         //1. Get users with most visited places (100?) - or with more stars??
         //2. split according to trainingPercentage (reviews)
         //3. in limitedRandomBusiness make sure to include the target business (set special business in recommender each time and use it)
@@ -264,7 +272,7 @@ public class ContentRecommender {
         //5. calculate precision and recall.
         //User.find.where()
 
-        int totalUsers=100;
+        int totalUsers=nUsers;
         String[] uids= EvaluationController.findPopularUsers(totalUsers);
         setLimitedUsers(uids);
         setMaxBusinessReviewed(maxBusinessNeighb);
@@ -285,10 +293,9 @@ public class ContentRecommender {
             tpTotal+=result[1];
         }
         averageTime/=uids.length;
-        EvaluationResult er=new EvaluationResult();
+
         er.precision=tpTotal/(maxRecommendations*totalUsers);
         er.recall=tpTotal/(esperadoTotal);
-        er.description="Recomendador de contenido: { porcentaje entrenamiento= "+(int)(trainingPercentage*100)+"%,negocios revisados="+maxBusinessNeighb+",filtra por radio="+radio+"}";
         er.time=averageTime;
 
         return er;
@@ -305,7 +312,7 @@ public class ContentRecommender {
             Business b=bs.get(i);
             trainingBusiness.add(b.business_id);
             for (int j = 0; j < b.categories.size(); j++) {
-                Category cate=b.categories.get(i);
+                Category cate=b.categories.get(j);
                 if(!cats.contains(cate))
                     cats.add(cate);
             }
