@@ -48,10 +48,11 @@ public class User extends Model{
 	public int fans;
 
 
-	public ArrayList<Review> reviews;
+    @Transient
+	public List<Review> reviews;
 
     @OneToMany(mappedBy = "user")
-    public ArrayList<Tip> tips;
+    public List<Tip> tips;
 
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -62,16 +63,20 @@ public class User extends Model{
     @JoinTable(name = "userattributes")
     public List<AttributeDB> attributes;
 
-    public static Finder<String,User> find = new Finder<String,User>(
+    public static Finder<String, User> find = new Finder<String, User>(
             String.class, User.class
     );
 
+
+    //@ManyToMany(cascade = CascadeType.ALL)
+    //@JoinTable(name = "userbusiness")
     @Transient
-    private ArrayList<Business> visited;
+    public List<Business> visited;
+
     @Transient
-    private double latitude;
+    public double latitude;
     @Transient
-    private double longitude;
+    public double longitude;
 
     public User()
 	{
@@ -83,11 +88,12 @@ public class User extends Model{
         reviews=new ArrayList<Review>();
         attributes=new ArrayList<AttributeDB>();
         categories=new ArrayList<Category>();
+        visited=new ArrayList<Business>();
 	}
 	/**
 	 * @return the reviews
 	 */
-	public ArrayList<Review> getReviews() {
+	public List<Review> getReviews() {
 		return reviews;
 	}
 	/**

@@ -17,7 +17,6 @@ bin/*
 *.class
 data/*.json
 db/*
-*.sql
 *.DS_STORE
 *.log
 *.model
