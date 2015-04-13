@@ -25,6 +25,7 @@ public class EvaluationController extends Controller {
         ContentRecommender cr=new ContentRecommender();
         ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
         System.out.println("Content recommender evaluation:");
+        Logger.debug("Content recommender evaluation...");
 
         EvaluationResult  res;
         try{
@@ -111,7 +112,7 @@ public class EvaluationController extends Controller {
         //String query="select user_id,count(user_id) cc from review group by user_id order by cc desc limit "+nusers;
 
         //List<SqlRow> rows = Ebean.createSqlQuery(query).findList();
-        String[] ansa=new String[Math.max(nusers,most500Popular.length)];
+        String[] ansa=new String[Math.min(nusers,most500Popular.length)];
         for (int i = 0; i < nusers&&i<most500Popular.length; i++) {
             ansa[i]=most500Popular[i];
         }
