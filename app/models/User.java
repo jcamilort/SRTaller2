@@ -68,8 +68,6 @@ public class User extends Model{
     );
 
 
-    //@ManyToMany(cascade = CascadeType.ALL)
-    //@JoinTable(name = "userbusiness")
     @Transient
     public List<Business> visited;
 
