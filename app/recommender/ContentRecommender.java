@@ -151,7 +151,6 @@ public class ContentRecommender {
             else
                 completeQuery+=tqWhere.substring(3);
         }
-        //TODO revisar query
         String queryJoin="select count(*) co from (select category_id cid from category"+where1+") c2 join category on cid=category_id "+where2;
 
         cot = Ebean.createSqlQuery(completeQuery).findList().get(0).getInteger("co");
