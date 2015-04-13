@@ -5,13 +5,17 @@
 
 
     <h1 class="text-center center-block">Tus lugares recomendados</h1>
+    <form id="searchForm" method="POST" action="/search">
+        <input type="hidden" name="user_id" value="@if(us!=null){@us.user_id}" />
     <section id="categories_section">
 
     <label for="categories" style="float:left">Categorías: </label>
 
+
+
     <input id="categories_selected" name="categories"  placeholder="Escribe posibles categorías"/>
 
-    <button id="btn_search">Actualizar</button>
+    <button id="btn_search" type="submit">Recomendar</button>
     <button id="btn_cleantags">Limpiar</button>
     </section>
     <br/>
@@ -30,6 +34,8 @@
             </div>
         </div>
     </div>
+
+        </form>
     <div id="results">
         <table class="table center-simple">
             <thead>
@@ -118,29 +124,12 @@
 
     $('#btn_cleantags').click(function () {
     $("#categories_selected").tagit("removeAll");
+        return false;
     });
         //preload categories by user
         @for(c<-categs){
-        $("#categories_selected").tagit("createTag", "@c");
+        $("#categories_selected").tagit("createTag", "@Html(c)");
     }
-
-        $('#btn_search' ).click(function(){
-            var ats=$("input[name=attributes]:checked").map(
-            function () {return this.value;}).get().join(",");
-            var uid="@if(us!=null){@us.user_id};";
-            $.post("/search",
-            {
-            categories: $("#categories_selected" ).val(),
-            attributes: ats,
-            user_id: uid
-            },
-            function(data, status){
-            //alert("Data: " + data + "\nStatus: " + status);
-            $('html').replaceWith(data);
-
-            });
-        });
-        
         
     </script>
 

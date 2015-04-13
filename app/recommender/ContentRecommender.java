@@ -96,7 +96,7 @@ public class ContentRecommender {
                 Recommendation r = new Recommendation();
                 int index=ordered[j][0].intValue();
                 r.setBusiness(Business.find.byId(bids[index]));
-                r.setEstimatedRating(ordered[j][1]);
+                r.setEstimatedRating(ordered[j][1]*5);
                 returned.add(r);
             }
         }
@@ -139,13 +139,17 @@ public class ContentRecommender {
         }
         if(c2.length>0)
         {
-            where2=" ";
+            where2=" where ";
             String tqWhere="";
             for (int i = 0; i < c2.length; i++) {
                 tqWhere+=" or category_id="+c2[i];
             }
+
             where2+=tqWhere.substring(3);
-            completeQuery+=tqWhere.substring(3);
+            if(completeQuery.contains("where"))
+                completeQuery+=tqWhere;
+            else
+                completeQuery+=tqWhere.substring(3);
         }
         //TODO revisar query
         String queryJoin="select count(*) co from (select category_id cid from category"+where1+") c2 join category on cid=category_id "+where2;
@@ -182,9 +186,12 @@ public class ContentRecommender {
             theQuery="select distinct business_business_id from businesscategories where ";
             String tqWhere="";
             for (int i = 0; i < cs.length; i++) {
-                tqWhere+=" or businesscategories.category_category_id="+cs[i].getID();
+                if(cs[i]!=null)
+                    tqWhere+=" or businesscategories.category_category_id="+cs[i].getID();
+                else System.err.println("Trying use an unknown category...");
             }
             theQuery+=tqWhere.substring(3);
+            theQuery=" order by rand() limit "+MAX_REVIEWED;
         }
         else{
             theQuery="select distinct business_business_id from usercategories join businesscategories on businesscategories.category_category_id=usercategories.category_category_id " +joinstatement+
