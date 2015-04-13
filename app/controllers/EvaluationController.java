@@ -9,7 +9,10 @@ import recommender.ContentRecommender;
 import models.EvaluationResult;
 import views.html.evaluation;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EvaluationController extends Controller {
@@ -67,6 +70,19 @@ public class EvaluationController extends Controller {
         System.out.println("precision:"+ res.precision);
         System.out.println("averageTime:"+res.time);
         System.out.println();
+
+        try {
+            PrintWriter writer = new PrintWriter("cr"+(new Date()).toString());
+
+            writer.println(res.description);
+            writer.println("recall: "+res.recall);
+            writer.println("precision:"+ res.precision);
+            writer.println("averageTime:"+res.time);
+            writer.println();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
