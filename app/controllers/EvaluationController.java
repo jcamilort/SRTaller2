@@ -27,12 +27,14 @@ public class EvaluationController extends Controller {
 //        ContentRecommender cr=new ContentRecommender();
 //        EvaluationResult res = cr.evaluateCR(false, 500, 0.5);
 //        
+        CollaborativeRecommender.generateDataModel();
         
         ContentRecommender cr=new ContentRecommender();
         ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
         System.out.println("Content recommender evaluation:");
 
         EvaluationResult  res;
+        EvaluationResult resCollab;
         try{
             res = cr.evaluate(false, 500, 0.3,25,100);
             evals.add(res);
@@ -66,14 +68,37 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-	        EvaluationResult resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
+	        resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
 	        evals.add(resCollab);
 	        printEval(resCollab);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
-        
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(100, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(50, 50, CollaborativeRecommender.EUCLIDEAN, 0.3);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(10, 50, CollaborativeRecommender.EUCLIDEAN, 0.6);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
         return evals;
     }
 

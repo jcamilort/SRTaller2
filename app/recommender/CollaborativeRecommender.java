@@ -451,11 +451,16 @@ public class CollaborativeRecommender {
 
 	public static EvaluationResult evaluate( int neighbors, int relevantUsers,
 			int similarityMethod, double trainingPercentage) {
+		EvaluationResult er = new EvaluationResult();
+		er.precision = 0;
+		er.recall = 0;
+		er.description = "";
+		er.time = 0;
 		try {
 			String[] uids = EvaluationController
 					.findPopularUsers(relevantUsers);
 
-			generateDataModel();
+//			generateDataModel();
 
 			UserSimilarity similarity;
 			if (similarityMethod == PEARSON) {
@@ -474,39 +479,53 @@ public class CollaborativeRecommender {
 
 			recommender = new GenericUserBasedRecommender(dataModel,
 					neighborhood, similarity);
-			int tpTotal = 0;
-			int esperadoTotal = 0;
+			double tpTotal = 0;
+			double esperadoTotal = 0;
 
 			long t1 = 0, averageTime = 0;
-			for (int i = 0; i < uids.length; i++) {
-
-				int[] result = recommendEval(thing2long.toLongID(uids[i]),
-						neighbors);// result[#esperado][#tp
-				// -
-				// intersección]
-				esperadoTotal += result[0];
-				tpTotal += result[1];
+			System.out.println("Tam Arreglo: "+uids.length);
+			for (int i = 0; i < uids.length && i<relevantUsers; i++) {
+				System.out.println(i+"   "+uids[i]);
+				if(uids[i]!=null || !uids[i].trim().equals("null")){
+					double[] result = recommendEval(thing2long.toLongID(uids[i]),
+							neighbors);// result[#esperado][#tp
+					// -
+					// intersección]
+					esperadoTotal += result[0];
+					tpTotal += result[1];
+				}
 			}
 			averageTime = (System.currentTimeMillis() - t1) / uids.length;
-			EvaluationResult er = new EvaluationResult();
 			er.precision = tpTotal
 					/ (MAX_RECOMMENDATIONS * dataModel.getNumUsers());
 			er.recall = tpTotal / (esperadoTotal);
+			String simString ="";
+			if(similarityMethod==EUCLIDEAN){
+				simString = "Euclidean";
+			}
+			else if(similarityMethod==PEARSON){
+				simString = "Pearson";
+			}
+			else if(similarityMethod==SPEARMAN){
+				simString = "Spearman";
+			}
 			er.description = "Recomendador colaborativo: { porcentaje entrenamiento= "
 					+ (int) (trainingPercentage * 100)
 					+ "%, usuarios revisados="
 					+ uids.length
-					+ ", similaridad:}";
+					+ " usuarios relevantes:"
+					+relevantUsers
+					+ ", similaridad: "+simString+"}";
 			er.time = averageTime;
+			
 		} catch (TasteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return er;
 	}
 
-	private static int[] recommendEval(long l, double neighbors) {
-		int[] respuesta = new int[2];
+	private static double[] recommendEval(long l, double neighbors) {
+		double[] respuesta = new double[2];
 		respuesta[0] = 0;
 		respuesta[1] = 0;
 		try {
@@ -520,7 +539,6 @@ public class CollaborativeRecommender {
 			}
 			return respuesta;
 		} catch (TasteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return respuesta;
@@ -545,7 +563,6 @@ public class CollaborativeRecommender {
 			return new GenericUserBasedRecommender(data, neighborhood,
 					similarity);
 		} catch (TasteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
