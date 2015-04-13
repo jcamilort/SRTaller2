@@ -170,7 +170,6 @@ public class CollaborativeRecommender {
 					else{
 						contenido_anterior = false;
 					}			
-					
 				}
 				
 
