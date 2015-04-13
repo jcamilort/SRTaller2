@@ -128,7 +128,7 @@ public class ContentRecommender {
 
         if(c1.length>0)
         {
-            where1="where ";
+            where1=" where ";
             String tqWhere="";
             for (int i = 0; i < c1.length; i++) {
                 tqWhere+= " or category_id=" + c1[i];
@@ -139,15 +139,18 @@ public class ContentRecommender {
         }
         if(c2.length>0)
         {
-            where2="";
+            where2=" ";
             String tqWhere="";
             for (int i = 0; i < c2.length; i++) {
                 tqWhere+=" or category_id="+c2[i];
             }
             where2+=tqWhere.substring(3);
-            completeQuery+=tqWhere.substring(3);
+            //completeQuery+=tqWhere.substring(3);
+            completeQuery+=tqWhere;
+            
         }
-        String queryJoin="select count(*) co from (select category_id cid from category"+where1+") c2 join category on cid=category_id "+where2;
+        //TODO revisar query
+        String queryJoin="select count(*) co from (select category_id cid from category"+where1+") c2 join category on cid=category_id and"+where2;
 
         cot = Ebean.createSqlQuery(completeQuery).findList().get(0).getInteger("co");
         cojoin= Ebean.createSqlQuery(queryJoin).findList().get(0).getInteger("co");

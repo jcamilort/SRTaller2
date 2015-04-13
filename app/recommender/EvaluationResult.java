@@ -7,5 +7,6 @@ public class EvaluationResult {
 
     public double precision;
     public double recall;
-    //etc...
+    public double time;
+    public String description;
 }

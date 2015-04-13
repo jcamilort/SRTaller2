@@ -128,7 +128,7 @@ public class CollaborativeRecommender {
 						// add the like that we just found to this user
 						userPrefList.add(new GenericPreference(userLong, itemLong,
 								preference));
-						System.out.println("Adding " + person + "(" + userLong
+						System.out.println("LocBased " + person + "(" + userLong
 								+ ") to " + likeName + "(" + itemLong
 								+ ") with preference " + preference);
 					}
@@ -163,7 +163,7 @@ public class CollaborativeRecommender {
 						// add the like that we just found to this user
 						userPrefList.add(new GenericPreference(userLong, itemLong,
 								preference));
-						System.out.println("Adding " + person + "(" + userLong
+						System.out.println("LocBased " + person + "(" + userLong
 								+ ") to " + likeName + "(" + itemLong
 								+ ") with preference " + preference);
 					}
@@ -406,7 +406,7 @@ public class CollaborativeRecommender {
 	public static CollaborativeRecommender getInstance() {
 		if (instance == null) {
 			instance = new CollaborativeRecommender();
-			CollaborativeRecommender.generateDataModel();
+			//CollaborativeRecommender.generateDataModel();
 		}
 		return instance;
 	}

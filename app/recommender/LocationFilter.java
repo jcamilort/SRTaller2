@@ -60,7 +60,7 @@ public class LocationFilter {
 			System.out.println("Error in JSON response " + e.getClass()
 					+ e.getMessage());
 			e.printStackTrace();
-			return null;
+			return new ArrayList<Business>();
 		}
     }
 
