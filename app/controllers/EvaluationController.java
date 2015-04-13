@@ -2,7 +2,7 @@ package controllers;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
-import play.api.Logger;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import recommender.ContentRecommender;
@@ -28,7 +28,7 @@ public class EvaluationController extends Controller {
 
         EvaluationResult  res;
         try{
-            res = cr.evaluate(false, 500, 0.3,25,100);
+            res = cr.evaluate(false, 500, 0.3,5,100);
             evals.add(res);
             printEval(res);
         }
@@ -36,7 +36,7 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 500, 0.6,25,100);
+            res = cr.evaluate(false, 500, 0.6,5,100);
             evals.add(res);
             printEval(res);
         }
@@ -44,25 +44,23 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 1000, 0.5,15,100);
+            res = cr.evaluate(true, 500, 0.5,5,100);
             evals.add(res);
             printEval(res);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
-        try{
-            res = cr.evaluate(true, 1000, 0.5,15,100);
-            evals.add(res);
-            printEval(res);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
+        for (EvaluationResult er:evals)
+        {
+            printEval(er);
         }
         return evals;
     }
 
     private static void printEval(EvaluationResult res) {
+
+        //Logger.er
 
         System.out.println();
         System.out.println(res.description);
