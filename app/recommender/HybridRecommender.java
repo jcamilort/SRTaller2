@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class HybridRecommender {
 
-    private static final int RADIO_FILTRO = 25000;
+    public static final int RADIO_FILTRO = 25000;
 	private static HybridRecommender instance;
     private static CollaborativeRecommender colaborativo;
     private static ContentRecommender contenido;
@@ -138,21 +138,6 @@ public class HybridRecommender {
 
 	private static ArrayList<Recommendation> getContentRecommendations(double[] latlong, String hour, User user, String[] categories,String[] attributes) {
 		ArrayList<Recommendation> returned = new ArrayList<Recommendation>();
-    	
-//        Business bt=new Business();
-//        bt.setName("un business");
-//        bt.setBusiness_id("id1");
-//        returned.add(new Recommendation(bt,4.8));
-//
-//        bt=new Business();
-//        bt.setName("otro business");
-//        bt.setBusiness_id("id2");
-//        returned.add(new Recommendation(bt,4.8));
-//
-//        bt=new Business();
-//        bt.setName("tercer business");
-//        bt.setBusiness_id("id3");
-//        returned.add(new Recommendation(bt,4.8));
 //    	
     	returned = contenido.recommend(latlong,hour,user,categories,attributes);
     	return returned;

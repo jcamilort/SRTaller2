@@ -46,11 +46,8 @@
                 </tr>
             </thead>
             <tbody id = "recommendlist">
-                <tr>
-                    <td>Hard rock (sample)</td>
-                    <td>5.0</td>
-                    <td><a>+</a></td>
-                </tr>@for( r <- items) {
+
+                @for( r <- items) {
                     <tr>
                         <td>@r.business.name</td>
                         <td>@r.estimatedRating</td>

@@ -232,9 +232,10 @@ public class Application extends Controller {
         if(logged == null){
         	System.out.println("EL USUARIO ES NULO!");
         }
-        //ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
         ContentRecommender cr=ContentRecommender.getInstance();
-        ArrayList<Recommendation> items = cr.recommend(pos, hora, logged, categoriesList, attributesList);
+        ArrayList<Recommendation> items = hr.recommend(pos, hora, logged, categoriesList, attributesList);
+
+        //ArrayList<Recommendation> items = cr.recommend(pos, hora, logged, categoriesList, attributesList);
 
 
         //

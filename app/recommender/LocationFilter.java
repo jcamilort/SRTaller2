@@ -30,6 +30,7 @@ public class LocationFilter {
 
 	public static ArrayList<Business> obtenerSitiosCercanos(double latitud,
 			double longitud, int radioM) {
+        long t1=System.currentTimeMillis();
 		try {
 			ArrayList<Business> id_collection = new ArrayList<Business>();
 			String url = URL_BASE_MAP_GPS_ST_INTERSECTS + latitud + "," + longitud + "),"
@@ -54,6 +55,7 @@ public class LocationFilter {
 				
 				//System.out.println(rta);
 			}
+            System.out.println("\n ATTENTION!! getting geolocation filter taked "+(System.currentTimeMillis()-t1)+"ms\n\n");
 
 			return id_collection;
 		} catch (JSONException e) {
