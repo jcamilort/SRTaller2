@@ -2,6 +2,7 @@ package recommender;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
+import controllers.EvaluationController;
 import models.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ContentRecommender {
 
     private int MAX_REVIEWED;
+    private String[] limitedUsers;
 
     public void setMaxRecommendations(int maxRecommendations) {
         this.maxRecommendations = maxRecommendations;
@@ -83,7 +85,7 @@ public class ContentRecommender {
 
         if(cs.length>0)
         {
-            String[] bids=getAllPosibleSimilarBusiness(user==null?null:user.getUser_id(),cs);
+            String[] bids=getAllPosibleSimilarBusiness(user ==null?null: user.getUser_id(),cs);
             Double[][] similB=new Double[bids.length][2];
             int i=0;
             for (i = 0; i < similB.length&&i<MAX_REVIEWED; i++)
@@ -233,15 +235,62 @@ public class ContentRecommender {
         return "";
     }
 
-    public EvaluationResult evaluate (double radioLoc,String hour, double trainingPercentage,int evalMethod)
+    public EvaluationResult evaluateCR (boolean radio,int maxBusinessNeighb, double trainingPercentage)
     {
-        //TODO
-        return new EvaluationResult();
 
+        //TODO
+        //1. Get users with most visited places (100?) - or with more stars??
+        //2. split according to trainingPercentage (reviews)
+        //3. in limitedRandomBusiness make sure to include the target business (set special business in recommender each time and use it)
+        //4.recommend for all users
+        //5. calculate precision and recall.
+        //User.find.where()
+
+        int totalUsers=100;
+        String[] uids= EvaluationController.findPopularUsers(totalUsers);
+        setLimitedUsers(uids);
+        setMaxBusinessReviewed(maxBusinessNeighb);
+        int tpTotal=0;
+        int esperadoTotal=0;
+
+        long t1=0,averageTime=0;
+        t1=System.currentTimeMillis();
+        for (int i = 0; i < uids.length; i++) {
+
+            int[] result=recommendEval(uids[i]);//result[#esperado][#tp - intersección]
+            esperadoTotal+=result[0];
+            tpTotal+=result[1];
+        }
+        averageTime=(System.currentTimeMillis()-t1)/uids.length;
+        EvaluationResult er=new EvaluationResult();
+        er.precision=tpTotal/(maxRecommendations*totalUsers);
+        er.recall=tpTotal/(esperadoTotal);
+        er.description="Recomendador de contenido: { porcentaje entrenamiento= "+(int)(trainingPercentage*100)+"%,negocios revisados="+maxBusinessNeighb+",filtra por radio="+radio+"}";
+        er.time=averageTime;
+
+        return er;
     }
+
+    private int[] recommendEval(String uid) {
+        //todo
+        //3. in limitedRandomBusiness make sure to include the target business (set special business in recommender each time and use it)
+        //4.recommend for all users
+        //5. calculate precision and recall.
+        return new int[0];
+    }
+
 
     public void setFilteredBusinessGeo(ArrayList<Business> filteredBusinessGeo) {
         geoFiltered=true;
         this.filteredBusinessGeo = filteredBusinessGeo;
+    }
+
+
+    public void setLimitedUsers(String[] limitedUsers) {
+        this.limitedUsers = limitedUsers;
+    }
+
+    public String[] getLimitedUsers() {
+        return limitedUsers;
     }
 }
