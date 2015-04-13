@@ -1,6 +1,7 @@
 package recommender;
 
 import models.Business;
+import models.EvaluationResult;
 import models.Recommendation;
 import models.User;
 

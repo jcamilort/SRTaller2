@@ -1,4 +1,4 @@
-package recommender;
+package models;
 
 /**
  * Created by carol on 8/04/15.

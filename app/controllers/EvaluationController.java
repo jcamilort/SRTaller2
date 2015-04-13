@@ -2,28 +2,30 @@ package controllers;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
-import com.semantria.SentimentAnalizer;
 import play.mvc.Controller;
 import play.mvc.Result;
-import recommender.CollaborativeRecommender;
 import recommender.ContentRecommender;
-import recommender.DataLoader;
-import recommender.EvaluationResult;
-import views.html.index;
+import models.EvaluationResult;
+import views.html.evaluation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EvaluationController extends Controller {
 
 
-    public static Result evaluateContent() {
+    public static EvaluationResult evaluateContentRecommender() {
 
         ContentRecommender cr=new ContentRecommender();
+        EvaluationResult res = cr.evaluate(false, 50, 0.5);
+        return res;
+    }
 
-        EvaluationResult res = cr.evaluateCR(false, 500, 0.5);
 
-
-        return ok();
+    public static Result evaluation() {
+        ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
+        evals.add(evaluateContentRecommender());
+        return ok(evaluation.render(evals));//"Hybrid recommender system"));
     }
 
 

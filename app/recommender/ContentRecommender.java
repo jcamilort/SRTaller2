@@ -17,6 +17,7 @@ public class ContentRecommender {
 
     private int MAX_REVIEWED;
     private String[] limitedUsers;
+    private ArrayList<String> specialBusinesses;
 
     public void setMaxRecommendations(int maxRecommendations) {
         this.maxRecommendations = maxRecommendations;
@@ -85,7 +86,14 @@ public class ContentRecommender {
 
         if(cs.length>0)
         {
-            String[] bids=getAllPosibleSimilarBusiness(user ==null?null: user.getUser_id(),cs);
+            String[] bids;
+            String[] bidsPrev=getAllPosibleSimilarBusiness(user ==null?null: user.getUser_id(),cs);
+            if(specialBusinesses!=null&&!specialBusinesses.isEmpty())
+            {
+                bids=includeSpecial(bidsPrev);
+            }
+            else bids=bidsPrev;
+
             Double[][] similB=new Double[bids.length][2];
             int i=0;
             for (i = 0; i < similB.length&&i<MAX_REVIEWED; i++)
@@ -112,6 +120,18 @@ public class ContentRecommender {
         }
         System.out.println("\n\n!!!HIGH ATTENTION HERE... RECOMMENDING BY CONTENT TAKED "+(System.currentTimeMillis()-t1)+"ms!!!\n\n");
         return returned;
+    }
+
+    private String[] includeSpecial(String[] bidsPrev) {
+        ArrayList<String> all=new ArrayList<String>();
+        for (int i = 0; i < bidsPrev.length; i++) {
+            all.add(bidsPrev[i]);
+        }
+        for (int i = 0; i < specialBusinesses.size(); i++) {
+            if(!all.contains(specialBusinesses.get(i)))
+                all.add(specialBusinesses.get(i));
+        }
+        return all.toArray(new String[all.size()]);
     }
 
     private Double[][] orderAll(Double[][] similB) {
@@ -235,10 +255,8 @@ public class ContentRecommender {
         return "";
     }
 
-    public EvaluationResult evaluateCR (boolean radio,int maxBusinessNeighb, double trainingPercentage)
+    public EvaluationResult evaluate (boolean radio,int maxBusinessNeighb, double trainingPercentage)
     {
-
-        //TODO
         //1. Get users with most visited places (100?) - or with more stars??
         //2. split according to trainingPercentage (reviews)
         //3. in limitedRandomBusiness make sure to include the target business (set special business in recommender each time and use it)
@@ -256,12 +274,17 @@ public class ContentRecommender {
         long t1=0,averageTime=0;
         t1=System.currentTimeMillis();
         for (int i = 0; i < uids.length; i++) {
-
-            int[] result=recommendEval(uids[i]);//result[#esperado][#tp - intersección]
+            User u=User.find.byId(uids[i]);
+            String[] splitedCats = getSplitedCategories(u, trainingPercentage);
+            t1=System.currentTimeMillis();
+            //recommend based in splitted categories not in user:
+            ArrayList<Recommendation> res = recommend(radio ? u.getMedianLocation() : null, null, null, splitedCats, null);
+            averageTime+=System.currentTimeMillis()-t1;
+            int[] result=getEval(res);//result[#esperado][#tp - intersección]
             esperadoTotal+=result[0];
             tpTotal+=result[1];
         }
-        averageTime=(System.currentTimeMillis()-t1)/uids.length;
+        averageTime/=uids.length;
         EvaluationResult er=new EvaluationResult();
         er.precision=tpTotal/(maxRecommendations*totalUsers);
         er.recall=tpTotal/(esperadoTotal);
@@ -271,12 +294,49 @@ public class ContentRecommender {
         return er;
     }
 
-    private int[] recommendEval(String uid) {
-        //todo
-        //3. in limitedRandomBusiness make sure to include the target business (set special business in recommender each time and use it)
-        //4.recommend for all users
-        //5. calculate precision and recall.
-        return new int[0];
+    private String[] getSplitedCategories(User u, double trainingPercentage) {
+        List<Business> bs = u.getVisitedBusiness();
+        specialBusinesses = new ArrayList<String>();
+        int toplimit= (int) (((double)bs.size())*trainingPercentage);
+        ArrayList<String> trainingBusiness = new ArrayList<String>();
+        ArrayList<Category> cats=new ArrayList<Category>();
+
+        for (int i = 0; i < toplimit; i++) {
+            Business b=bs.get(i);
+            trainingBusiness.add(b.business_id);
+            for (int j = 0; j < b.categories.size(); j++) {
+                Category cate=b.categories.get(i);
+                if(!cats.contains(cate))
+                    cats.add(cate);
+            }
+        }
+        for (int i = toplimit; i < bs.size(); i++) {
+            specialBusinesses.add(bs.get(i).business_id);
+        }
+
+
+        String[] ansa=new String[cats.size()];
+        for (int i = 0; i < cats.size(); i++) {
+            ansa[i]=cats.get(i).name;
+        }
+        return ansa;
+    }
+
+    /**
+     * //result[#esperado][#tp - intersección]
+     * @param res
+     * @return
+     */
+    private int[] getEval(ArrayList<Recommendation> res) {
+        int[] result=new int[2];
+        result[0]=specialBusinesses.size();
+        result[1]=0;
+        for (Recommendation r:res)
+        {
+            if(specialBusinesses.contains(r.getBusiness().getBusiness_id()))
+                result[1]++;
+        }
+        return result;
     }
 
 
