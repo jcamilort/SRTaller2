@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ContentRecommender {
 
-    private static final int MAX_REVIEWED = 1000;
+    private int MAX_REVIEWED;
 
     public void setMaxRecommendations(int maxRecommendations) {
         this.maxRecommendations = maxRecommendations;
@@ -26,10 +26,15 @@ public class ContentRecommender {
 
     private ArrayList<Business> filteredBusinessGeo;
 
+    public void setMaxBusinessReviewed(int max)
+    {
+        MAX_REVIEWED=max;
+    }
     public ContentRecommender()
     {
         filteredBusinessGeo=new ArrayList<Business>();
         maxRecommendations =20;
+        MAX_REVIEWED=1500;
     }
 
     public static ContentRecommender getInstance() {
@@ -43,7 +48,10 @@ public class ContentRecommender {
         if(latlong!=null&&latlong.length>0)
         {
             geoFiltered=true;
-            double[] geoFilter = latlong;
+            if(filteredBusinessGeo==null||filteredBusinessGeo.isEmpty())
+            {
+                filteredBusinessGeo = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], HybridRecommender.RADIO_FILTRO);
+            }
         }
         else geoFiltered=false;
 
@@ -162,11 +170,13 @@ public class ContentRecommender {
     {
         long[] cs1=new long[c1.length];
         for (int i = 0; i < cs1.length; i++) {
-            cs1[i]=c1[i].getID();
+            if(c1[i]!=null)
+                cs1[i]=c1[i].getID();
         }
         long[] cs2=new long[c2.length];
         for (int i = 0; i < cs2.length; i++) {
-            cs2[i]=c2[i].getID();
+            if(c2[i]!=null)
+                cs2[i]=c2[i].getID();
         }
         return getJaccardSimilarity(cs1,cs2);
     }
@@ -182,7 +192,7 @@ public class ContentRecommender {
         String theQuery="";
         if(cs.length>0)
         {
-            theQuery="select distinct business_business_id from businesscategories where ";
+            theQuery="select distinct business_business_id from businesscategories"+joinstatement+" where ";
             String tqWhere="";
             for (int i = 0; i < cs.length; i++) {
                 if(cs[i]!=null)
@@ -207,18 +217,17 @@ public class ContentRecommender {
     }
 
     private String calculateJoinGeoFiltered() {
-
         if(filteredBusinessGeo.size()>0)
         {
             String where="";
 
-            for (Business b:filteredBusinessGeo)
-            {
-                where+="or business_id=\""+b.business_id+"\" ";
+            for (int i = 0; i < filteredBusinessGeo.size() && i < MAX_REVIEWED*5; i++) {
+
+                where+="or business_id=\""+filteredBusinessGeo.get(i).business_id+"\" ";
             }
             where=where.substring(3);
 
-            String join="join (select businness_id from business where "+where+") bfilter on bfilter.business_id=business_business_id";
+            String join=" join (select business_id from business where "+where+") bfilter on bfilter.business_id=business_business_id";
             return join;
         }
         return "";
@@ -232,6 +241,7 @@ public class ContentRecommender {
     }
 
     public void setFilteredBusinessGeo(ArrayList<Business> filteredBusinessGeo) {
+        geoFiltered=true;
         this.filteredBusinessGeo = filteredBusinessGeo;
     }
 }

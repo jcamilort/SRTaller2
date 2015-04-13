@@ -375,6 +375,7 @@ public class CollaborativeRecommender {
 	 */
 	public static List<RecommendedItem> recommendThings(String user_id,int numberOfRecommendations) throws TasteException
 	{
+        long t1 = System.currentTimeMillis();
 		// List<String> recommendations = new ArrayList<String>();
 		List<RecommendedItem> items = null;
 		try {
@@ -385,6 +386,7 @@ public class CollaborativeRecommender {
 		} catch (TasteException e) {
 			throw e;
 		}
+        System.out.println("\n ATTENTION!! getting geolocation filter taked "+(System.currentTimeMillis()-t1)+"ms\n\n");
 		return items;
 	}
 
