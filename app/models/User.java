@@ -68,6 +68,10 @@ public class User extends Model{
 
     @Transient
     private ArrayList<Business> visited;
+    @Transient
+    private double latitude;
+    @Transient
+    private double longitude;
 
     public User()
 	{
@@ -219,16 +223,36 @@ public class User extends Model{
      if(visited==null||visited.isEmpty()) {
 
          visited = new ArrayList<Business>();
-         List<SqlRow> q = Ebean.createSqlQuery("select distinct business.business_id bid from business join review on review.business_id=business.business_id").findList();
+         List<SqlRow> q = Ebean.createSqlQuery("select distinct business.business_id bid from business join review on review.business_id=business.business_id where user_id=\""+getUser_id()+"\"").findList();
          for (SqlRow r : q) {
              visited.add(Business.find.byId(r.getString("bid")));
          }
      }
         return visited;
     }
+    public double getMedianLatitude()
+    {
+        if(latitude==0)
+            getMedianLocation();
+        return latitude;
+
+    }
+    public double getMedianLongitude()
+    {
+        if(latitude==0)
+            getMedianLocation();
+        return longitude;
+    }
     public double[] getMedianLocation()
     {
         double[] ansa=new double[2];
+        if(latitude!=0&&longitude!=0)
+        {
+            ansa[0]=latitude;
+            ansa[1]=longitude;
+            return ansa;
+        }
+
         getVisitedBusiness();
         double[] latitudes=new double[visited.size()];
         double[] longitudes=new double[visited.size()];
@@ -239,21 +263,21 @@ public class User extends Model{
             longitudes[i]=visited.get(i).longitude;
         }
         Arrays.sort(latitudes);
-        double medianLat;
+
         if (latitudes.length % 2 == 0)
-            medianLat = ((double)latitudes[latitudes.length/2] + (double)latitudes[latitudes.length/2 - 1])/2;
+            latitude = ((double)latitudes[latitudes.length/2] + (double)latitudes[latitudes.length/2 - 1])/2;
         else
-            medianLat = (double) latitudes[latitudes.length/2];
+            latitude = (double) latitudes[latitudes.length/2];
 
         Arrays.sort(longitudes);
-        double medianLong;
-        if (longitudes.length % 2 == 0)
-            medianLong = ((double)longitudes[longitudes.length/2] + (double)longitudes[longitudes.length/2 - 1])/2;
-        else
-            medianLong = (double) longitudes[longitudes.length/2];
 
-        ansa[0]=medianLat;
-        ansa[0]=medianLong;
+        if (longitudes.length % 2 == 0)
+            longitude = ((double)longitudes[longitudes.length/2] + (double)longitudes[longitudes.length/2 - 1])/2;
+        else
+            longitude = (double) longitudes[longitudes.length/2];
+
+        ansa[0]=latitude;
+        ansa[1]=longitude;
         return ansa;
     }
 

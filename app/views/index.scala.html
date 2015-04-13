@@ -8,6 +8,7 @@
     <label>Localización: </label><input type="text" id="latitude" name="latitude" placeholder="Latitud"/>-
     <input type="text" id="longitude" name="longitude" placeholder="Longitud"/>
         <button id="setGeo">Aquí</button>
+        <button id="setGeo2">Donde siempre</button>
     <br/>
 
 
@@ -38,10 +39,18 @@
     } else {
     alert ( "Geolocation is not supported by this browser." ) ;
     }
-
         return false;
+    });
 
+    $('#setGeo2').on('click', function (){
+        @if(us==null){alert ( "Identifícate por favor." ) ;}else{
 
+        var la=@us.getMedianLatitude();
+         var lo=@us.getMedianLongitude();
+        var newpos=new google.maps.LatLng(la,lo);
+        placeMarker ( newpos, map ) ;
+        }
+        return false;
 
     });
 
