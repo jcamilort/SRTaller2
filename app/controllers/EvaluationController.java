@@ -69,6 +69,15 @@ public class EvaluationController extends Controller {
         System.out.println("averageTime:"+res.time);
         System.out.println();
 
+        
+        Logger.info("xxxcontenidoxxx:");
+        Logger.info("");
+        Logger.info(res.description);
+        Logger.info("recall: "+res.recall);
+        Logger.info("precision:"+ res.precision);
+        Logger.info("averageTime:"+res.time);
+        Logger.info("");
+        
         try {
             PrintWriter writer = new PrintWriter("cr"+(new Date()).toString());
 
