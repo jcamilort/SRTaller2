@@ -9,6 +9,7 @@ import recommender.CollaborativeRecommender;
 import recommender.ContentRecommender;
 import recommender.DataLoader;
 import recommender.EvaluationResult;
+import views.html.evaluation;
 import views.html.index;
 
 import java.util.List;
@@ -18,12 +19,13 @@ public class EvaluationController extends Controller {
 
     public static Result evaluateContent() {
 
-        ContentRecommender cr=new ContentRecommender();
+//        ContentRecommender cr=new ContentRecommender();
+//        EvaluationResult res = cr.evaluateCR(false, 500, 0.5);
+//        
+        
+        EvaluationResult resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
 
-        EvaluationResult res = cr.evaluateCR(false, 500, 0.5);
-
-
-        return ok();
+        return ok(evaluation.render());
     }
 
 
@@ -33,6 +35,7 @@ public class EvaluationController extends Controller {
      * @return
      */
     public static String[] findPopularUsers(int nusers) {
+    	
         String query="select user_id,count(user_id) cc from review group by user_id order by cc desc limit "+nusers;
 
         List<SqlRow> rows = Ebean.createSqlQuery(query).findList();

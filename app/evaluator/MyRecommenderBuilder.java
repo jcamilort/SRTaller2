@@ -19,13 +19,13 @@ public class MyRecommenderBuilder implements RecommenderBuilder {
 	{
 		int neighbourhoodSize = 100;
 
-//		UserSimilarity similarity = new EuclideanDistanceSimilarity(modelo);
-//		UserNeighborhood neighborhood = new NearestNUserNeighborhood(neighbourhoodSize, similarity, modelo);
-//		UserBasedRecommender recommender = new GenericUserBasedRecommender(modelo, neighborhood, similarity);
+		UserSimilarity similarity = new EuclideanDistanceSimilarity(modelo);
+		UserNeighborhood neighborhood = new NearestNUserNeighborhood(neighbourhoodSize, similarity, modelo);
+		UserBasedRecommender recommender = new GenericUserBasedRecommender(modelo, neighborhood, similarity);
 		
-		ItemSimilarity similarity2 = new EuclideanDistanceSimilarity(modelo);
-		GenericItemBasedRecommender recommender = new GenericItemBasedRecommender(modelo, similarity2);
-		
+//		ItemSimilarity similarity2 = new EuclideanDistanceSimilarity(modelo);
+//		GenericItemBasedRecommender recommender = new GenericItemBasedRecommender(modelo, similarity2);
+//		
 		return recommender;
 	}
 }
