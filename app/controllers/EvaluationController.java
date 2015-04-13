@@ -21,29 +21,52 @@ public class EvaluationController extends Controller {
 
         ContentRecommender cr=new ContentRecommender();
         ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
-        EvaluationResult  res;
-                try{
-                    res = cr.evaluate(false, 500, 0.5,50,100);
-                    evals.add(res);
-                }
-                catch (Exception ex){
-                    ex.printStackTrace();
-                }
-
         System.out.println("Content recommender evaluation:");
-        for (int i = 0; i < evals.size(); i++) {
 
-            EvaluationResult e = evals.get(i);
-            System.out.println();
-            System.out.println(e.description);
-            System.out.println("recall: "+e.recall);
-            System.out.println("precision:"+ e.precision);
-            System.out.println("averageTime:"+e.time);
-            System.out.println();
+        EvaluationResult  res;
+        try{
+            res = cr.evaluate(false, 500, 0.3,50,100);
+            evals.add(res);
+            printEval(res);
         }
-
-
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+            res = cr.evaluate(false, 500, 0.6,50,100);
+            evals.add(res);
+            printEval(res);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+            res = cr.evaluate(false, 1000, 0.5,30,100);
+            evals.add(res);
+            printEval(res);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+            res = cr.evaluate(true, 1000, 0.5,30,100);
+            evals.add(res);
+            printEval(res);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
         return evals;
+    }
+
+    private static void printEval(EvaluationResult res) {
+
+        System.out.println();
+        System.out.println(res.description);
+        System.out.println("recall: "+res.recall);
+        System.out.println("precision:"+ res.precision);
+        System.out.println("averageTime:"+res.time);
+        System.out.println();
     }
 
 
