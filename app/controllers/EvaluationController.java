@@ -25,7 +25,7 @@ public class EvaluationController extends Controller {
 
         EvaluationResult  res;
         try{
-            res = cr.evaluate(false, 500, 0.3,50,100);
+            res = cr.evaluate(false, 500, 0.3,25,100);
             evals.add(res);
             printEval(res);
         }
@@ -33,7 +33,7 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 500, 0.6,50,100);
+            res = cr.evaluate(false, 500, 0.6,25,100);
             evals.add(res);
             printEval(res);
         }
@@ -41,7 +41,7 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 1000, 0.5,30,100);
+            res = cr.evaluate(false, 1000, 0.5,15,100);
             evals.add(res);
             printEval(res);
         }
@@ -49,7 +49,7 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(true, 1000, 0.5,30,100);
+            res = cr.evaluate(true, 1000, 0.5,15,100);
             evals.add(res);
             printEval(res);
         }
