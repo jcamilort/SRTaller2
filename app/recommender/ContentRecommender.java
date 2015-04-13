@@ -190,7 +190,7 @@ public class ContentRecommender {
                 else System.err.println("Trying use an unknown category...");
             }
             theQuery+=tqWhere.substring(3);
-            theQuery=" order by rand() limit "+MAX_REVIEWED;
+            theQuery+=" order by rand() limit "+MAX_REVIEWED;
         }
         else{
             theQuery="select distinct business_business_id from usercategories join businesscategories on businesscategories.category_category_id=usercategories.category_category_id " +joinstatement+
