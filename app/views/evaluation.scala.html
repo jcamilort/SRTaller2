@@ -1,13 +1,29 @@
-@()
+@(evals:List[EvaluationResult])
 
 @main("","Recommender system",null) {
 
 
-    <h1>Model evaluation</h1>
-    <h2>Model description</h2>
-    <h2>Evaluation description</h2>
-    <h2>Results</h2>
-    <h3>Recall</h3>
-    <h3>Precision</h3>
-    ...
+    <h1>Evaluaciones del recomendador</h1>
+
+    <table class="table center-simple">
+        <thead>
+            <tr>
+                <th>Descripcion</th>
+                <th>Tiempo promedio de recomendacion</th>
+                <th>Precision</th>
+                <th>Recall</th>
+            </tr>
+        </thead>
+        <tbody id = "recommendlist">
+
+        @for( r <- evals) {
+            <tr>
+                <td>@r.description</td>
+                <td>@r.time</td>
+                <td>@r.precision</td>
+                <td>@r.recall</td>
+            </tr>
+        }
+        </tbody>
+    </table>
 }

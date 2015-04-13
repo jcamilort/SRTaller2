@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import models.Business;
+import models.EvaluationResult;
 import models.Recommendation;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;

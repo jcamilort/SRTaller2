@@ -251,9 +251,6 @@ public class Application extends Controller {
 
         return ok(search.render(msg,logged,items,cstr));
     }
-    public static Result evaluation() {
-        return ok(evaluation.render());//"Hybrid recommender system"));
-    }
 
 
     public static Result getBusiness(String id) {
