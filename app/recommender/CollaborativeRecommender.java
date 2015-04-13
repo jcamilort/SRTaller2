@@ -81,6 +81,8 @@ public class CollaborativeRecommender {
 	
 	public static void generateDataModelPositionBased(ArrayList<Business> businesses){
 		try {
+			long beforeData = System.currentTimeMillis();
+			System.out.println("Beggining at: "+beforeData);
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
 
@@ -191,6 +193,9 @@ public class CollaborativeRecommender {
 
 			oos.writeObject(dataModel);
 			System.out.println("DataModel Generated!");
+			long elapsedDataTime =System.currentTimeMillis() - beforeData;
+			System.out.println("Beggining at: "+elapsedDataTime);
+			
 			oos.close();
 
 		} catch (IOException e) {
@@ -214,6 +219,7 @@ public class CollaborativeRecommender {
 	public static void generateDataModel() 
 	{
 		try {
+			long beforeData = System.currentTimeMillis();
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
 
@@ -278,6 +284,9 @@ public class CollaborativeRecommender {
 
 			oos.writeObject(dataModel);
 			System.out.println("DataModel Generated!");
+			long elapsedDataTime = System.currentTimeMillis() - beforeData;
+			System.out.println("DataModel Generation took at: "+elapsedDataTime);
+			
 			oos.close();
 
 		} catch (IOException e) {
@@ -290,6 +299,9 @@ public class CollaborativeRecommender {
 	public static ArrayList<Recommendation> executeRecommender(String userID,
 			int numberOfRecommendations, int neighbors, int similarityMethod) {
 		try {
+			
+			long recommendTimeStart = System.currentTimeMillis();
+			//System.out.println("Recommendation time start: "+recommendTimeStart);
 
 			ArrayList<Recommendation> result = new ArrayList<Recommendation>();
 			
@@ -345,6 +357,8 @@ public class CollaborativeRecommender {
 				}
 			}
 			System.out.println("All collaborative recommendations added");
+			long timeElapsed = System.currentTimeMillis() - recommendTimeStart;
+			System.out.println("Time elapsed: "+timeElapsed);
 			return result;
 
 		} catch (TasteException e) {
