@@ -2,7 +2,7 @@ package controllers;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
-import play.api.Logger;
+import play.Logger;
 import play.mvc.Controller;
 import play.mvc.Result;
 import recommender.ContentRecommender;
@@ -12,7 +12,10 @@ import views.html.evaluation;
 import views.html.index;
 import views.html.evaluation;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import models.EvaluationResult;
@@ -32,11 +35,12 @@ public class EvaluationController extends Controller {
         ContentRecommender cr=new ContentRecommender();
         ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
         System.out.println("Content recommender evaluation:");
+        Logger.debug("Content recommender evaluation...");
 
         EvaluationResult  res;
         EvaluationResult resCollab;
         try{
-            res = cr.evaluate(false, 500, 0.3,25,100);
+            res = cr.evaluate(false, 500, 0.3,5,100);
             evals.add(res);
             printEval(res);
         }
@@ -44,7 +48,7 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 500, 0.6,25,100);
+            res = cr.evaluate(false, 500, 0.6,5,100);
             evals.add(res);
             printEval(res);
         }
@@ -52,20 +56,16 @@ public class EvaluationController extends Controller {
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 1000, 0.5,15,100);
+            res = cr.evaluate(true, 500, 0.5,5,100);
             evals.add(res);
             printEval(res);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
-        try{
-            res = cr.evaluate(true, 1000, 0.5,15,100);
-            evals.add(res);
-            printEval(res);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
+        for (EvaluationResult er:evals)
+        {
+            printEval(er);
         }
         try{
 	        resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
@@ -136,12 +136,36 @@ public class EvaluationController extends Controller {
 
     private static void printEval(EvaluationResult res) {
 
+        //Logger.er
+
         System.out.println();
         System.out.println(res.description);
         System.out.println("recall: "+res.recall);
         System.out.println("precision:"+ res.precision);
         System.out.println("averageTime:"+res.time);
         System.out.println();
+
+        
+        Logger.info("xxxcontenidoxxx:");
+        Logger.info("");
+        Logger.info(res.description);
+        Logger.info("recall: "+res.recall);
+        Logger.info("precision:"+ res.precision);
+        Logger.info("averageTime:"+res.time);
+        Logger.info("");
+        
+        try {
+            PrintWriter writer = new PrintWriter("cr"+(new Date()).toString());
+
+            writer.println(res.description);
+            writer.println("recall: "+res.recall);
+            writer.println("precision:"+ res.precision);
+            writer.println("averageTime:"+res.time);
+            writer.println();
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -166,7 +190,7 @@ public class EvaluationController extends Controller {
 
 
         //List<SqlRow> rows = Ebean.createSqlQuery(query).findList();
-        String[] ansa=new String[Math.max(nusers,most500Popular.length)];
+        String[] ansa=new String[Math.min(nusers,most500Popular.length)];
         for (int i = 0; i < nusers&&i<most500Popular.length; i++) {
             ansa[i]=most500Popular[i];
         }
