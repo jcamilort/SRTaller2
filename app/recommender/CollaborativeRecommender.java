@@ -79,7 +79,7 @@ public class CollaborativeRecommender {
 
 	private static final String rutaReviewInfoLocationBased = null;
 
-	public static final int MAX_RECOMMENDATIONS = 20;
+	public static final double MAX_RECOMMENDATIONS = 20;
 
 	public static void main(String[] args) {
 		// generateDataModel();
@@ -497,7 +497,7 @@ public class CollaborativeRecommender {
 			}
 			averageTime = (System.currentTimeMillis() - t1) / uids.length;
 			er.precision = tpTotal
-					/ (MAX_RECOMMENDATIONS * dataModel.getNumUsers());
+					/ (MAX_RECOMMENDATIONS * (double)dataModel.getNumUsers());
 			er.recall = tpTotal / (esperadoTotal);
 			String simString ="";
 			if(similarityMethod==EUCLIDEAN){

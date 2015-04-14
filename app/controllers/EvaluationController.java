@@ -99,6 +99,38 @@ public class EvaluationController extends Controller {
         catch (Exception ex){
             ex.printStackTrace();
         }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.PEARSON, 0.5);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(100, 1000, CollaborativeRecommender.PEARSON, 0.5);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.EUCLIDEAN, 0.3);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.EUCLIDEAN, 0.6);
+	        evals.add(resCollab);
+	        printEval(resCollab);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
         return evals;
     }
 
