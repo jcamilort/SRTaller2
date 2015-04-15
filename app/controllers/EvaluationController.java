@@ -28,38 +28,52 @@ public class EvaluationController extends Controller {
         Logger.debug("Content recommender evaluation...");
 
         EvaluationResult  res;
+        long t0=0;
         try{
-            res = cr.evaluate(false, 500, 0.3,5,100);
+            ///Params:filtra por radio, #business neighborhood, # users to evaluate, #recomendaciones x usuario
+            t0=System.currentTimeMillis();
+            res = cr.evaluate(false, 500, 0.3,50,100);//test control
             evals.add(res);
-            printEval(res);
+            printEval(res,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(false, 500, 0.6,5,100);
+            t0=System.currentTimeMillis();
+            res = cr.evaluate(false, 1000, 0.3,50,100);//varía #business
             evals.add(res);
-            printEval(res);
+            printEval(res,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
-            res = cr.evaluate(true, 500, 0.5,5,100);
+            t0=System.currentTimeMillis();
+            res = cr.evaluate(false, 500, 0.7,50,100);//varía % training
             evals.add(res);
-            printEval(res);
+            printEval(res,t0);
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        try{
+            t0=System.currentTimeMillis();
+            res = cr.evaluate(true, 500, 0.3,50,100);//varía filtro x radio
+            evals.add(res);
+            printEval(res,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         for (EvaluationResult er:evals)
         {
-            printEval(er);
+            printEval(er,t0);
         }
         return evals;
     }
 
-    private static void printEval(EvaluationResult res) {
+    private static void printEval(EvaluationResult res,long tinicial) {
 
         //Logger.er
 
@@ -80,12 +94,14 @@ public class EvaluationController extends Controller {
         Logger.info("");
         
         try {
-            PrintWriter writer = new PrintWriter("cr"+(new Date()).toString());
+            long tf=System.currentTimeMillis();
+            PrintWriter writer = new PrintWriter("cr_"+tf);
 
             writer.println(res.description);
             writer.println("recall: "+res.recall);
             writer.println("precision:"+ res.precision);
             writer.println("averageTime:"+res.time);
+            writer.println("totalEvaluationTime:"+(tf-tinicial));
             writer.println();
             writer.close();
         } catch (FileNotFoundException e) {
