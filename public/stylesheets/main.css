@@ -22,6 +22,12 @@ input[type="text"],input[type="number"]{
     width: 40%;
     padding: 0px;
 }
+#map_business{
+
+    height: 400px;
+    width: 400px;
+}
+
 #search{
     margin-top: 15px;
 }
