@@ -79,68 +79,76 @@ public class EvaluationController extends Controller {
         }
         for (EvaluationResult er:evals)
         {
-            printEval(er,t0);
+            printEval(er,System.currentTimeMillis());
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(100, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 50, CollaborativeRecommender.EUCLIDEAN, 0.3);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(10, 50, CollaborativeRecommender.EUCLIDEAN, 0.6);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.PEARSON, 0.5);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(100, 1000, CollaborativeRecommender.PEARSON, 0.5);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.EUCLIDEAN, 0.3);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
         try{
+            t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 500, CollaborativeRecommender.EUCLIDEAN, 0.6);
 	        evals.add(resCollab);
-	        printEval(resCollab);
+	        printEval(resCollab,t0);
         }
         catch (Exception ex){
             ex.printStackTrace();
