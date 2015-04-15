@@ -43,8 +43,8 @@ public class HybridRecommender {
     	contenido.setFilteredBusinessGeo(cercanos);
     	
     	//TODO generate the new dataModels
-    	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user.user_id, categories,attributes);
-    	ArrayList<Recommendation> contentRecs = getContentRecommendations( latlong,hour,  user, categories,attributes);
+    	ArrayList<Recommendation> collabRecs = getCollaborativeRecommendations( latlong,hour,  user==null?"":user.user_id, categories,attributes);
+    	ArrayList<Recommendation> contentRecs = getContentRecommendations(latlong, hour, user, categories, attributes);
         
     	ArrayList<Recommendation> finalRecs = new ArrayList<Recommendation>();
     	int ultimaPos=collabRecs.size()+contentRecs.size();
@@ -152,12 +152,13 @@ public class HybridRecommender {
 		int neighbors = 10;
 		int similarityMethod = CollaborativeRecommender.EUCLIDEAN;
 
+        if(user_id==null||user_id.equals(""))
+            return new ArrayList<Recommendation>();
 		return colaborativo.executeRecommender(user_id, (int)CollaborativeRecommender.MAX_RECOMMENDATIONS, neighbors, similarityMethod);
 	}
 
 	public static EvaluationResult evaluate (double radioLoc,String hour, double trainingPercentage,int evalMethod)
     {
-
         //TODO
         return new EvaluationResult();
     }
