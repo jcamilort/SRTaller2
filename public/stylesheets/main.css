@@ -75,3 +75,7 @@ label[for="userid"],input[name="userid"]
 {
     float:left;
 }
+#results{
+    float:right;
+    width:80%
+}

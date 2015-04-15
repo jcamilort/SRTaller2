@@ -34,6 +34,8 @@ public class HybridRecommender {
     public static ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
     	//TODO filtrar por posicion y horas
+        if(latlong!=null && latlong.length==2)
+            System.out.println("latlong: ["+latlong[0]+","+latlong[1]+"]");
     	ArrayList<Business> cercanos = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], RADIO_FILTRO);
     	colaborativo.generateDataModelPositionBased(cercanos);
     	//colaborativo.generateDataModel();

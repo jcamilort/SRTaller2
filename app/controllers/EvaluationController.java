@@ -27,11 +27,6 @@ public class EvaluationController extends Controller {
 
     public static ArrayList<EvaluationResult> evaluateContentRecommender() {
 
-//        ContentRecommender cr=new ContentRecommender();
-//        EvaluationResult res = cr.evaluateCR(false, 500, 0.5);
-//        
-        CollaborativeRecommender.generateDataModel();
-        
         ContentRecommender cr=new ContentRecommender();
         ArrayList<EvaluationResult> evals=new ArrayList<EvaluationResult>();
         System.out.println("Content recommender evaluation:");
@@ -81,6 +76,7 @@ public class EvaluationController extends Controller {
         {
             printEval(er,System.currentTimeMillis());
         }
+        CollaborativeRecommender.generateDataModel();
         try{
             t0=System.currentTimeMillis();
 	        resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
@@ -178,7 +174,7 @@ public class EvaluationController extends Controller {
         
         try {
             long tf=System.currentTimeMillis();
-            PrintWriter writer = new PrintWriter("cr_"+tf);
+            PrintWriter writer = new PrintWriter("cr_"+tf+".eval");
 
             writer.println(res.description);
             writer.println("recall: "+res.recall);

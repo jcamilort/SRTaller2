@@ -48,12 +48,19 @@ public class ContentRecommender {
 
     public ArrayList<Recommendation> recommend(double[] latlong,String hour, User user,String[] categories,String[] attributes)
     {
-        if(latlong!=null&&latlong.length>0)
+        if(latlong!=null&&latlong.length>0&&latlong[0]!=0)
         {
             geoFiltered=true;
             if(filteredBusinessGeo==null||filteredBusinessGeo.isEmpty())
             {
-                filteredBusinessGeo = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], HybridRecommender.RADIO_FILTRO);
+                try{
+                    filteredBusinessGeo = LocationFilter.obtenerSitiosCercanos(latlong[0], latlong[1], HybridRecommender.RADIO_FILTRO);
+                }
+                catch (Exception e)
+                {
+                    filteredBusinessGeo=new ArrayList<>();
+                }
+
             }
         }
         else geoFiltered=false;
@@ -294,8 +301,8 @@ public class ContentRecommender {
         }
         averageTime/=uids.length;
 
-        er.precision=tpTotal/(maxRecommendations*totalUsers);
-        er.recall=tpTotal/(esperadoTotal);
+        er.precision=(double)(((double)tpTotal)/(double)(maxRecommendations*totalUsers));
+        er.recall=(double)(((double)tpTotal)/(double)(esperadoTotal));
         er.time=averageTime;
 
         return er;
