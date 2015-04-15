@@ -9,11 +9,13 @@ GET         /data                controllers.SemantriaController.loadData()
 GET         /semantria           controllers.SemantriaController.index()
 GET         /sentiment           controllers.SemantriaController.sentiment()
 GET         /evaluation          controllers.EvaluationController.evaluation()
+
 POST        /search              controllers.Application.search()
 GET         /search              controllers.Application.searchGet()
 GET         /randomuser          controllers.Application.randomUserId()
 
-GET         /business/:id        controllers.Application.getBusiness(id: String)
+GET         /business/:id 	     controllers.Application.getBusiness(id: String)
+
 
 
 # Map static resources from the /public folder to the /assets URL path

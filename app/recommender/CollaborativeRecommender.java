@@ -10,14 +10,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import models.Business;
+import models.EvaluationResult;
 import models.Recommendation;
 import org.apache.mahout.cf.taste.common.TasteException;
 import org.apache.mahout.cf.taste.impl.common.FastByIDMap;
+import org.apache.mahout.cf.taste.impl.common.FastIDSet;
 import org.apache.mahout.cf.taste.impl.model.GenericDataModel;
 import org.apache.mahout.cf.taste.impl.model.GenericPreference;
 import org.apache.mahout.cf.taste.impl.model.GenericUserPreferenceArray;
@@ -35,6 +38,8 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood;
 import org.apache.mahout.cf.taste.recommender.RecommendedItem;
 import org.apache.mahout.cf.taste.recommender.UserBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.UserSimilarity;
+
+import controllers.EvaluationController;
 
 public class CollaborativeRecommender {
 	/**
@@ -74,13 +79,24 @@ public class CollaborativeRecommender {
 
 	private static final String rutaReviewInfoLocationBased = null;
 
+	public static final double MAX_RECOMMENDATIONS = 20;
+
 	public static void main(String[] args) {
-		//generateDataModel();
-		executeRecommender("uMKK1Ans4DrUsxlliIH_xA", 100, 10, EUCLIDEAN);
+		// generateDataModel();
+		EvaluationResult resCollab = CollaborativeRecommender.evaluate(50, 100, CollaborativeRecommender.EUCLIDEAN, 0.5);
+		System.out.println(resCollab.description);
+		System.out.println("Precision: "+resCollab.precision);
+		System.out.println("Recall: "+resCollab.recall);
+		System.out.println("Time: "+resCollab.time);
+		
+
 	}
-	
-	public static void generateDataModelPositionBased(ArrayList<Business> businesses){
+
+	public static void generateDataModelPositionBased(
+			ArrayList<Business> businesses) {
 		try {
+			long beforeData = System.currentTimeMillis();
+			System.out.println("Beggining at: " + beforeData);
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
 
@@ -94,31 +110,31 @@ public class CollaborativeRecommender {
 
 			String line;
 			String negocio_anterior = "";
-			boolean contenido_anterior  = false;
+			boolean contenido_anterior = false;
 			// go through every line
 			while ((line = br.readLine()) != null) {
 				String[] parts = line.split(";");
 				String likeName = parts[1].trim();
-				
-				if(negocio_anterior.equals(likeName)){
-					if(contenido_anterior){
+
+				if (negocio_anterior.equals(likeName)) {
+					if (contenido_anterior) {
 						String person = parts[0].trim();
 						float preference = Float.parseFloat(parts[2]);
-						
+
 						// create a long from the person name
 						long userLong = thing2long.toLongID(person);
-						
+
 						// store the mapping for the user
 						thing2long.storeMapping(userLong, person);
-						
+
 						// create a long from the like name
 						long itemLong = thing2long.toLongID(likeName);
-						
+
 						// store the mapping for the item
 						thing2long.storeMapping(itemLong, likeName);
-						
+
 						List<Preference> userPrefList;
-						
+
 						// if we already have a userPrefList use it
 						// otherwise create a new one.
 						if ((userPrefList = preferecesOfUsers.get(userLong)) == null) {
@@ -126,34 +142,33 @@ public class CollaborativeRecommender {
 							preferecesOfUsers.put(userLong, userPrefList);
 						}
 						// add the like that we just found to this user
-						userPrefList.add(new GenericPreference(userLong, itemLong,
-								preference));
-						System.out.println("LocBased " + person + "(" + userLong
-								+ ") to " + likeName + "(" + itemLong
-								+ ") with preference " + preference);
+						userPrefList.add(new GenericPreference(userLong,
+								itemLong, preference));
+						System.out.println("LocBased " + person + "("
+								+ userLong + ") to " + likeName + "("
+								+ itemLong + ") with preference " + preference);
 					}
-				}
-				else{
+				} else {
 					negocio_anterior = likeName;
-					if(isContainedIn(likeName, businesses)){
-						contenido_anterior=true;
+					if (isContainedIn(likeName, businesses)) {
+						contenido_anterior = true;
 						String person = parts[0].trim();
 						float preference = Float.parseFloat(parts[2]);
-						
+
 						// create a long from the person name
 						long userLong = thing2long.toLongID(person);
-						
+
 						// store the mapping for the user
 						thing2long.storeMapping(userLong, person);
-						
+
 						// create a long from the like name
 						long itemLong = thing2long.toLongID(likeName);
-						
+
 						// store the mapping for the item
 						thing2long.storeMapping(itemLong, likeName);
-						
+
 						List<Preference> userPrefList;
-						
+
 						// if we already have a userPrefList use it
 						// otherwise create a new one.
 						if ((userPrefList = preferecesOfUsers.get(userLong)) == null) {
@@ -161,18 +176,15 @@ public class CollaborativeRecommender {
 							preferecesOfUsers.put(userLong, userPrefList);
 						}
 						// add the like that we just found to this user
-						userPrefList.add(new GenericPreference(userLong, itemLong,
-								preference));
-						System.out.println("LocBased " + person + "(" + userLong
-								+ ") to " + likeName + "(" + itemLong
-								+ ") with preference " + preference);
-					}
-					else{
+						userPrefList.add(new GenericPreference(userLong,
+								itemLong, preference));
+						System.out.println("LocBased " + person + "("
+								+ userLong + ") to " + likeName + "("
+								+ itemLong + ") with preference " + preference);
+					} else {
 						contenido_anterior = false;
-					}			
-					
+					}
 				}
-				
 
 			}
 
@@ -187,11 +199,15 @@ public class CollaborativeRecommender {
 			// create a data model
 			dataModel = new GenericDataModel(preferecesOfUsersFastMap);
 
-			FileOutputStream fos = new FileOutputStream("dataModelLocation.model");
+			FileOutputStream fos = new FileOutputStream(
+					"dataModelLocation.model");
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 
 			oos.writeObject(dataModel);
 			System.out.println("DataModel Generated!");
+			long elapsedDataTime = System.currentTimeMillis() - beforeData;
+			System.out.println("Beggining at: " + elapsedDataTime);
+
 			oos.close();
 
 		} catch (IOException e) {
@@ -201,20 +217,20 @@ public class CollaborativeRecommender {
 		}
 	}
 
-	private static boolean isContainedIn(String business_id, ArrayList<Business> businesses) {
+	private static boolean isContainedIn(String business_id,
+			ArrayList<Business> businesses) {
 		boolean termino = false;
-		for (int i = 0 ; i < businesses.size() && !termino; i++)
-		{
-			if(businesses.get(i).business_id.equals(business_id)){
+		for (int i = 0; i < businesses.size() && !termino; i++) {
+			if (businesses.get(i).business_id.equals(business_id)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public static void generateDataModel() 
-	{
+	public static void generateDataModel() {
 		try {
+			long beforeData = System.currentTimeMillis();
 			// create a file out of the resource
 			File data = new File(rutaReviewInfo);
 
@@ -279,6 +295,10 @@ public class CollaborativeRecommender {
 
 			oos.writeObject(dataModel);
 			System.out.println("DataModel Generated!");
+			long elapsedDataTime = System.currentTimeMillis() - beforeData;
+			System.out.println("DataModel Generation took at: "
+					+ elapsedDataTime);
+
 			oos.close();
 
 		} catch (IOException e) {
@@ -292,9 +312,12 @@ public class CollaborativeRecommender {
 			int numberOfRecommendations, int neighbors, int similarityMethod) {
 		try {
 
+			long recommendTimeStart = System.currentTimeMillis();
+			// System.out.println("Recommendation time start: "+recommendTimeStart);
+
 			ArrayList<Recommendation> result = new ArrayList<Recommendation>();
-			
-			//FileInputStream fis = new FileInputStream("dataModel.model");
+
+			// FileInputStream fis = new FileInputStream("dataModel.model");
 			FileInputStream fis = new FileInputStream("dataModelLocation.model");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 
@@ -315,19 +338,24 @@ public class CollaborativeRecommender {
 				similarity = new EuclideanDistanceSimilarity(dataModel);
 			}
 
-			UserNeighborhood neighborhood = new NearestNUserNeighborhood(neighbors, similarity, dataModel);
+			UserNeighborhood neighborhood = new NearestNUserNeighborhood(
+					neighbors, similarity, dataModel);
 
 			// Instantiate the recommender
 
-			recommender = new GenericUserBasedRecommender(dataModel,neighborhood, similarity);
+			recommender = new GenericUserBasedRecommender(dataModel,
+					neighborhood, similarity);
 
-			//recommenderGBIR = new GenericBooleanPrefItemBasedRecommender(dataModel, new LogLikelihoodSimilarity(dataModel));
+			// recommenderGBIR = new
+			// GenericBooleanPrefItemBasedRecommender(dataModel, new
+			// LogLikelihoodSimilarity(dataModel));
 
 			System.out.println("Getting the recommendations...");
 
-			List<RecommendedItem> recommendations = recommendThings(userID, numberOfRecommendations);
-			
-			if(recommendations.size()==0)
+			List<RecommendedItem> recommendations = recommendThings(userID,
+					numberOfRecommendations);
+
+			if (recommendations.size() == 0)
 				System.out.println("No recommendations");
 
 			// List<String> recommendationsBooleanPref =
@@ -335,17 +363,23 @@ public class CollaborativeRecommender {
 
 			System.out.println("USER-BASED");
 			for (RecommendedItem rec : recommendations) {
-				System.out.println("Got recommendations..."+recommendations.size());
-				
-				Business found = Business.find.byId(thing2long.toStringID(rec.getItemID()));
-				if(found!=null){
-					System.out.println("Found business..."+found.getName()+" "+found.getBusiness_id());
-				
-					Recommendation recom = new Recommendation(found, rec.getValue());
+				System.out.println("Got recommendations..."
+						+ recommendations.size());
+
+				Business found = Business.find.byId(thing2long.toStringID(rec
+						.getItemID()));
+				if (found != null) {
+					System.out.println("Found business..." + found.getName()
+							+ " " + found.getBusiness_id());
+
+					Recommendation recom = new Recommendation(found,
+							rec.getValue());
 					result.add(recom);
 				}
 			}
 			System.out.println("All collaborative recommendations added");
+			long timeElapsed = System.currentTimeMillis() - recommendTimeStart;
+			System.out.println("Time elapsed: " + timeElapsed);
 			return result;
 
 		} catch (TasteException e) {
@@ -373,20 +407,22 @@ public class CollaborativeRecommender {
 	 * @throws TasteException
 	 *             If anything goes wrong a TasteException is thrown
 	 */
-	public static List<RecommendedItem> recommendThings(String user_id,int numberOfRecommendations) throws TasteException
-	{
-        long t1 = System.currentTimeMillis();
+	public static List<RecommendedItem> recommendThings(String user_id,
+			int numberOfRecommendations) throws TasteException {
+		long t1 = System.currentTimeMillis();
 		// List<String> recommendations = new ArrayList<String>();
 		List<RecommendedItem> items = null;
 		try {
-			items = recommender.recommend(thing2long.toLongID(user_id), numberOfRecommendations);
-//			 for (RecommendedItem item : items) {
-//				 recommendations.add(thing2long.toStringID(item.getItemID()));
-//			 }
+			items = recommender.recommend(thing2long.toLongID(user_id),
+					numberOfRecommendations);
+			// for (RecommendedItem item : items) {
+			// recommendations.add(thing2long.toStringID(item.getItemID()));
+			// }
 		} catch (TasteException e) {
 			throw e;
 		}
-        System.out.println("\n ATTENTION!! getting geolocation filter taked "+(System.currentTimeMillis()-t1)+"ms\n\n");
+		System.out.println("\n ATTENTION!! getting geolocation filter taked "
+				+ (System.currentTimeMillis() - t1) + "ms\n\n");
 		return items;
 	}
 
@@ -408,8 +444,128 @@ public class CollaborativeRecommender {
 	public static CollaborativeRecommender getInstance() {
 		if (instance == null) {
 			instance = new CollaborativeRecommender();
-			//CollaborativeRecommender.generateDataModel();
+			// CollaborativeRecommender.generateDataModel();
 		}
 		return instance;
+	}
+
+	public static EvaluationResult evaluate( int neighbors, int relevantUsers,
+			int similarityMethod, double trainingPercentage) {
+		EvaluationResult er = new EvaluationResult();
+		er.precision = 0;
+		er.recall = 0;
+		er.description = "";
+		er.time = 0;
+		try {
+			String[] uids = EvaluationController
+					.findPopularUsers(relevantUsers);
+
+//			generateDataModel();
+
+			UserSimilarity similarity;
+			if (similarityMethod == PEARSON) {
+				// Pearson
+				similarity = new PearsonCorrelationSimilarity(dataModel);
+			} else if (similarityMethod == SPEARMAN) {
+				similarity = new SpearmanCorrelationSimilarity(dataModel);
+			} else {
+				similarity = new EuclideanDistanceSimilarity(dataModel);
+			}
+
+			UserNeighborhood neighborhood = new NearestNUserNeighborhood(
+					neighbors, similarity, dataModel);
+
+			// Instantiate the recommender
+
+			recommender = new GenericUserBasedRecommender(dataModel,
+					neighborhood, similarity);
+			double tpTotal = 0;
+			double esperadoTotal = 0;
+
+			long t1 = 0, averageTime = 0;
+			System.out.println("Tam Arreglo: "+uids.length);
+			for (int i = 0; i < uids.length && i<relevantUsers; i++) {
+				System.out.println(i+"   "+uids[i]);
+				if(uids[i]!=null || !uids[i].trim().equals("null")){
+					double[] result = recommendEval(thing2long.toLongID(uids[i]),
+							neighbors);// result[#esperado][#tp
+					// -
+					// intersección]
+					esperadoTotal += result[0];
+					tpTotal += result[1];
+				}
+			}
+			averageTime = (System.currentTimeMillis() - t1) / uids.length;
+			er.precision = tpTotal
+					/ (MAX_RECOMMENDATIONS * (double)dataModel.getNumUsers());
+			er.recall = tpTotal / (esperadoTotal);
+			String simString ="";
+			if(similarityMethod==EUCLIDEAN){
+				simString = "Euclidean";
+			}
+			else if(similarityMethod==PEARSON){
+				simString = "Pearson";
+			}
+			else if(similarityMethod==SPEARMAN){
+				simString = "Spearman";
+			}
+			er.description = "Recomendador colaborativo: { porcentaje entrenamiento= "
+					+ (int) (trainingPercentage * 100)
+					+ "%, usuarios revisados="
+					+ uids.length
+					+ " usuarios relevantes:"
+					+relevantUsers
+					+ ", similaridad: "+simString+"}";
+			er.time = averageTime;
+			
+		} catch (TasteException e) {
+			e.printStackTrace();
+		}
+		return er;
+	}
+
+	private static double[] recommendEval(long l, double neighbors) {
+		double[] respuesta = new double[2];
+		respuesta[0] = 0;
+		respuesta[1] = 0;
+		try {
+			FastIDSet fs = dataModel.getItemIDsFromUser(l);
+			Iterator<Long> iter = fs.iterator();
+			while (iter.hasNext()) {
+				Long itemId = iter.next();
+				respuesta[0] += recommender.estimatePreference(l, itemId);
+				respuesta[1] += dataModel.getPreferenceValue(l, itemId);
+
+			}
+			return respuesta;
+		} catch (TasteException e) {
+			e.printStackTrace();
+		}
+		return respuesta;
+	}
+
+	public GenericUserBasedRecommender darRecomendador(DataModel data,
+			int neighbors, int similarityMethod) {
+		dataModel = data;
+		UserSimilarity similarity;
+		try {
+			if (similarityMethod == PEARSON) {
+				// Pearson
+				similarity = new PearsonCorrelationSimilarity(dataModel);
+			} else if (similarityMethod == SPEARMAN) {
+				similarity = new SpearmanCorrelationSimilarity(dataModel);
+			} else {
+				similarity = new EuclideanDistanceSimilarity(dataModel);
+			}
+			UserNeighborhood neighborhood = new NearestNUserNeighborhood(
+					neighbors, similarity, data);
+
+			return new GenericUserBasedRecommender(data, neighborhood,
+					similarity);
+		} catch (TasteException e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 }

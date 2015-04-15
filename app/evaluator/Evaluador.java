@@ -46,14 +46,14 @@ public class Evaluador {
 		// a certain person
 		Map<Long,List<Preference>> preferecesOfUsers = new HashMap<Long,List<Preference>>();
 
-
 		// Read File
 		BufferedReader br = new BufferedReader(new FileReader(data));
 
 		String line;
-
+		int counter = 0;
 		// go through every line
-		while ((line = br.readLine()) != null) {
+		while ((line = br.readLine()) != null && counter<500000) {
+			counter++;
 			String[] parts = line.split(";");
 			String person = parts[0];
 			String likeName = parts[1];
@@ -94,36 +94,59 @@ public class Evaluador {
 		RecommenderEvaluator evaluatorMahout1 = new AverageAbsoluteDifferenceRecommenderEvaluator();
 		RecommenderBuilder builder = new MyRecommenderBuilder();
 		
+		System.out.println("Evaluating...");
 		//El evaluador se construye con 90% de datos de prueba y 10% de datos de entrenamiento
 		//El resultado obtenido, entre más bajo, mejor. 
-		
+
+		//First test case
 		double trainingP=0.5;
 		double testP = 1.0;
 		
 		double result = evaluatorMahout1.evaluate(builder, null, mod, trainingP ,testP );
-		System.out.println("Collaborative Filtering Average Distance Evaluator Result: "+result);
+		System.out.println("Collaborative Filtering Average Distance Evaluator Result: "+result + " training%:"+trainingP+ " test%:"+testP +" Euclidean with 100 neighbors");
 		
 		RecommenderEvaluator evaluatorMahout2 = new  RMSRecommenderEvaluator();
 		double resulte = evaluatorMahout2.evaluate(builder, null, mod, trainingP, testP);
-		System.out.println("Collaborative Filtering RMS Evaluator Result: "+resulte);
+		System.out.println("Collaborative Filtering RMS Evaluator Result: "+resulte+ " training%:"+trainingP+ " test%:"+testP +" Euclidean with 100 neighbors");
+				
+		//Second test case
+		trainingP = 0.4;
+		testP = 0.9;
+		double result2 = evaluatorMahout1.evaluate(builder, null, mod, trainingP ,testP );
+		System.out.println("Collaborative Filtering Average Distance Evaluator Result: "+result2 + " training%:"+trainingP+ " test%:"+testP +" Euclidean with 100 neighbors");
 		
+		double resulte2 = evaluatorMahout2.evaluate(builder, null, mod, trainingP, testP);
+		System.out.println("Collaborative Filtering RMS Evaluator Result: "+resulte2+ " training%:"+trainingP+ " test%:"+testP +" Euclidean with 100 neighbors");
+		
+		//Second test case
+		trainingP = 0.4;
+		testP = 0.9;
+		double result3 = evaluatorMahout1.evaluate(builder, null, mod,
+				trainingP, testP);
+		System.out
+				.println("Collaborative Filtering Average Distance Evaluator Result: "
+						+ result3
+						+ " training%:"
+						+ trainingP
+						+ " test%:"
+						+ testP
+						+ " Euclidean with 100 neighbors");
+
+		double resulte3 = evaluatorMahout2.evaluate(builder, null, mod,
+				trainingP, testP);
+		System.out.println("Collaborative Filtering RMS Evaluator Result: "+resulte3+ " training%:"+trainingP+ " test%:"+testP +" Euclidean with 100 neighbors");
+				
 		RecommenderIRStatsEvaluator evaluator = new GenericRecommenderIRStatsEvaluator ();
-		IRStatistics stats = evaluator.evaluate(builder, null, mod, null, 2,GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD,1.0);
+		IRStatistics  stats = null;
+		try{
+		stats = evaluator.evaluate(builder, null, mod, null, 2,3,0.5);
+		}
+		catch(TasteException e){
+			e.printStackTrace();
+		}
 		System.out.println(stats.getPrecision());
 		System.out.println(stats.getRecall());
 		
-		/*
-		RandomUtils.useTestSeed();
-		DataModel model = new FileDataModel (new File("intro.csv"));
-		RecommenderIRStatsEvaluator evaluator =
-				new GenericRecommenderIRStatsEvaluator ();
-		RecommenderBuilder recommenderBuilder = new MyRecommenderBuilder();
-		IRStatistics stats = evaluator.evaluate(
-				recommenderBuilder, null, model, null, 2,
-				GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD,
-				1.0);
-		System.out.println(stats.getPrecision());
-		System.out.println(stats.getRecall());*/
 	}
 
 }
