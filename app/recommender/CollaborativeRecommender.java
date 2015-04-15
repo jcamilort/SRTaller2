@@ -421,7 +421,7 @@ public class CollaborativeRecommender {
 		} catch (TasteException e) {
 			throw e;
 		}
-		System.out.println("\n ATTENTION!! getting geolocation filter taked "
+		System.out.println("\n ATTENTION!! getting geolocation filter took "
 				+ (System.currentTimeMillis() - t1) + "ms\n\n");
 		return items;
 	}

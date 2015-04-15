@@ -55,7 +55,7 @@ public class LocationFilter {
 				
 				//System.out.println(rta);
 			}
-            System.out.println("\n ATTENTION!! getting geolocation filter taked "+(System.currentTimeMillis()-t1)+"ms\n\n");
+            System.out.println("\n ATTENTION!! getting geolocation filter took "+(System.currentTimeMillis()-t1)+"ms\n\n");
 
 			return id_collection;
 		} catch (JSONException e) {

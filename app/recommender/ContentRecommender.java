@@ -125,7 +125,7 @@ public class ContentRecommender {
                 returned.add(r);
             }
         }
-        System.out.println("\n\n!!!HIGH ATTENTION HERE... RECOMMENDING BY CONTENT TAKED "+(System.currentTimeMillis()-t1)+"ms!!!\n\n");
+        System.out.println("\n\n!!!HIGH ATTENTION HERE... RECOMMENDING BY CONTENT TOOK "+(System.currentTimeMillis()-t1)+"ms!!!\n\n");
         return returned;
     }
 

@@ -5,7 +5,7 @@
 
     <h1>Evaluaciones del recomendador</h1>
 
-    <table class="table center-simple">
+    <table id="evaluations" class="table center-simple">
         <thead>
             <tr>
                 <th>Descripcion</th>
@@ -26,4 +26,8 @@
         }
         </tbody>
     </table>
+
+    <script>
+    $("#evaluations" ).html($("#evaluations" ).html().split(",").join("<br/>"))
+    </script>
 }
